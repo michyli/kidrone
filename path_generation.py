@@ -175,8 +175,31 @@ class PolygonCreate:
                     swath[swath.index(lines)] = reverse_line(lines)
             return swath
         
+        #Determines slope of the swaths (swaths are all perpendicular to baseline)
+        if slope == "vertical":
+            opp_slope = 0
+        elif slope == 0:
+            opp_slope = "vertical"
+        else:
+            opp_slope = -(1 / slope)
+        
         #generate baseline
+        #* baseline is extrapolated to the minimum bounding box that is slanted according to the desired slope of the baseline
+        #* this implementation will ensure that no corners of the mapped area are left out in the constructed path (essentially addressing for edge cases)
+        proj_pt = []
         baseline = self.extrapolate_line(self.centroid, slope)
+        for point in self.points:
+            proj_pt.append(pt_to_line(point, baseline))
+        rightmostpoint = [max(proj_pt, key=lambda pt: pt.x)]
+        leftmostpoint = [min(proj_pt, key=lambda pt: pt.x)]
+        if slope > 0:
+            max_point = max(rightmostpoint, key=lambda pt: pt.y)
+            min_point = min(leftmostpoint, key=lambda pt: pt.y)
+        else:
+            max_point = min(rightmostpoint, key=lambda pt: pt.y)
+            min_point = max(leftmostpoint, key=lambda pt: pt.y)
+                        
+        baseline = LineString([line_intersection(self.centroid, slope, min_point, opp_slope), line_intersection(self.centroid, slope, max_point, opp_slope)])
         inter_points = split_line(baseline, interval)
         
         #Visualizing Baseline
@@ -186,14 +209,6 @@ class PolygonCreate:
                 plt.plot(i.x, i.y, 'ko', ms=4, alpha=0.2)
             """
             plt.plot([baseline.boundary.geoms[0].x, baseline.boundary.geoms[1].x], [baseline.boundary.geoms[0].y, baseline.boundary.geoms[1].y], 'ko:', ms=4, alpha=0.2)           
-        
-        #Determines slope of the swaths (swaths are all perpendicular to baseline)
-        if slope == "vertical":
-            opp_slope = 0
-        elif slope == 0:
-            opp_slope = "vertical"
-        else:
-            opp_slope = -(1 / slope)
         
         #Generate swath if it intersects with the polygon.
         swath = [self.extrapolate_line(i, opp_slope) for i in inter_points if self.polygon.intersects(self.extrapolate_line(i, opp_slope))]
@@ -290,6 +305,51 @@ def normalizeVec(x, y):
     norm = 1 / np.sqrt(x ** 2 + y ** 2)
     return x * norm, y * norm
 
+def line_intersection(point1, slope1, point2, slope2):
+    """Finds the point of intersection between two straight lines given the point and slope of both lines.
+    Returns a Point object.
+    
+    point1: Point object
+    slope1: float or "vertical"
+    point2: Point object
+    slope2: float or "vertical"
+    """
+    if slope1 == "vertical" and slope2 == "vertical":
+        if point1 == point2:
+            raise ValueError("two inputted lines are the same")
+        else:
+            raise ValueError("No intersections, two inputted lines are parallel")
+    if slope1 == "vertical":
+        return Point([point1.x, point2.y + slope2 * (point1.x - point2.x)])
+    if slope2 == "vertical":
+        return Point([point2.x, point1.y + slope1 * (point2.x - point2.x)])
+        
+    b1 = point1.y - slope1 * point1.x
+    b2 = point2.y - slope2 * point2.x
+    
+    x = (b2 - b1) / (slope1 - slope2)
+    y = slope1 * x + b1
+    return Point([x, y])
+
+def pt_to_line(point, line):
+    """Orthogonally projects a point onto a line
+    returns the projected point as a Point object
+    
+    point:  a Point object
+    line:   a LineString object
+    """
+    x = np.array(point.coords[0])
+
+    u = np.array(line.coords[0])
+    v = np.array(line.coords[len(line.coords)-1])
+
+    n = v - u
+    n /= np.linalg.norm(n, 2)
+
+    P = u + n*np.dot(x - u, n) #datatype if np.array
+    return Point([P[0], P[1]])
+    
+
 def split_line(line, interval):
     """Splits a line into equal distances
         if a line can't be split into the given interval distance, and there are less than 20% of interval as excess,
@@ -336,7 +396,7 @@ def showswath(full_path):
 ============================================
 """
 
-def generate_path(points, disp_diam, baseline_slope, invert = False):
+def generate_path(points, disp_diam, baseline_slope, vis = False, invert = False):
     """
     A compacted set of commands to generate a function based on all the necessary informations
     """
@@ -347,8 +407,10 @@ def generate_path(points, disp_diam, baseline_slope, invert = False):
     path = offset_outline.swath_gen(disp_diam, baseline_slope, invert, show_baseline=True)
     
     #Visualization
-    showswath(path)
-    plt.show()
+    if vis:
+        showswath(path)
+        plt.show()
+        
     return path
     
     
@@ -361,21 +423,20 @@ def generate_path(points, disp_diam, baseline_slope, invert = False):
 #Note: slope (the third input of generate_path) can be either a float or the string "vertical"
 
 #Quadualateral
-#swath not fully perpendicular to baseline cuz inverted version is shorter in path length
 """ eg1 = [(12, 10), (20, 10), (20, 20), (10, 20)] 
-path = generate_path(eg1, 1, 1)  """
+path = generate_path(eg1, 1, 1, vis=True)  """
 
 #Hexalateral
 """ eg2 = [(5, 9), (30, 6), (40, 20), (35, 37), (27, 41), (12, 30)]
-path = generate_path(eg2, 2, 0.1) """
+path = generate_path(eg2, 2, 0.1, vis=True) """
 
 #More complicated shape
-#Flying outside of designated area
+#Demonstration of flying outside of designated area
 """ eg3 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
-path = generate_path(eg3, 3, 9) """
+path = generate_path(eg3, 3, 9, vis=True) """
 
 """ eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
-path = generate_path(eg4, 0.8, 0.5)"""
+path = generate_path(eg4, 0.8, 0.5, True) """
 
 #Demonstrates what the returned data type looks like (list of LineString object)
 """print(np.array(path))"""

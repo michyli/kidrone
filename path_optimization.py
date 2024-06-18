@@ -9,7 +9,22 @@ class Path:
         path: a list of LineStrings. Usually the output of generate_path() function
         """
         self.path = path
-        self.length = sum([i.length for i in self.path])
+    
+    def length(self):
+        """Returns the length of path in KM
+        Note that the point coordinates in self.path are in unit of longtitude and latitude.
+        
+        The more accurate calculation involves Haversin Formula.
+        But for the purpose here, a rough estimate is sufficient.
+        """
+        length = []
+        for line in self.path:
+            # 1° of latitude is always 111.32 km
+            dx = (line.coords[1][0] - line.coords[0][0]) * 111.32
+            # 1° of longitude is 40075 km * cos(latitude) / 360
+            dy = 40075 * np.cos((line.coords[1][1] - line.coords[0][1])) / 360
+            length.append(np.sqrt(dx**2 + dy**2))
+        return round(sum(length), 5)
     
     def air_time(self):
         """Returns the projected air time when executing the given path
@@ -32,5 +47,4 @@ class Path:
         height:         constant height the drone aims to travel at (m)
         seed_weight:    weight of the seed (kg)
         """
-        
-
+        pass
