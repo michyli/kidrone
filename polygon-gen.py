@@ -3,44 +3,44 @@ import matplotlib.pyplot as plt
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint
 
 """
-===========================
-====== Polygon Class ======
-===========================
+=====================
+====== Classes ======
+=====================
 """
 class PolygonCreate:
     """
-    Creates a polygon object given a list of points in tuple
+    Creates a polygon object with inherit attributes.
     """
     def __init__(self, points):
-        """
-        initialization of Polygon object. Points are given in tuples
+        """ Initialization of Polygon object.
+        
+        points: tuple / list of (x, y) coordinates
         >>> points = [(10, 10), (30, 10), (10, 30)]
-        x should represent latitude and y should represent longtitude
+        #* In later implementation, x should represent latitude and y should represent longtitude.
         """
         
-        #Initialization of basic polygon information
+        #Initialization of basic polygon information from given points
         self.xcord = [i[0] for i in points]
         self.ycord = [i[1] for i in points]
         self.xmax, self.xmin = max(self.xcord), min(self.xcord)
         self.ymax, self.ymin = max(self.ycord), min(self.ycord)
-        
-        #Define Centroid of polygon
         self.xcentroid = sum(self.xcord) / len(self.xcord)
         self.ycentroid = sum(self.ycord) / len(self.ycord)
         self.centroid = Point(self.xcentroid, self.ycentroid)
 
-        #Shapely definitions useful for executing Shapely functions
+        #Basic polygon information defined in shapely objects, necesary for executing Shapely functions
         self.points = [Point(i[0], i[1]) for i in points]
         self.edges = [LineString([self.points[i], self.points[i+1]]) for i in range(len(points) - 1)]
         self.polygon = LinearRing(tuple(self.points))
 
     def poly_offset(self, offset):
-        """
-        return a set of new coordinates of the offset polygon.
-        by default, positive offset is inward-offset
-
-        **offset is in unit of latitude / longtitude
-
+        """ Returns a set of new coordinates of an offsetted polygon, where
+        all the edges are offsetted inward.
+        By default, positive offset is inward-offset.
+        
+        offset: perpendicular distance between new edge and original edge.
+        
+        example execution:
         >>> points = [(10, 10), (30, 10), (10, 30)]
         >>> tri = PolygonCreate(points)
         >>> new_tri = tri.poly_offset(1)
@@ -92,12 +92,11 @@ class PolygonCreate:
         return PolygonCreate(new_points)
 
     def extrapolate_line(self, point, slope):
-        """
-        Construct a line from a point and a slope, then
-        extend a line to the maximum boundry of the polygon.
-        returns the extrapolated line
+        """ Construct a line from a point and a slope, then extend a line to the maximum
+        boundry of the polygon. Returns the new extrapolated line.
         
-        'point' is a Point object
+        point: a Point object -- Point([x, y])
+        slope: a float or "vertical"
         """
         if slope == "vertical":
             return LineString([Point((point.x, self.ymin)), Point((point.x, self.ymax))])
@@ -116,19 +115,26 @@ class PolygonCreate:
         return LineString([coord_L, coord_R])
 
     def span_line(self, line):
-        """
-        crop a linestring to the edge of the polygon if it extends outside of the polygon
-        returns the cropped linestring
+        """ Crops part of the LineString that exceeds the boundary of the polygon
+        Returns the new cropped LineString.
 
-        'line' is a LineString object
+        line: a LineString object. It is necessary that 'line' intersects the polygon already.
+              Otherwise use extrapolate_line() first before calling span_line()
         """
+        #Check if the input line intersects with the polygon
+        if not self.polygon.intersects(line):
+            raise ValueError("The line doesn't intersect with the polygon. Call extrapolate_line() first before using span_line()")
+        
         intersection_points = self.polygon.intersection(line)
         if isinstance(intersection_points, Point):
+            #Case where line and polygon intersects only at a point
             return intersection_points
         if isinstance(intersection_points, MultiPoint):
+            #Case where line and polygon intersects at more than one point
             if len(intersection_points.geoms) > 2:
                 new_point_coords = list(intersection_points.geoms)
                 #Extract the left-most and right-most intersection points
+                #Note that points returned from .intersection() in NOT ordered
                 coord1, coord2 = max(new_point_coords, key=lambda i: i.x), min(new_point_coords, key=lambda i: i.x)
                 new_point_coords = [coord1, coord2]
             else:
@@ -136,18 +142,28 @@ class PolygonCreate:
                 new_point_coords = [new_point_coords[0], new_point_coords[-1]]
             return LineString(new_point_coords)
         if isinstance(intersection_points, LineString):
+            #Case where the line is co-linear with one of the polygon's edge
             return intersection_points
 
     def swath_gen(self, interval, slope, invert = False, show_baseline = False, _F_single_point = False, _R_single_point = False):
-        """
-        generates evenly spaced swath lines perpendicular to wind direction
-        optimized so that average length of the highest
+        """Generates evenly spaced swath lines based on a baseline.
+        The baseline is a line that passes through the centroid with the input slope.
+        Returns a complete path, which is a list of LineStrings
+        
+        interval:           dispersion diameter of the drone
+        slope:              the slope of the baseline (wind direction) in respect to the horizontal line
+        invert:             determines whether the path generated goes in the default (False) direction or an inverted (True) direction
+        show_baseline:      determines whether to display baseline in matplotlib graph
+        
+        _F_single_point:    determines whether there is a single-point-intersection between swath line and polygon at the Front of the path
+        _R_single_point:    determines whether there is a single-point-intersection between swath line and polygon at the Rear of the path
         """
         def swath_align(swath):
-            """
-            align all LineStrings inside a swath so that the starting point are on one side, and the ending point on the other
-            * .intersection arranges the two intersection points randomly
-            swath is a list of LineStrings
+            """ Aligns all LineStrings inside a swath based on the first one, so that the
+            starting point are on one side of the baseline, and the ending points are on the other
+            #* .intersection() arranges the two intersection points randomly, and hence the direction of swaths is random without rearranging
+            
+            swath: a list of LineStrings
             """
             def _dir(line):
                 start, end = line.boundary.geoms[0], line.boundary.geoms[1]
@@ -171,7 +187,7 @@ class PolygonCreate:
             """
             plt.plot([baseline.boundary.geoms[0].x, baseline.boundary.geoms[1].x], [baseline.boundary.geoms[0].y, baseline.boundary.geoms[1].y], 'ko:', ms=4, alpha=0.2)           
         
-        #Determine slope of the swaths (swaths are all perpendicular to baseline)
+        #Determines slope of the swaths (swaths are all perpendicular to baseline)
         if slope == "vertical":
             opp_slope = 0
         elif slope == 0:
@@ -179,11 +195,11 @@ class PolygonCreate:
         else:
             opp_slope = -(1 / slope)
         
-        #Generate swath if it is within the polygon. swath is a list with LineString elements
+        #Generate swath if it intersects with the polygon.
         swath = [self.extrapolate_line(i, opp_slope) for i in inter_points if self.polygon.intersects(self.extrapolate_line(i, opp_slope))]
         swath = [self.span_line(i) for i in swath]
         
-        #Check if there are single-point intersections (instead of 2-point intersections)
+        #Check if there are single-point intersections (instead of Multi-point intersections)
         #Note that single-point intersections will only occur at Front (F) or Rear (R) or the whole path.
         if any([isinstance(i, Point) for i in swath]):
             if isinstance(swath[0], Point):
@@ -194,46 +210,49 @@ class PolygonCreate:
                 last_point = swath[-1]
         swath = [i for i in swath if isinstance(i, LineString)]
         
-        #Align all swath path into the same orientation
+        #Align all swath path into the same orientation using swath_align
         swath = swath_align(swath)
         for i in range(1, len(swath), 2):
             swath[i] = reverse_line(swath[i])
         
+        #Check if the default path or inverted path should be generated
         if invert:
             for i in range(len(swath)):
                 swath[i] = reverse_line(swath[i])
         
-        #Create lines that connects all swaths    
+        #Create intermediate lines that connects all swaths    
         inter_lines = []
         for i in range(len(swath) - 1):
             inter_lines.append(LineString((swath[i].boundary.geoms[1], swath[i+1].boundary.geoms[0])))
             
-        #Weave inter_lines into swath to form the complete path
-        complete_swath = []
+        #Weave intermediate lines into swath to form the complete path
+        complete_path = []
         for i in range(len(inter_lines)):
-            complete_swath.append(swath[i])
-            complete_swath.append(inter_lines[i])
-        complete_swath.append(swath[-1])
+            complete_path.append(swath[i])
+            complete_path.append(inter_lines[i])
+        complete_path.append(swath[-1])
         
-        #Add front or back single-point intersection to complete swath path
+        #Add front or back single-point intersections (if there are any) to complete the ends of the path
         if _F_single_point:
             first_line = LineString([first_point, swath[0].boundary.geoms[0]])
-            complete_swath.insert(0, first_line)
+            complete_path.insert(0, first_line)
         if _R_single_point:
             last_line = LineString([swath[-1].boundary.geoms[1], last_point])
-            complete_swath.insert(-1, last_line)
+            complete_path.insert(-1, last_line)
         
-        return complete_swath
+        return complete_path
 
     def showpoly(self, polys = None):
-        """
-        plots the polygon, with the option to plot additional polygon on the same plot
-        poly should be given in a list
+        """ Plots the polygon, with the option to plot additional polygon on the same plot
+        
+        poly: a list of CreatePolygon objects that will be plotted in addition to 'self'
 
+        example execution of plotting one polygon
         >>> points = [(10, 10), (30, 10), (10, 30)]
         >>> tri = PolygonCreate(points)
         >>> tri.showpoly()
-        OR
+        
+        example execution of plotting more than one polygon
         >>> points_2 = [(10, 10), (30, 10), (10, 40), (15, 30)]
         >>> quad = PolygonCreate(points_2)
         >>> new_tri = tri.poly_offset(1)
@@ -245,6 +264,7 @@ class PolygonCreate:
         fig, ax = plt.subplots()
         ax.plot(x, y, "ro-.", ms=4)
         
+        #Plotting additional polygons if there are any
         if polys is not None:
             for poly in polys:
                 x, y = list(poly.xcord), list(poly.ycord)
@@ -260,24 +280,60 @@ class PolygonCreate:
         plt.ylim(min(self.xmin, self.ymin) - buffer, max(self.xmax, self.ymax) + buffer)
 
 
+class Path:
+    """
+    Path class processes the path object and extracts information about the path.
+    """
+    def __init__(self, path):
+        """      
+        path: a list of LineStrings. Usually the output of generate_path() function
+        """
+        self.path = path
+        self.length = sum([i.length for i in self.path])
+    
+    def air_time(self):
+        """Returns the projected air time when executing the given path
+        
+        Parameters used:
+        1) Dispersing velocity:                         100km/h
+        2) Max non-dispersing velocity:                 200km/h
+        3) Turning velocity:                             50km/h
+        4) Min. acceleration / Deceleration distance:   0.1km (100m)
+        5) Acceleration / Deceleration:                 Linear
+        """
+        airtime = 0
+        
+        return airtime
+        
+    def offset_path(self, wind_dir, height, seed_weight):
+        """Returns an offsetted path based on the wind direction, drone height, and seed weight.
+        
+        wind_dir:       a tuple containing the x and y components of the wind vector
+        height:         constant height the drone aims to travel at (m)
+        seed_weight:    weight of the seed (kg)
+        """
+        
+        
+
 """
 ==============================
 ====== General Function ======
 ==============================
 """
 def normalizeVec(x, y):
-    #Normalize a vector (x, y)
+    """Normalize a vector (x, y)"""
     norm = 1 / np.sqrt(x ** 2 + y ** 2)
     return x * norm, y * norm
 
 def split_line(line, interval):
-    """
-    split a line into equal distances
+    """Splits a line into equal distances
         if a line can't be split into the given interval distance, and there are less than 20% of interval as excess,
-            then it expands the interval
+            then it expands the interval slightly
         if the excess is more than 20% of the interval,
             then it shrinks the interval to add in another split
-    line is a LineString object
+   
+    line:       a LineString object
+    interval:   the desired distance between points
     
     return a list of Point objects
     """
@@ -294,26 +350,15 @@ def split_line(line, interval):
     return points
 
 def reverse_line(line):
-    """
-    reverse the order of points in the line
-    'line' is a LineString object with multiple points
+    """Reverses the order of points in the LineString
+    line: a LineString object with two or more points
     """
     line_list = np.array(line.coords)
     return LineString(line_list[::-1])
     
-    """ for i in range(len(line.coords)):
-        x = np.array(line.coords)[i][0]
-        y = np.array(line.coords)[i][1]
-    print(x)
-    print(y)
-    x = x[::-1]
-    y = y[::-1]
-    return LineString(zip(x, y)) """
-    
 def showswath(full_path):     
-    """
-    plot the complete swath
-    'full_path' is a list of LineStrings
+    """Plots the complete swath
+    full_path: a list of LineStrings. Usually output of generate_path() function.
     """
     for lines in full_path:
         start, end = lines.coords[0], lines.coords[1]
@@ -325,14 +370,8 @@ def showswath(full_path):
 ====== Path Generator & Optimizations ======
 ============================================
 """
-def path_length(path):
-    """
-    returns the total length of the input path
-    'path' is a list of LineStrings
-    """
-    return sum([i.length for i in path])
 
-def generate_path(points, disp_diam, baseline_slope):
+def generate_path(points, disp_diam, baseline_slope, invert = False):
     """
     A compacted set of commands to generate a function based on all the necessary informations
     """
@@ -340,14 +379,9 @@ def generate_path(points, disp_diam, baseline_slope):
     offset_outline = outline.poly_offset(disp_diam / 2)
     outline.showpoly([offset_outline])
     
-    #Find out the shortest path between inverted and uninverted versions
-    path_uninv = offset_outline.swath_gen(disp_diam, baseline_slope, show_baseline=True, invert=False)
-    path_inv = offset_outline.swath_gen(disp_diam, baseline_slope, show_baseline=True, invert=True)
-    if path_length(path_uninv) > path_length(path_inv):
-        path = path_inv
-    else:
-        path = path_uninv
+    path = offset_outline.swath_gen(disp_diam, baseline_slope, invert, show_baseline=True)
     
+    #Visualization
     showswath(path)
     plt.show()
     return path
@@ -369,7 +403,7 @@ path = generate_path(eg1, 1, 1)  """
 
 #Hexalateral
 """ eg2 = [(5, 9), (30, 6), (40, 20), (35, 37), (27, 41), (12, 30)]
-path = generate_path(eg2, 2, 9) """
+path = generate_path(eg2, 2, 0.1) """
 
 #More complicated shape
 #Flying outside of designated area
@@ -377,17 +411,5 @@ path = generate_path(eg2, 2, 9) """
 path = generate_path(eg3, 3, 9) """
 
 eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
-path = generate_path(eg4, 2, 0.2)
-
-
-
-#* 100km/h during flight
-#? Fuel efficiency vs speed vs payload, etc.
-#! Need max flight speed
-#! Need turn radius & turn speed
-
-#TODO swath offset
-
-
-
-
+path = generate_path(eg4, 0.8, 0.5)
+print(np.array(path))
