@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint
 
 """
-=====================
-====== Classes ======
-=====================
+===================
+====== Class ======
+===================
 """
 class PolygonCreate:
     """
@@ -278,47 +278,12 @@ class PolygonCreate:
         buffer = 0.2 * max(self.xmax - self.xmin, self.ymax - self.ymin)
         plt.xlim(min(self.xmin, self.ymin) - buffer, max(self.xmax, self.ymax) + buffer)
         plt.ylim(min(self.xmin, self.ymin) - buffer, max(self.xmax, self.ymax) + buffer)
-
-
-class Path:
-    """
-    Path class processes the path object and extracts information about the path.
-    """
-    def __init__(self, path):
-        """      
-        path: a list of LineStrings. Usually the output of generate_path() function
-        """
-        self.path = path
-        self.length = sum([i.length for i in self.path])
-    
-    def air_time(self):
-        """Returns the projected air time when executing the given path
-        
-        Parameters used:
-        1) Dispersing velocity:                         100km/h
-        2) Max non-dispersing velocity:                 200km/h
-        3) Turning velocity:                             50km/h
-        4) Min. acceleration / Deceleration distance:   0.1km (100m)
-        5) Acceleration / Deceleration:                 Linear
-        """
-        airtime = 0
-        
-        return airtime
-        
-    def offset_path(self, wind_dir, height, seed_weight):
-        """Returns an offsetted path based on the wind direction, drone height, and seed weight.
-        
-        wind_dir:       a tuple containing the x and y components of the wind vector
-        height:         constant height the drone aims to travel at (m)
-        seed_weight:    weight of the seed (kg)
-        """
-        
-        
+      
 
 """
-==============================
-====== General Function ======
-==============================
+===============================
+====== General Functions ======
+===============================
 """
 def normalizeVec(x, y):
     """Normalize a vector (x, y)"""
@@ -392,14 +357,13 @@ def generate_path(points, disp_diam, baseline_slope, invert = False):
 ====== Testing ======
 =====================
 """
-#Example run: change 'points' to other sets of points to change output
-#Note: slope (the third input of generate_path) can be either a float or "vertical"
+#Example run: change 'eg' to other sets of points to change output
+#Note: slope (the third input of generate_path) can be either a float or the string "vertical"
 
 #Quadualateral
 #swath not fully perpendicular to baseline cuz inverted version is shorter in path length
 """ eg1 = [(12, 10), (20, 10), (20, 20), (10, 20)] 
 path = generate_path(eg1, 1, 1)  """
-
 
 #Hexalateral
 """ eg2 = [(5, 9), (30, 6), (40, 20), (35, 37), (27, 41), (12, 30)]
@@ -410,6 +374,8 @@ path = generate_path(eg2, 2, 0.1) """
 """ eg3 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
 path = generate_path(eg3, 3, 9) """
 
-eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
-path = generate_path(eg4, 0.8, 0.5)
-print(np.array(path))
+""" eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
+path = generate_path(eg4, 0.8, 0.5)"""
+
+#Demonstrates what the returned data type looks like (list of LineString object)
+"""print(np.array(path))"""
