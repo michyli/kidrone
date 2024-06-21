@@ -39,10 +39,13 @@ def line_intersection(point1, slope1, point2, slope2):
     return Point([x, y])
 
 def line_angle(line1, line2):
-    """Returns the acute angle formed by two line segments.
-    both inputs are LineString objects, and direction of the LineString objects matters
+    """Returns the smaller angle formed by two line segments.
+    both inputs are LineString objects, and direction of the LineString objects matters.
+    Two line segments should be consecutive, meaning that they should intersect at at least one point.
     output should be angle in degree.
     """
+    #Check for continuity
+    #TODO end of line 1 is start of line 2, and also vice versa. Otherwise raise an error "The lines are not continuous"
     #vectorize two LineStrings
     vec1 = (line1.coords[1][0] - line1.coords[0][0], line1.coords[1][1] - line1.coords[0][1])
     vec2 = (line2.coords[1][0] - line2.coords[0][0], line2.coords[1][1] - line2.coords[0][1])
