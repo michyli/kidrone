@@ -1,4 +1,5 @@
 from polygoncreate import *
+from basic_functions import *
 
 """
 ============================
@@ -50,3 +51,8 @@ path = generate_path(eg4, 0.8, 0.5, vis=True) """
 
 #Demonstrates what the returned data type looks like (list of LineString object)
 """print(np.array(path))"""
+
+
+line1 = LineString([(0, 0), (1, 1)])
+line2 = LineString([(1, 1), (3, 4)])
+print(line_angle(line1, line2))

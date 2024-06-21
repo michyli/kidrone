@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint
+from math import acos, sqrt, pi
 
 """
 =============================================
@@ -49,7 +50,13 @@ def line_angle(line1, line2):
     #vectorize two LineStrings
     vec1 = (line1.coords[1][0] - line1.coords[0][0], line1.coords[1][1] - line1.coords[0][1])
     vec2 = (line2.coords[1][0] - line2.coords[0][0], line2.coords[1][1] - line2.coords[0][1])
-    
+
+    dot_product = (vec1[0] * vec2[0]) + (vec1[1] * vec2[1])
+    angle = acos(dot_product / (sqrt(vec1[0] ** 2 + vec1[1] ** 2) + sqrt(vec2[0] ** 2 + vec2[1] ** 2))) * (180 / pi)
+    print(angle)
+    if angle > 180:
+        angle = 360 - angle
+    angle = 180 - angle
     return angle
 
 def pt_to_line(point, line):
