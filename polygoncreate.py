@@ -120,13 +120,24 @@ class PolygonCreate:
         #Check if the input line intersects with the polygon
         if not self.ring.intersects(line):
             raise ValueError("The line doesn't intersect with the polygon. Call extrapolate_line() first before using span_line()")
+
+        intersection_points = list(self.ring.intersection(line))
+        if isinstance(intersection_points, LineString):
+            #Case where the line is co-linear with one of the polygon's edge
+            intersection_points = MultiPoint([Point(line.coords[0]), Point(line.coords[1])])
         
-        intersection_points = self.ring.intersection(line)
-        if isinstance(intersection_points, Point):
+        for enclosed in self.children:
+            if enclosed.ring.intersects(line):
+                intersection_points.extend(list(enclosed.ring.intersection(line)))
+        if len(intersection_points) == 1:
             #Case where line and polygon intersects only at a point
             return intersection_points
-        if isinstance(intersection_points, MultiPoint):
+        if len(intersection_points) >= 2:
             #Case where line and polygon intersects at more than one point
+            if any([enclosed.ring.intersects(line) for enclosed in self.children]):
+                
+            
+            
             if len(intersection_points.geoms) > 2:
                 new_point_coords = list(intersection_points.geoms)
                 #Extract the left-most and right-most intersection points
@@ -138,7 +149,7 @@ class PolygonCreate:
                 new_point_coords = [new_point_coords[0], new_point_coords[-1]]
             return LineString(new_point_coords)
         if isinstance(intersection_points, LineString):
-            #Case where the line is co-linear with one of the polygon's edge
+            
             return intersection_points
 
     def swath_gen(self, interval, slope, invert = False, show_baseline = False, _F_single_point = False, _R_single_point = False):
@@ -289,3 +300,5 @@ class PolygonCreate:
         buffer = 0.2 * max(self.xmax - self.xmin, self.ymax - self.ymin)
         plt.xlim(min(self.xmin, self.ymin) - buffer, max(self.xmax, self.ymax) + buffer)
         plt.ylim(min(self.xmin, self.ymin) - buffer, max(self.xmax, self.ymax) + buffer)
+        
+

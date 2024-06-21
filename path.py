@@ -1,5 +1,5 @@
 import numpy as np
-from shapely.geometry import LineString, Point, LinearRing, MultiPoint
+from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
 from segment import *
 
 class Path:
