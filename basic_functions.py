@@ -116,7 +116,7 @@ def linestring_dist(line):
 
 def showswath(full_path):     
     """Plots the complete swath
-    full_path: a Path object
+    full_path: a Path object. the .path attribute extracts the list of LineString that makes the Path object
     """
     for lines in full_path.path:
         start, end = lines.coords[0], lines.coords[1]
