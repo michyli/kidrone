@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from shapely.geometry import LineString, Point, LinearRing, MultiPoint
+from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
 from basic_functions import *
 from path import *
 
@@ -33,7 +33,8 @@ class PolygonCreate:
         #Basic polygon information defined in shapely objects, necesary for executing Shapely functions
         self.points = [Point(i[0], i[1]) for i in points]
         self.edges = [LineString([self.points[i], self.points[i+1]]) for i in range(len(points) - 1)]
-        self.polygon = LinearRing(tuple(self.points))
+        self.ring = LinearRing(tuple(self.points))
+        self.polygon = Polygon(tuple(self.points))
 
     def poly_offset(self, offset):
         """ Returns a set of new coordinates of an offsetted polygon, where
@@ -124,10 +125,10 @@ class PolygonCreate:
               Otherwise use extrapolate_line() first before calling span_line()
         """
         #Check if the input line intersects with the polygon
-        if not self.polygon.intersects(line):
+        if not self.ring.intersects(line):
             raise ValueError("The line doesn't intersect with the polygon. Call extrapolate_line() first before using span_line()")
         
-        intersection_points = self.polygon.intersection(line)
+        intersection_points = self.ring.intersection(line)
         if isinstance(intersection_points, Point):
             #Case where line and polygon intersects only at a point
             return intersection_points
@@ -213,7 +214,7 @@ class PolygonCreate:
             plt.plot([baseline.boundary.geoms[0].x, baseline.boundary.geoms[1].x], [baseline.boundary.geoms[0].y, baseline.boundary.geoms[1].y], 'ko:', ms=4, alpha=0.2)           
         
         #Generate swath if it intersects with the polygon.
-        swath = [self.extrapolate_line(i, opp_slope) for i in inter_points if self.polygon.intersects(self.extrapolate_line(i, opp_slope))]
+        swath = [self.extrapolate_line(i, opp_slope) for i in inter_points if self.ring.intersects(self.extrapolate_line(i, opp_slope))]
         swath = [self.span_line(i) for i in swath]
         
         #Check if there are single-point intersections (instead of Multi-point intersections)
