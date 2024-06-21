@@ -34,4 +34,4 @@ class Segment:
     def time(self):
         """Gives the time it takes to cover this path, with acceleration / deceleration taken into consideration 
         """
-        pass
+        
