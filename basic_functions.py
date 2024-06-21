@@ -123,9 +123,9 @@ def linestring_dist(line):
 
 def showswath(full_path):     
     """Plots the complete swath
-    full_path: a list of LineStrings. Usually output of generate_path() function.
+    full_path: a Path object
     """
-    for lines in full_path:
+    for lines in full_path.path:
         start, end = lines.coords[0], lines.coords[1]
         xx, yy = [start[0], end[0]], [start[1], end[1]]
         plt.plot(xx, yy, 'go-', ms=6, linewidth=2.5)

@@ -56,8 +56,8 @@ class Path:
                 segment.curr_velo = self.nondisp_velo
             if len(self.parent.intersection(segment.line)) == 2:
                 segment.curr_velo = self.disp_velo
-            elif len(self.parent.intersection(segment.line)):
-                segment.curr_velo = 
+            """ elif len(self.parent.intersection(segment.line)):
+                segment.curr_velo =  """
         #Assign linked velocities to all Segment objects
         for i in range(len(airtime_list)):
             if i != 0 and i != len(airtime_list):
