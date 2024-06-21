@@ -48,16 +48,24 @@ def line_angle(line1, line2):
     #Check for continuity
     #TODO end of line 1 is start of line 2, and also vice versa. Otherwise raise an error "The lines are not continuous"
     #vectorize two LineStrings
+    if line1.coords[-1] != line2.coords[0] and line2.coords[-1] != line1.coords[0]:
+        raise ValueError("The lines are not continuous")
+    
     vec1 = (line1.coords[1][0] - line1.coords[0][0], line1.coords[1][1] - line1.coords[0][1])
     vec2 = (line2.coords[1][0] - line2.coords[0][0], line2.coords[1][1] - line2.coords[0][1])
 
     dot_product = (vec1[0] * vec2[0]) + (vec1[1] * vec2[1])
-    angle = acos(dot_product / (sqrt(vec1[0] ** 2 + vec1[1] ** 2) + sqrt(vec2[0] ** 2 + vec2[1] ** 2))) * (180 / pi)
-    print(angle)
-    if angle > 180:
-        angle = 360 - angle
-    angle = 180 - angle
-    return angle
+    magnitude1 = sqrt(vec1[0] ** 2 + vec1[1] ** 2)
+    magnitude2 = sqrt(vec2[0] ** 2 + vec2[1] ** 2)
+
+    angle_rad = acos(dot_product / (magnitude1 * magnitude2))
+    angle_deg = angle_rad * (180 / pi)
+
+    if angle_deg > 180:
+        angle_deg = 360 - angle_deg
+
+    angle_deg = 180 - angle_deg
+    return angle_deg
 
 def pt_to_line(point, line):
     """Orthogonally projects a point onto a line

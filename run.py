@@ -52,7 +52,23 @@ path = generate_path(eg4, 0.8, 0.5, vis=True) """
 #Demonstrates what the returned data type looks like (list of LineString object)
 """print(np.array(path))"""
 
+"""
+#Test line_angle function
 
+#Expected 168.69...
 line1 = LineString([(0, 0), (1, 1)])
 line2 = LineString([(1, 1), (3, 4)])
 print(line_angle(line1, line2))
+
+#Expected 65.22...
+line1 = LineString([(0, 0), (-1, -2)])
+line2 = LineString([(4, -5), (0, 0)])
+print(line_angle(line1, line2))
+
+#Expected ValueError
+line1 = LineString([(0, 0), (1, 1)])
+line2 = LineString([(2, 2), (3, 4)])
+print(line_angle(line1, line2))
+
+"""
+
