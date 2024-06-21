@@ -4,9 +4,9 @@ from shapely.geometry import LineString, Point, LinearRing, MultiPoint
 from math import acos, sqrt, pi
 
 """
-=============================================
-=== Basic Functions independent of Classes===
-=============================================
+==============================================
+=== Basic Functions independent of Classes ===
+==============================================
 """
 def normalizeVec(x, y):
     """Normalize a vector (x, y)"""
@@ -46,11 +46,10 @@ def line_angle(line1, line2):
     output should be angle in degree.
     """
     #Check for continuity
-    #TODO end of line 1 is start of line 2, and also vice versa. Otherwise raise an error "The lines are not continuous"
-    #vectorize two LineStrings
     if line1.coords[-1] != line2.coords[0] and line2.coords[-1] != line1.coords[0]:
         raise ValueError("The lines are not continuous")
     
+    #vectorize two LineStrings
     vec1 = (line1.coords[1][0] - line1.coords[0][0], line1.coords[1][1] - line1.coords[0][1])
     vec2 = (line2.coords[1][0] - line2.coords[0][0], line2.coords[1][1] - line2.coords[0][1])
 
