@@ -51,24 +51,20 @@ class Path:
         
         #Assign max velocity to all Segment objects
         for segment in airtime_list:
-            
+            #! Modify after map variable is implemented
             if not self.parent.intersects(segment.line):
                 segment.curr_velo = self.nondisp_velo
             if len(self.parent.intersection(segment.line)) == 2:
                 segment.curr_velo = self.disp_velo
             """ elif len(self.parent.intersection(segment.line)):
                 segment.curr_velo =  """
-        #Assign linked velocities to all Segment objects
+        #Assign prev and next velocities to all Segment objects
         for i in range(len(airtime_list)):
             if i != 0 and i != len(airtime_list):
                 airtime_list[i].prev_velo = airtime_list[i-1].curr_velo
-                airtime_list[i].next_velo = airtime_list[i+1].curr_velo
-           
-                
-        
-        
-             
-        return airtime_list
+                airtime_list[i].next_velo = airtime_list[i+1].curr_velo  
+
+        return sum([seg.time for seg in airtime_list])
         
     def offset_path(self, wind_dir, height, seed_weight):
         """Returns an offsetted path based on the wind direction, drone height, and seed weight.
