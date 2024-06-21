@@ -13,15 +13,13 @@ class PolygonCreate:
     """
     Creates a polygon object with inherit attributes.
     """
-    def __init__(self, points):
+    def __init__(self, points, children=None):
         """ Initialization of Polygon object.
         
         points:     tuple / list of (x, y) coordinates
         >>> points = [(10, 10), (30, 10), (10, 30)]
         #* In later implementation, x should represent latitude and y should represent longtitude.
-        enclosed:   a list of list of points
-        children:   a list of polygons that are fully contained by self
-        parent:     the parent polygon self belongs to
+        children:   a list of PolygonCreate Objects
         """
         #Initialization of basic polygon information from given points
         self.xcord = [i[0] for i in points]
@@ -37,6 +35,12 @@ class PolygonCreate:
         self.edges = [LineString([self.points[i], self.points[i+1]]) for i in range(len(points) - 1)]
         self.ring = LinearRing(tuple(self.points))
         self.polygon = Polygon(tuple(self.points))
+
+        #Defining children
+        for c in children:
+            if not c.within(self.polygon):
+                raise AssertionError("The children are not wholly contained in the overall polygon!")
+        self.children = children
 
     def poly_offset(self, offset):
         """ Returns a set of new coordinates of an offsetted polygon, where
@@ -300,5 +304,29 @@ class PolygonCreate:
         buffer = 0.2 * max(self.xmax - self.xmin, self.ymax - self.ymin)
         plt.xlim(min(self.xmin, self.ymin) - buffer, max(self.xmax, self.ymax) + buffer)
         plt.ylim(min(self.xmin, self.ymin) - buffer, max(self.xmax, self.ymax) + buffer)
-        
 
+    def show_children(self):
+        """Output points of children"""
+        
+        for c in self.children:
+            print(c.points)
+
+    def add_child(self, child):
+        """Adds a child to the polygon's list of children
+
+        child: PolygonCreate object
+
+        """
+        self.children.append(child)
+    
+    def remove_child(self, child):
+        """Removes a child from the polygon's list of children
+
+        child: PolygonCreate object
+
+        """
+        for i in range(len(self.children)):
+            if self.children[i] == child:
+                self.children = self.children.splice(i, i)
+                break
+        
