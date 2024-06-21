@@ -16,11 +16,13 @@ class PolygonCreate:
     def __init__(self, points):
         """ Initialization of Polygon object.
         
-        points: tuple / list of (x, y) coordinates
+        points:     tuple / list of (x, y) coordinates
         >>> points = [(10, 10), (30, 10), (10, 30)]
         #* In later implementation, x should represent latitude and y should represent longtitude.
+        enclosed:   a list of list of points
+        children:   a list of polygons that are fully contained by self
+        parent:     the parent polygon self belongs to
         """
-        
         #Initialization of basic polygon information from given points
         self.xcord = [i[0] for i in points]
         self.ycord = [i[1] for i in points]
@@ -29,7 +31,7 @@ class PolygonCreate:
         self.xcentroid = sum(self.xcord) / len(self.xcord)
         self.ycentroid = sum(self.ycord) / len(self.ycord)
         self.centroid = Point(self.xcentroid, self.ycentroid)
-
+        
         #Basic polygon information defined in shapely objects, necesary for executing Shapely functions
         self.points = [Point(i[0], i[1]) for i in points]
         self.edges = [LineString([self.points[i], self.points[i+1]]) for i in range(len(points) - 1)]
@@ -52,16 +54,12 @@ class PolygonCreate:
         """
         oldX = self.xcord
         oldY = self.ycord
-        
         newX = []
         newY = []
-
         num_points = len(oldX)
-
         for curr in range(num_points):
             prev = (curr + num_points - 1) % num_points
             next = (curr + 1) % num_points
-
             #Find the normalized vector of an edge
             vnX =  oldX[next] - oldX[curr]
             vnY =  oldY[next] - oldY[curr]
@@ -69,7 +67,6 @@ class PolygonCreate:
             #Find the orthogonal vector to the edge
             nnnX = -vnnY
             nnnY = vnnX
-
             #Find the normalized vector to the other adjacent edge
             vpX =  oldX[curr] - oldX[prev]
             vpY =  oldY[curr] - oldY[prev]
@@ -77,21 +74,17 @@ class PolygonCreate:
             #Find the orthogonal vector to the edge
             npnX = -vpnY
             npnY = vpnX
-
             #Bisector is the sum of two vectors orthogonal to the edges
             bisX = (nnnX + npnX)
             bisY = (nnnY + npnY)
-
             #Determine length of bisector based on the needed offset
             bisnX, bisnY = normalizeVec(bisX,  bisY)
             bislen = offset / np.sqrt((1 + nnnX*npnX + nnnY*npnY)/2)
-
             #Create the new offset polygon coordinates
             newX.append(oldX[curr] + bislen * bisnX)
             newY.append(oldY[curr] + bislen * bisnY)
 
             new_points = [(newX[i], newY[i]) for i in range(len(newX))]
-        
         return PolygonCreate(new_points)
 
     def extrapolate_line(self, point, slope):
