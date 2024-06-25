@@ -14,18 +14,25 @@ They are very helpful to manipulate Shapely datatypes and vectors to gear toward
 
 def normalizeVec(x, y):
     """Normalize a vector (x, y)"""
+    
+    if x == 0:
+        assert y != 0, "Zero vector cannot be normalized"
+    if y == 0:
+        assert x != 0, "Zero vector cannot be normalized"
+    
     norm = 1 / np.sqrt(x ** 2 + y ** 2)
     return x * norm, y * norm
 
-def line_intersection(point1, slope1, point2, slope2):
+def line_intersection(point1: Point, slope1, point2: Point, slope2):
     """Finds the point of intersection between two straight lines given the point and slope of both lines.
-    Returns a Point object.
     
-    point1: Point object
-    slope1: float or "vertical"
-    point2: Point object
-    slope2: float or "vertical"
+    slope1 and slope2 can be either given as number or "vertical"
     """
+    
+    assert all(isinstance(i, Point) for i in [point1, point2]), "input point should be Point objects"
+    assert isinstance(slope1, (int, float)) or slope1 == "vertical", "input slope1 should be a number or 'vertical'"
+    assert isinstance(slope2, (int, float)) or slope2 == "vertical", "input slope2 should be a number or 'vertical'"
+    
     if slope1 == "vertical" and slope2 == "vertical":
         if point1 == point2:
             raise ValueError("two inputted lines are the same")
@@ -43,24 +50,25 @@ def line_intersection(point1, slope1, point2, slope2):
     y = slope1 * x + b1
     return Point([x, y])
 
-def line_slope(line):
-    """Returns the slope of a LineString based on the boundary of the LineString
-    Returns a float or "vertical"
+def line_slope(line: LineString):
+    """Returns the slope of a LineString based on the boundary of the LineString"""
     
-    line: a LineString object
-    """
+    assert isinstance(line, LineString), "input should be a LineString object"
+    
     try:
         slope = (line.boundary.geoms[1].y - line.boundary.geoms[0].y) / (line.boundary.geoms[1].x - line.boundary.geoms[0].x)
     except ZeroDivisionError:
         slope = "vertical"
     return slope
 
-def line_angle(line1, line2):
+def line_angle(line1: LineString, line2: LineString):
     """Returns the smaller angle formed by two line segments.
-    both inputs are LineString objects, and direction of the LineString objects matters.
+    Note that the direction of the LineString objects matters.
     Two line segments should be consecutive, meaning that they should intersect at at least one point.
-    output should be angle in degree.
+    Output angle is in degrees.
     """
+    assert all(isinstance(i, LineString) for i in [line1, line2]), "input lines should be Line objects"
+    
     #Check for continuity
     if line1.coords[-1] != line2.coords[0] and line2.coords[-1] != line1.coords[0]:
         raise ValueError("The lines are not continuous")
@@ -82,13 +90,15 @@ def line_angle(line1, line2):
     angle_deg = 180 - angle_deg
     return angle_deg
 
-def pt_to_line(point, line):
+def pt_to_line(point: Point, line: LineString):
     """Orthogonally projects a point onto a line
     returns the projected point as a Point object
     
-    point:  a Point object
-    line:   a LineString object
+    point:  the point being projected
+    line:   the line being projected onto
     """
+    assert isinstance(point, Point) and isinstance(line, LineString), "input should be a Point object and a LineString object"
+    
     x = np.array(point.coords[0])
 
     u = np.array(line.coords[0])
@@ -100,18 +110,20 @@ def pt_to_line(point, line):
     P = u + n*np.dot(x - u, n) #datatype if np.array
     return Point([P[0], P[1]])
 
-def split_line(line, interval):
+def split_line(line: LineString, interval) -> list[Point]:
     """Splits a line into equal distances
         if a line can't be split into the given interval distance, and there are less than 20% of interval as excess,
             then it expands the interval slightly
         if the excess is more than 20% of the interval,
             then it shrinks the interval to add in another split
    
-    line:       a LineString object
+    line:       a LineString object to be split
     interval:   the desired distance between points
     
     return a list of Point objects
     """
+    assert isinstance(line, LineString), "input line should be a LineString object"
+    
     num_div = line.length / interval
     if num_div % 1 < 0.2 and num_div % 1 > 0:
         pass
@@ -124,19 +136,24 @@ def split_line(line, interval):
         points.pop(-1)
     return points
 
-def reverse_line(line):
+def reverse_line(line: LineString):
     """Reverses the order of points in the LineString
-    line: a LineString object with two or more points
+    line: a LineString object with two or more points to be reversed in direction
     """
+    assert isinstance(line, LineString), "input line should be a LineString object"
     line_list = np.array(line.coords)
     return LineString(line_list[::-1])
     
-def linestring_dist(line):
-    """Returns the distance in KM given a LineString as an input
+def linestring_dist(line: LineString):
+    """Returns the distance in KM given a LineString (with geographic coordinates) as input
+    LineString should be a 2-point LineString
     
     The more accurate calculation involves Haversin Formula.
     But for the purpose here, a rough estimate is sufficient.
     """
+    assert isinstance(line, LineString), "input line should be a LineString object"
+    assert len(line.coords) == 2, "the input LineString should have 2 points only"
+    
     # 1° of latitude is always 111.32 km
     dx = (line.coords[1][0] - line.coords[0][0]) * 111.32
     # 1° of longitude is 40075 km * cos(latitude) / 360
@@ -144,12 +161,14 @@ def linestring_dist(line):
     length = np.sqrt(dx**2 + dy**2)
     return length
 
-def extract_coords(shape):
+def extract_coords(shape: Point|MultiPoint|LineString) -> list[tuple]:
     """Extracts Shapely geometry (Point, MultiPoint, LineString) coordinates into a list of tuples.
     Returns the extracted list of coordinates
     
-    shape: a Point, MultiPoint, or LineString object
+    shape: a Point, MultiPoint, or LineString object to be flattened
     """
+    assert isinstance(shape, (Point, MultiPoint, LineString)), "input must be a Point, MultiPoint, or LineString object"
+    
     if isinstance(shape, Point):
         return (shape.x, shape.y)
     if isinstance(shape, MultiPoint):
@@ -157,19 +176,20 @@ def extract_coords(shape):
     if isinstance(shape, LineString):
         return [(pt[0], pt[1]) for pt in shape.coords]
 
-def break_line(line):
+def break_line(line: LineString) -> list[LineString]:
     """Break a multi-point LineString into a list of multiple 2-point LineStrings
     Returns a list of LineString objects
     
-    line: a LineString object
+    line: a LineString object to be broken down
     """
+    assert isinstance(line, LineString), "input line should be a LineString object"
     coords = list(line.coords)
     return [LineString([coords[i], coords[i+1]]) for i in range(len(coords)-1)]
 
 def showswath(full_path):     
     """Plots the complete swath
     full_path: a Path object. the .path attribute extracts the list of LineString that makes the Path object
-    """
+    """   
     for lines in full_path.path:
         start, end = lines.coords[0], lines.coords[1]
         xx, yy = [start[0], end[0]], [start[1], end[1]]

@@ -44,7 +44,7 @@ class PolygonCreate:
         self.children = children
 
     def poly_offset(self, offset):
-        """ Returns a set of new coordinates of an offsetted polygon, where
+        """ Returns a new PolygonCreate object of the offsetted polygon, where
         all the edges are offsetted inward.
         By default, positive offset is inward-offset.
         
@@ -92,12 +92,12 @@ class PolygonCreate:
             new_points = [(newX[i], newY[i]) for i in range(len(newX))]
         return PolygonCreate(new_points)
 
-    def extrapolate_line(self, point, slope):
-        """ Construct a line from a point and a slope, then extend a line to the maximum
-        boundry of the polygon. Returns the new extrapolated line.
+    def extrapolate_line(self, point: Point, slope):
+        """ Construct a line from a point and a slope, then extend a line to the maximum boundry of the polygon.
+        Returns the new extrapolated line as LineString object.
         
-        point: a Point object -- Point([x, y])
-        slope: a float or "vertical"
+        point: a Point object that anchors the line
+        slope: a float or "vertical" that fully defines the line
         """
         if slope == "vertical":
             return LineString([Point((point.x, self.ymin)), Point((point.x, self.ymax))])
@@ -115,7 +115,7 @@ class PolygonCreate:
         
         return LineString([coord_L, coord_R])
 
-    def span_line(self, line):
+    def span_line(self, line: LineString):
         """ Crops part of the LineString that exceeds the boundary of the polygon.
         Also crops a line to segments if it intersects with any children polygon of the self polygon.
         Returns the new cropped LineString (direction of linestring is not determined).
@@ -127,7 +127,6 @@ class PolygonCreate:
         if not self.ring.intersects(line):
             raise ValueError("The line doesn't intersect with the polygon. Call extrapolate_line() first before using span_line()")
 
-        
         intersection_list = [self.ring.intersection(line)]
         if self.children:
             intersection_list += [enc.ring.intersection(line) for enc in self.children]
@@ -251,7 +250,7 @@ class PolygonCreate:
             last_line = LineString([swath[-1].boundary.geoms[1], last_point])
             complete_path.insert(-1, last_line)
             
-        #Break multi-point swath into 2-point LineStrings
+        #Break multi-point swath into multiple 2-point LineStrings
         final_path = []
         for line in complete_path:
             final_path.extend(break_line(line))

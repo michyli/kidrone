@@ -35,7 +35,17 @@ class Path:
         self.acc = self.turn_dist / (self.nondisp_velo - self.disp_velo) #KM/h^2
         self.dec = self.turn_dist / (self.turn_velo - self.disp_velo) #KM/h^2
         
-    
+    def offset_path(self, wind_dir, height, seed_weight):
+        """Returns an offsetted path based on the wind direction, drone height, and seed weight.
+        
+        wind_dir:       a tuple containing the x and y components of the wind vector
+        height:         constant height the drone aims to travel at (m)
+        seed_weight:    weight of the seed (kg)
+        """
+        #TODO: need to be completed
+        pass
+        
+    @property
     def pathlength(self):
         """Returns the length of path in KM
         Note that the point coordinates in self.path are in unit of longtitude and latitude.
@@ -58,13 +68,5 @@ class Path:
 
         return sum([seg.time for seg in airtime_list])      
         
-    def offset_path(self, wind_dir, height, seed_weight):
-        """Returns an offsetted path based on the wind direction, drone height, and seed weight.
-        
-        wind_dir:       a tuple containing the x and y components of the wind vector
-        height:         constant height the drone aims to travel at (m)
-        seed_weight:    weight of the seed (kg)
-        """
-        pass
     
     
