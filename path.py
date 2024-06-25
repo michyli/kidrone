@@ -30,10 +30,8 @@ class Path:
         """
         self.disp_velo = 100 #KM/h
         self.nondisp_velo = 200 #KM/h
-        self.turn_velo = 50 #KM/h
+        self.default_turn_velo = 50 #%, max percentage of current velocity the drone can travel when performing a 90 degree turn
         self.turn_dist = 0.1 #KM, minimum distance for drone to accelerate or decelerate to disp_velo
-        self.acc = self.turn_dist / (self.nondisp_velo - self.disp_velo) #KM/h^2
-        self.dec = self.turn_dist / (self.turn_velo - self.disp_velo) #KM/h^2
         
         #@property definition
         self.disp_map = _disp_map
@@ -61,20 +59,19 @@ class Path:
         """
         map = []
         for line in self.path:
-            print(np.isclose(line_slope(line), self.swath_slope, rtol=1e-05, atol=1e-08, equal_nan=False))
             if not np.isclose(line_slope(line), self.swath_slope, rtol=1e-05, atol=1e-08, equal_nan=False):
             #If the slope doesn't match the swath slope, then the line is a intermediate line that connects the swath, hence not a dispersing line.
                 map.append(False)
-            elif not self.parent.polygon.contains(line):
+            elif not self.parent.polygon.buffer(1e-8).contains(line):
                 #If the line isn't inside the polygon, then the line isn't a dispersing line
+                #Note that .buffer is used to account for Python rounding error
                 map.append(False)
             elif self.parent.children:
                 #If the line is inside of any internal polygons (e.g. lakes), then the line isn't a dispersing line
-                if any([c.contains(line) for c in self.parent.children]):
+                if any([c.buffer(1e-8).contains(line) for c in self.parent.children]):
                     map.append(False)
             else:
                 map.append(True)
-                
         self._disp_map = map
         
     @property
@@ -94,19 +91,43 @@ class Path:
     
     @airtime.setter
     def airtime(self, value):
-        """Returns the projected air time when executing the given path"""
+        """Returns the projected airtime when executing the given path"""
         def mapper(index):
+            """Returns the velocity of the segment depending on whether 
+            the number 'index' path in self.path is a dispersing of non-dispersing path.
+            """
             return self.disp_velo if self.disp_map[index] else self.nondisp_velo
+                
+        def angle_to_velo(line1, line2, velo1):
+            """Returns the turning velocity given two consecutive LineStrings
+            Assuming linear acc/deceleration -> Drone slows down to self.default_turn_velo if turning 90 degrees,
+            and fully stops if turning 180 degrees. Assume acc/deceleration as a linear function in between.
+            
+            velo1: velocity of the drone before changing travel direction
+            """
+            delta_angle = line_angle(line1, line2)-90
+            if delta_angle == 90:
+                return self.default_turn_velo
+            if delta_angle > 90:
+                return velo1 * self.default_turn_velo + (delta_angle-90) * ((velo1 - velo1 * self.default_turn_velo) / 90)
+            if delta_angle < 90:
+                return velo1 * self.default_turn_velo + (delta_angle-90) * ((velo1 * self.default_turn_velo) / 90)
         
         #Construct each LineString into Segment instances
         airtime_list = []
         for index, line in enumerate(self.path):
             if index == 0:
-                airtime_list.append(Segment(line, self, self.start_velo, mapper(index), mapper(index+1)))
-            elif index == len(self.path) - 1:
-                airtime_list.append(Segment(line, self, mapper(index-1), mapper(index), self.end_velo))
-            else:
-                airtime_list.append(Segment(line, self, mapper(index-1), mapper(index), mapper(index+1)))
+                #define the first line of the path
+                airtime_list.append(Segment(self.path[0], self, self.start_velo, mapper(0), angle_to_velo(self.path[0], self.path[1], mapper(0))))
+                continue
+            if index == len(self.path)-1:
+                #define the last line of the path
+                airtime_list.append(Segment(self.path[-1], self, angle_to_velo(self.path[-2], self.path[-1], mapper(-2)), mapper(-1), self.end_velo))
+                continue
+            start_turn_velo = angle_to_velo(self.path[index-1], line, mapper(index-1))
+            end_turn_velo = angle_to_velo(line, self.path[index+1], mapper(index))
+            airtime_list.append(Segment(line, self, start_turn_velo, mapper(index), end_turn_velo))
+        
 
-        self.__airtime = sum([seg.time for seg in airtime_list])   
+        self.__airtime = sum([seg.time for seg in airtime_list])
     

@@ -35,9 +35,7 @@ class Segment:
     
     @time.setter
     def time(self, value):
-        """Gives the time it takes to cover this path, with acceleration / deceleration taken into consideration 
-        """
-        print(self.curr_velo)
+        """Gives the time it takes to cover this path, with acceleration / deceleration taken into consideration """
         if any(i is None for i in [self.prev_velo, self.curr_velo, self.next_velo]):
             raise ValueError("all velocities need to be assigned before time can be determined.")
         

@@ -139,7 +139,7 @@ class PolygonCreate:
             intersection_points = sorted(intersection_points, key=lambda pt: pt[1])
         else:
             intersection_points = sorted(intersection_points, key=lambda pt: pt[0])
-        return LineString(intersection_points)
+        return LineString(intersection_points) if len(intersection_points) >= 2 else Point(intersection_points[0])
 
     def swath_gen(self, interval, slope, invert = False, show_baseline = False, _F_single_point = False, _R_single_point = False):
         """Generates evenly spaced swath lines based on a baseline.

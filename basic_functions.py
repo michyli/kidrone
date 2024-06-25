@@ -54,7 +54,7 @@ def line_slope(line: LineString):
     """Returns the slope of a LineString based on the boundary of the LineString"""
     
     assert isinstance(line, LineString), "input should be a LineString object"
-    
+    np.seterr(divide='ignore', invalid='ignore') #Ignore the warning of 0 division -> it is already accounted for by the except statement
     try:
         slope = (line.boundary.geoms[1].y - line.boundary.geoms[0].y) / (line.boundary.geoms[1].x - line.boundary.geoms[0].x)
     except ZeroDivisionError:
@@ -86,7 +86,6 @@ def line_angle(line1: LineString, line2: LineString):
 
     if angle_deg > 180:
         angle_deg = 360 - angle_deg
-
     angle_deg = 180 - angle_deg
     return angle_deg
 
