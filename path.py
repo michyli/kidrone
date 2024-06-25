@@ -6,7 +6,7 @@ class Path:
     """
     Path class processes the path object and extracts information about the path.
     """
-    def __init__(self, path, parent, swath_slope, start_velo=0, end_velo=0):
+    def __init__(self, path: list[LineString], parent, swath_slope, start_velo=0, end_velo=0, _disp_map=[], _pathlength=None, _airtime=None):
         """      
         path:   a list of LineStrings. Usually the output of generate_path() function
         parent: the polygon object the path belongs to
@@ -35,6 +35,11 @@ class Path:
         self.acc = self.turn_dist / (self.nondisp_velo - self.disp_velo) #KM/h^2
         self.dec = self.turn_dist / (self.turn_velo - self.disp_velo) #KM/h^2
         
+        #@property definition
+        self.disp_map = _disp_map
+        self.pathlength = _pathlength
+        self.airtime = _airtime
+        
     def offset_path(self, wind_dir, height, seed_weight):
         """Returns an offsetted path based on the wind direction, drone height, and seed weight.
         
@@ -46,27 +51,62 @@ class Path:
         pass
         
     @property
+    def disp_map(self):
+        return self._disp_map
+    
+    @disp_map.setter
+    def disp_map(self, value):
+        """Determines the max velocity of each corresponding Segment within the Path within the Polygon.
+        Note that lines that connects the swath are not dispersing lines.
+        """
+        map = []
+        for line in self.path:
+            print(np.isclose(line_slope(line), self.swath_slope, rtol=1e-05, atol=1e-08, equal_nan=False))
+            if not np.isclose(line_slope(line), self.swath_slope, rtol=1e-05, atol=1e-08, equal_nan=False):
+            #If the slope doesn't match the swath slope, then the line is a intermediate line that connects the swath, hence not a dispersing line.
+                map.append(False)
+            elif not self.parent.polygon.contains(line):
+                #If the line isn't inside the polygon, then the line isn't a dispersing line
+                map.append(False)
+            elif self.parent.children:
+                #If the line is inside of any internal polygons (e.g. lakes), then the line isn't a dispersing line
+                if any([c.contains(line) for c in self.parent.children]):
+                    map.append(False)
+            else:
+                map.append(True)
+                
+        self._disp_map = map
+        
+    @property
     def pathlength(self):
+        return self.__pathlength
+    
+    @pathlength.setter
+    def pathlength(self, value):
         """Returns the length of path in KM
         Note that the point coordinates in self.path are in unit of longtitude and latitude.
         """
-        return sum([linestring_dist(line) for line in self.path])
+        self.__pathlength = sum([linestring_dist(line) for line in self.path])
     
+    @property
     def airtime(self):
-        """Returns the projected air time when executing the given path"""
-        #construct all lines in path into Segment object
-        airtime_list = [Segment(line, self) for line in self.path]
-        #Set starting and ending velocity
-        airtime_list[0].prev_velo = self.start_velo
-        airtime_list[-1].next_velo = self.end_velo
-
-        #Assign prev and next velocities to all Segment objects
-        for i in range(len(airtime_list)):
-            if i != 0 and i != len(airtime_list):
-                airtime_list[i].prev_velo = airtime_list[i-1].curr_velo
-                airtime_list[i].next_velo = airtime_list[i+1].curr_velo  
-
-        return sum([seg.time for seg in airtime_list])      
-        
+        return self.__airtime
     
+    @airtime.setter
+    def airtime(self, value):
+        """Returns the projected air time when executing the given path"""
+        def mapper(index):
+            return self.disp_velo if self.disp_map[index] else self.nondisp_velo
+        
+        #Construct each LineString into Segment instances
+        airtime_list = []
+        for index, line in enumerate(self.path):
+            if index == 0:
+                airtime_list.append(Segment(line, self, self.start_velo, mapper(index), mapper(index+1)))
+            elif index == len(self.path) - 1:
+                airtime_list.append(Segment(line, self, mapper(index-1), mapper(index), self.end_velo))
+            else:
+                airtime_list.append(Segment(line, self, mapper(index-1), mapper(index), mapper(index+1)))
+
+        self.__airtime = sum([seg.time for seg in airtime_list])   
     

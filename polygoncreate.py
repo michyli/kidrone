@@ -133,6 +133,7 @@ class PolygonCreate:
         intersection_points = []
         for shp in intersection_list:
             intersection_points.extend(extract_coords(shp))
+        intersection_points = list(set(intersection_points))
         
         if line_slope(line) == "vertical":
             intersection_points = sorted(intersection_points, key=lambda pt: pt[1])
@@ -280,7 +281,7 @@ class PolygonCreate:
         ax.plot(x, y, "ro-.", ms=4)
         
         #Plotting additional polygons if there are any
-        if polys is not None:
+        if polys:
             for poly in polys:
                 x, y = list(poly.xcord), list(poly.ycord)
                 x.append(x[0])

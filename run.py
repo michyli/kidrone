@@ -40,8 +40,9 @@ def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert =
 #Note: slope (the third input of generate_path) can be either a float or the string "vertical"
 
 #Quadualateral
-""" eg1 = [(12, 10), (20, 10), (20, 20), (10, 20)] 
-path = generate_path(eg1, 1, 1, vis=True)  """
+eg1 = [(12, 10), (20, 10), (20, 20), (10, 20)] 
+path = generate_path(eg1, 1, 1, vis=True)
+print(path.airtime)
 
 #Hexalateral
 """ eg2 = [(5, 9), (30, 6), (40, 20), (35, 37), (27, 41), (12, 30)]
