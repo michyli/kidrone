@@ -6,13 +6,14 @@ class Path:
     """
     Path class processes the path object and extracts information about the path.
     """
-    def __init__(self, path, parent, start_velo=0, end_velo=0):
+    def __init__(self, path, parent, swath_slope, start_velo=0, end_velo=0):
         """      
         path:   a list of LineStrings. Usually the output of generate_path() function
         parent: the polygon object the path belongs to
         """
         self.path = path
         self.parent = parent
+        self.swath_slope = swath_slope
         
         #Assuming drone starts from and ends on static
         self.start_velo = start_velo #KM/h
@@ -48,23 +49,14 @@ class Path:
         #Set starting and ending velocity
         airtime_list[0].prev_velo = self.start_velo
         airtime_list[-1].next_velo = self.end_velo
-        
-        #Assign max velocity to all Segment objects
-        for segment in airtime_list:
-            #! Modify after map variable is implemented
-            if not self.parent.intersects(segment.line):
-                segment.curr_velo = self.nondisp_velo
-            if len(self.parent.intersection(segment.line)) == 2:
-                segment.curr_velo = self.disp_velo
-            """ elif len(self.parent.intersection(segment.line)):
-                segment.curr_velo =  """
+
         #Assign prev and next velocities to all Segment objects
         for i in range(len(airtime_list)):
             if i != 0 and i != len(airtime_list):
                 airtime_list[i].prev_velo = airtime_list[i-1].curr_velo
                 airtime_list[i].next_velo = airtime_list[i+1].curr_velo  
 
-        return sum([seg.time for seg in airtime_list])
+        return sum([seg.time for seg in airtime_list])      
         
     def offset_path(self, wind_dir, height, seed_weight):
         """Returns an offsetted path based on the wind direction, drone height, and seed weight.

@@ -26,7 +26,22 @@ class Segment:
         
         self.length = linestring_dist(line)
         
-    @property        
+    @property
+    def curr_velo(self):
+        """Determines the max velocity of the Segment within the Path within the Polygon.
+        Note that lines that connects the swath are not dispersing lines.
+        """
+        if line_slope(self.line) != self.parent.swath_slope:
+            #If the slope doesn't match the swath slope, then the line is a intermediate line that connects the swath, hence not a dispersing line.
+            return self.parent.nondisp_velo
+        if not self.parent.parent.polygon.contains(self.line):
+            #If the line isn't inside the polygon, the the line isn't a dispersing line
+            return self.parent.nondisp_velo
+        if self.parent.parent.children:
+            if any([c.contains(self.line) for c in self.parent.parent.children]):
+                return self.parent.nondisp_velo
+        return self.parent.disp_velo
+    
     def time(self):
         """Gives the time it takes to cover this path, with acceleration / deceleration taken into consideration 
         """

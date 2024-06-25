@@ -37,9 +37,10 @@ class PolygonCreate:
         self.polygon = Polygon(tuple(self.points))
 
         #Defining children
-        for c in children:
-            if not c.within(self.polygon):
-                raise AssertionError("The children are not wholly contained in the overall polygon!")
+        if isinstance(children, list):
+            for c in children:
+                if not c.within(self.polygon):
+                    raise AssertionError("The children are not fully contained in the overall polygon.")
         self.children = children
 
     def poly_offset(self, offset):
@@ -115,8 +116,9 @@ class PolygonCreate:
         return LineString([coord_L, coord_R])
 
     def span_line(self, line):
-        """ Crops part of the LineString that exceeds the boundary of the polygon
-        Returns the new cropped LineString.
+        """ Crops part of the LineString that exceeds the boundary of the polygon.
+        Also crops a line to segments if it intersects with any children polygon of the self polygon.
+        Returns the new cropped LineString (direction of linestring is not determined).
 
         line: a LineString object. It is necessary that 'line' intersects the polygon already.
               Otherwise use extrapolate_line() first before calling span_line()
@@ -125,36 +127,19 @@ class PolygonCreate:
         if not self.ring.intersects(line):
             raise ValueError("The line doesn't intersect with the polygon. Call extrapolate_line() first before using span_line()")
 
-        intersection_points = list(self.ring.intersection(line))
-        if isinstance(intersection_points, LineString):
-            #Case where the line is co-linear with one of the polygon's edge
-            intersection_points = MultiPoint([Point(line.coords[0]), Point(line.coords[1])])
         
-        for enclosed in self.children:
-            if enclosed.ring.intersects(line):
-                intersection_points.extend(list(enclosed.ring.intersection(line)))
-        if len(intersection_points) == 1:
-            #Case where line and polygon intersects only at a point
-            return intersection_points
-        if len(intersection_points) >= 2:
-            #Case where line and polygon intersects at more than one point
-            if any([enclosed.ring.intersects(line) for enclosed in self.children]):
-                
-            
-            
-            if len(intersection_points.geoms) > 2:
-                new_point_coords = list(intersection_points.geoms)
-                #Extract the left-most and right-most intersection points
-                #Note that points returned from .intersection() in NOT ordered
-                coord1, coord2 = max(new_point_coords, key=lambda i: i.x), min(new_point_coords, key=lambda i: i.x)
-                new_point_coords = [coord1, coord2]
-            else:
-                new_point_coords = list(intersection_points.geoms)
-                new_point_coords = [new_point_coords[0], new_point_coords[-1]]
-            return LineString(new_point_coords)
-        if isinstance(intersection_points, LineString):
-            
-            return intersection_points
+        intersection_list = [self.ring.intersection(line)]
+        if self.children:
+            intersection_list += [enc.ring.intersection(line) for enc in self.children]
+        intersection_points = []
+        for shp in intersection_list:
+            intersection_points.extend(extract_coords(shp))
+        
+        if line_slope(line) == "vertical":
+            intersection_points = sorted(intersection_points, key=lambda pt: pt[1])
+        else:
+            intersection_points = sorted(intersection_points, key=lambda pt: pt[0])
+        return LineString(intersection_points)
 
     def swath_gen(self, interval, slope, invert = False, show_baseline = False, _F_single_point = False, _R_single_point = False):
         """Generates evenly spaced swath lines based on a baseline.
@@ -265,8 +250,13 @@ class PolygonCreate:
         if _R_single_point:
             last_line = LineString([swath[-1].boundary.geoms[1], last_point])
             complete_path.insert(-1, last_line)
+            
+        #Break multi-point swath into 2-point LineStrings
+        final_path = []
+        for line in complete_path:
+            final_path.extend(break_line(line))
         
-        return Path(complete_path, self)
+        return Path(final_path, self, opp_slope)
 
     def showpoly(self, polys = None):
         """ Plots the polygon, with the option to plot additional polygon on the same plot

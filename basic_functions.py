@@ -4,10 +4,14 @@ from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
 from math import acos, sqrt, pi
 
 """
-==============================================
-=== Basic Functions independent of Classes ===
-==============================================
+======================
+=== Basic Functions===
+======================
+
+Here is a list of general functions used in the rest of the algorithm.
+They are very helpful to manipulate Shapely datatypes and vectors to gear towards a general purpose.
 """
+
 def normalizeVec(x, y):
     """Normalize a vector (x, y)"""
     norm = 1 / np.sqrt(x ** 2 + y ** 2)
@@ -38,6 +42,18 @@ def line_intersection(point1, slope1, point2, slope2):
     x = (b2 - b1) / (slope1 - slope2)
     y = slope1 * x + b1
     return Point([x, y])
+
+def line_slope(line):
+    """Returns the slope of a LineString based on the boundary of the LineString
+    Returns a float or "vertical"
+    
+    line: a LineString object
+    """
+    try:
+        slope = (line.boundary.geoms[1].y - line.boundary.geoms[0].y) / (line.boundary.geoms[1].x - line.boundary.geoms[0].x)
+    except ZeroDivisionError:
+        slope = "vertical"
+    return slope
 
 def line_angle(line1, line2):
     """Returns the smaller angle formed by two line segments.
@@ -127,6 +143,28 @@ def linestring_dist(line):
     dy = 40075 * np.cos((line.coords[1][1] - line.coords[0][1])) / 360
     length = np.sqrt(dx**2 + dy**2)
     return length
+
+def extract_coords(shape):
+    """Extracts Shapely geometry (Point, MultiPoint, LineString) coordinates into a list of tuples.
+    Returns the extracted list of coordinates
+    
+    shape: a Point, MultiPoint, or LineString object
+    """
+    if isinstance(shape, Point):
+        return (shape.x, shape.y)
+    if isinstance(shape, MultiPoint):
+        return [(pt.x, pt.y) for pt in shape.geoms]
+    if isinstance(shape, LineString):
+        return [(pt[0], pt[1]) for pt in shape.coords]
+
+def break_line(line):
+    """Break a multi-point LineString into a list of multiple 2-point LineStrings
+    Returns a list of LineString objects
+    
+    line: a LineString object
+    """
+    coords = list(line.coords)
+    return [LineString([coords[i], coords[i+1]]) for i in range(len(coords)-1)]
 
 def showswath(full_path):     
     """Plots the complete swath
