@@ -185,6 +185,10 @@ def break_line(line: LineString) -> list[LineString]:
     coords = list(line.coords)
     return [LineString([coords[i], coords[i+1]]) for i in range(len(coords)-1)]
 
+def disp_time(hour):
+    """Convert inputed hours to the format of hour:minute"""
+    return f"{round(hour//1, 0)} hours, {round(hour%1*60, 0)} minutes"
+
 def showswath(full_path):     
     """Plots the complete swath
     full_path: a Path object. the .path attribute extracts the list of LineString that makes the Path object

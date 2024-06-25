@@ -127,7 +127,11 @@ class Path:
             start_turn_velo = angle_to_velo(self.path[index-1], line, mapper(index-1))
             end_turn_velo = angle_to_velo(line, self.path[index+1], mapper(index))
             airtime_list.append(Segment(line, self, start_turn_velo, mapper(index), end_turn_velo))
-        
 
-        self.__airtime = sum([seg.time for seg in airtime_list])
+        tot_hour = sum([seg.time for seg in airtime_list])
+        
+        self.__airtime = tot_hour
     
+    def airtime_disp(self):
+        time_disp = disp_time(self.airtime)
+        print(time_disp)

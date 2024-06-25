@@ -39,12 +39,19 @@ class Segment:
         if any(i is None for i in [self.prev_velo, self.curr_velo, self.next_velo]):
             raise ValueError("all velocities need to be assigned before time can be determined.")
         
-        #Starting and ending velocity of this segment, assuming half of acc/deceleration are performed in this segment, and acceleration is linear
-        seg_start_velo = (self.prev_velo + self.curr_velo) / 2
-        seg_end_velo = (self.next_velo + self.curr_velo) / 2
+        if self.length >= 2 * self.parent.turn_dist:
+            start_acc_time = (self.curr_velo ** 2 - self.prev_velo ** 2) / self.parent.turn_dist
+            const_velo_time = (self.length - (2 * self.parent.turn_dist)) / self.curr_velo
+            end_dec_time = (self.next_velo ** 2 - self.curr_velo ** 2) / self.parent.turn_dist
+            tot_time = start_acc_time + const_velo_time + end_dec_time
+        else:
+            if self.prev_velo == self.next_velo:
+                tot_time = self.length / self.prev_velo
+            elif self.prev_velo > self.next_velo:
+                const_velo_time = (self.length - self.parent.turn_dist) / self.prev_velo
+                end_dec_time = (self.next_velo ** 2 - self.prev_velo ** 2) / self.parent.turn_dist
+                tot_time = const_velo_time + end_dec_time
+            else:
+                tot_time = (self.next_velo ** 2 - self.prev_velo ** 2) / self.length
         
-        start_acc_time = (self.curr_velo ** 2 - seg_start_velo ** 2) / (2 * self.parent.turn_dist)
-        end_acc_time = (seg_end_velo ** 2 - self.curr_velo ** 2) / (2 * self.parent.turn_dist)
-        const_velo_time = (self.length - (2 * self.parent.turn_dist)) / self.curr_velo
-        
-        self.__time = start_acc_time + end_acc_time + const_velo_time
+        self.__time = tot_time
