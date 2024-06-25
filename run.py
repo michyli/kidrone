@@ -41,7 +41,9 @@ def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert =
 
 #Quadualateral
 """ eg1 = [(12, 10), (20, 10), (20, 20), (10, 20)] 
-path = generate_path(eg1, 1, 1, vis=True) """
+path = generate_path(eg1, 1, 1, vis=True)
+path.airtime_disp()
+"""
 
 #Hexalateral
 """ eg2 = [(5, 9), (30, 6), (40, 20), (35, 37), (27, 41), (12, 30)]
@@ -49,9 +51,9 @@ path = generate_path(eg2, 2, 0.1, vis=True) """
 
 #More complicated shape
 #Demonstration of flying outside of designated area
-eg3 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
+""" eg3 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
 path = generate_path(eg3, 3, 9, vis=True)
-path.airtime_disp()
+"""
 
 """ eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
 path = generate_path(eg4, 1.5, 0.2, vis=True) """
