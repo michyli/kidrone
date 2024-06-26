@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
-from math import acos, sqrt, pi
 
 """
 ======================
@@ -11,6 +10,8 @@ from math import acos, sqrt, pi
 Here is a list of general functions used in the rest of the algorithm.
 They are very helpful to manipulate Shapely datatypes and vectors to gear towards a general purpose.
 """
+
+
 
 def normalizeVec(x, y):
     """Normalize a vector (x, y)"""
@@ -73,21 +74,20 @@ def line_angle(line1: LineString, line2: LineString):
     if line1.coords[-1] != line2.coords[0] and line2.coords[-1] != line1.coords[0]:
         raise ValueError("The lines are not continuous")
     
+    if line2.coords[-1] == line1.coords[0]:
+        #if line sequence is 2 -> 1, swap them
+        temp = line1
+        line1 = line2
+        line2 = temp
+    
     #vectorize two LineStrings
     vec1 = (line1.coords[1][0] - line1.coords[0][0], line1.coords[1][1] - line1.coords[0][1])
     vec2 = (line2.coords[1][0] - line2.coords[0][0], line2.coords[1][1] - line2.coords[0][1])
+    vec1n = normalizeVec(vec1[0], vec1[1])
+    vec2n = normalizeVec(vec2[0], vec2[1])
 
-    dot_product = (vec1[0] * vec2[0]) + (vec1[1] * vec2[1])
-    magnitude1 = sqrt(vec1[0] ** 2 + vec1[1] ** 2)
-    magnitude2 = sqrt(vec2[0] ** 2 + vec2[1] ** 2)
-
-    angle_rad = acos(dot_product / (magnitude1 * magnitude2))
-    angle_deg = angle_rad * (180 / pi)
-
-    if angle_deg > 180:
-        angle_deg = 360 - angle_deg
-    angle_deg = 180 - angle_deg
-    return angle_deg
+    angle = np.rad2deg(np.arccos(np.dot(vec1n, vec2n)))
+    return angle
 
 def pt_to_line(point: Point, line: LineString):
     """Orthogonally projects a point onto a line

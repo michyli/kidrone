@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from pyproj import Geod
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
 from basic_functions import *
 from path import *
@@ -13,7 +14,7 @@ class PolygonCreate:
     """
     Creates a polygon object with inherit attributes.
     """
-    def __init__(self, points, children=None):
+    def __init__(self, points, children=None, offsetparent=None):
         """ Initialization of Polygon object.
         
         points:     tuple / list of (x, y) coordinates
@@ -42,6 +43,7 @@ class PolygonCreate:
                 if not c.within(self.polygon):
                     raise AssertionError("The children are not fully contained in the overall polygon.")
         self.children = children
+        self.offsetparent = offsetparent
 
     def poly_offset(self, offset):
         """ Returns a new PolygonCreate object of the offsetted polygon, where
@@ -90,7 +92,7 @@ class PolygonCreate:
             newY.append(oldY[curr] + bislen * bisnY)
 
             new_points = [(newX[i], newY[i]) for i in range(len(newX))]
-        return PolygonCreate(new_points)
+        return PolygonCreate(new_points, self.children, self)
 
     def extrapolate_line(self, point: Point, slope):
         """ Construct a line from a point and a slope, then extend a line to the maximum boundry of the polygon.
@@ -256,10 +258,11 @@ class PolygonCreate:
         for line in complete_path:
             final_path.extend(break_line(line))
         
+        print(np.array(final_path))
         return Path(final_path, self, opp_slope)
 
     def showpoly(self, polys = None):
-        """ Plots the polygon, with the option to plot additional polygon on the same plot
+        """Plots the polygon, with the option to plot additional polygon on the same plot
         
         poly: a list of CreatePolygon objects that will be plotted in addition to 'self'
 
