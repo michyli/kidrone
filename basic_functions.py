@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from pyproj import Geod, Transformer
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
 
 """
@@ -11,51 +12,16 @@ Here is a list of general functions used in the rest of the algorithm.
 They are very helpful to manipulate Shapely datatypes and vectors to gear towards a general purpose.
 """
 
-
-
-def normalizeVec(x, y):
-    """Normalize a vector (x, y)"""
-    
-    if x == 0:
-        assert y != 0, "Zero vector cannot be normalized"
-    if y == 0:
-        assert x != 0, "Zero vector cannot be normalized"
-    
-    norm = 1 / np.sqrt(x ** 2 + y ** 2)
-    return x * norm, y * norm
-
-def line_intersection(point1: Point, slope1, point2: Point, slope2):
-    """Finds the point of intersection between two straight lines given the point and slope of both lines.
-    
-    slope1 and slope2 can be either given as number or "vertical"
-    """
-    
-    assert all(isinstance(i, Point) for i in [point1, point2]), "input point should be Point objects"
-    assert isinstance(slope1, (int, float)) or slope1 == "vertical", "input slope1 should be a number or 'vertical'"
-    assert isinstance(slope2, (int, float)) or slope2 == "vertical", "input slope2 should be a number or 'vertical'"
-    
-    if slope1 == "vertical" and slope2 == "vertical":
-        if point1 == point2:
-            raise ValueError("two inputted lines are the same")
-        else:
-            raise ValueError("No intersections, two inputted lines are parallel")
-    if slope1 == "vertical":
-        return Point([point1.x, point2.y + slope2 * (point1.x - point2.x)])
-    if slope2 == "vertical":
-        return Point([point2.x, point1.y + slope1 * (point2.x - point2.x)])
-        
-    b1 = point1.y - slope1 * point1.x
-    b2 = point2.y - slope2 * point2.x
-    
-    x = (b2 - b1) / (slope1 - slope2)
-    y = slope1 * x + b1
-    return Point([x, y])
-
+"""
+==========================
+=== LineString Related ===
+==========================
+"""
 def line_slope(line: LineString):
     """Returns the slope of a LineString based on the boundary of the LineString"""
-    
     assert isinstance(line, LineString), "input should be a LineString object"
     np.seterr(divide='ignore', invalid='ignore') #Ignore the warning of 0 division -> it is already accounted for by the except statement
+    
     try:
         slope = (line.boundary.geoms[1].y - line.boundary.geoms[0].y) / (line.boundary.geoms[1].x - line.boundary.geoms[0].x)
     except ZeroDivisionError:
@@ -89,25 +55,43 @@ def line_angle(line1: LineString, line2: LineString):
     angle = np.rad2deg(np.arccos(np.dot(vec1n, vec2n)))
     return angle
 
-def pt_to_line(point: Point, line: LineString):
-    """Orthogonally projects a point onto a line
-    returns the projected point as a Point object
+def line_intersection(point1: Point, slope1, point2: Point, slope2):
+    """Finds the point of intersection between two straight lines given the point and slope of both lines.
     
-    point:  the point being projected
-    line:   the line being projected onto
+    slope1 and slope2 can be either given as number or "vertical"
     """
-    assert isinstance(point, Point) and isinstance(line, LineString), "input should be a Point object and a LineString object"
     
-    x = np.array(point.coords[0])
+    assert all(isinstance(i, Point) for i in [point1, point2]), "input point should be Point objects"
+    assert isinstance(slope1, (int, float)) or slope1 == "vertical", "input slope1 should be a number or 'vertical'"
+    assert isinstance(slope2, (int, float)) or slope2 == "vertical", "input slope2 should be a number or 'vertical'"
+    
+    if slope1 == "vertical" and slope2 == "vertical":
+        if point1 == point2:
+            raise ValueError("two inputted lines are the same")
+        else:
+            raise ValueError("No intersections, two inputted lines are parallel")
+    if slope1 == "vertical":
+        return Point([point1.x, point2.y + slope2 * (point1.x - point2.x)])
+    if slope2 == "vertical":
+        return Point([point2.x, point1.y + slope1 * (point2.x - point2.x)])
+        
+    b1 = point1.y - slope1 * point1.x
+    b2 = point2.y - slope2 * point2.x
+    
+    x = (b2 - b1) / (slope1 - slope2)
+    y = slope1 * x + b1
+    return Point([x, y])
 
-    u = np.array(line.coords[0])
-    v = np.array(line.coords[len(line.coords)-1])
-
-    n = v - u
-    n /= np.linalg.norm(n, 2)
-
-    P = u + n*np.dot(x - u, n) #datatype if np.array
-    return Point([P[0], P[1]])
+def normalizeVec(x, y):
+    """Normalize a vector (x, y)"""
+    
+    if x == 0:
+        assert y != 0, "Zero vector cannot be normalized"
+    if y == 0:
+        assert x != 0, "Zero vector cannot be normalized"
+    
+    norm = 1 / np.sqrt(x ** 2 + y ** 2)
+    return x * norm, y * norm
 
 def split_line(line: LineString, interval) -> list[Point]:
     """Splits a line into equal distances
@@ -142,7 +126,18 @@ def reverse_line(line: LineString):
     assert isinstance(line, LineString), "input line should be a LineString object"
     line_list = np.array(line.coords)
     return LineString(line_list[::-1])
+
+def break_line(line: LineString) -> list[LineString]:
+    """Break a multi-point LineString into a list of multiple 2-point LineStrings
+    Returns a list of LineString objects
     
+    line: a LineString object to be broken down
+    """
+    assert isinstance(line, LineString), "input line should be a LineString object"
+    coords = list(line.coords)
+    return [LineString([coords[i], coords[i+1]]) for i in range(len(coords)-1)]
+
+#! CHANGE TO USE PYPLOT
 def linestring_dist(line: LineString):
     """Returns the distance in KM given a LineString (with geographic coordinates) as input
     LineString should be a 2-point LineString
@@ -160,6 +155,32 @@ def linestring_dist(line: LineString):
     length = np.sqrt(dx**2 + dy**2)
     return length
 
+
+"""
+================================
+=== Coordinates Manipulation ===
+================================
+"""
+def pt_to_line(point: Point, line: LineString):
+    """Orthogonally projects a point onto a line
+    returns the projected point as a Point object
+    
+    point:  the point being projected
+    line:   the line being projected onto
+    """
+    assert isinstance(point, Point) and isinstance(line, LineString), "input should be a Point object and a LineString object"
+    
+    x = np.array(point.coords[0])
+
+    u = np.array(line.coords[0])
+    v = np.array(line.coords[len(line.coords)-1])
+
+    n = v - u
+    n /= np.linalg.norm(n, 2)
+
+    P = u + n*np.dot(x - u, n) #datatype if np.array
+    return Point([P[0], P[1]])
+
 def extract_coords(shape: Point|MultiPoint|LineString) -> list[tuple]:
     """Extracts Shapely geometry (Point, MultiPoint, LineString) coordinates into a list of tuples.
     Returns the extracted list of coordinates
@@ -175,16 +196,81 @@ def extract_coords(shape: Point|MultiPoint|LineString) -> list[tuple]:
     if isinstance(shape, LineString):
         return [(pt[0], pt[1]) for pt in shape.coords]
 
-def break_line(line: LineString) -> list[LineString]:
-    """Break a multi-point LineString into a list of multiple 2-point LineStrings
-    Returns a list of LineString objects
-    
-    line: a LineString object to be broken down
-    """
-    assert isinstance(line, LineString), "input line should be a LineString object"
-    coords = list(line.coords)
-    return [LineString([coords[i], coords[i+1]]) for i in range(len(coords)-1)]
 
+
+"""
+==================================
+=== Coordinates Transformation ===
+==================================
+"""
+def gcs2pcs(lon, lat):
+    """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
+    """
+    transformer = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True)
+    x, y = transformer.transform(lon,lat)
+    if x == np.inf or y == np.inf:
+        raise ValueError("input should be in sequence of (Longtitude, Latitude), it may be currently reversed")
+    return x, y
+
+def pcs2gcs(x, y):
+    """Converts EPSG:3857 (meters) to EPSG:4326 (lat&lon)
+    """
+    transformer = Transformer.from_crs("EPSG:3857", "EPSG:4326", always_xy=True)
+    lon, lat = transformer.transform(x,y)
+    return lon, lat
+
+def gcs2pcs_batch(coords):
+    """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
+    but input is a whole list of EPSG:4326 coordinates
+    """
+    return [gcs2pcs(pt[0], pt[1]) for pt in coords]
+    
+def pcs2gcs_batch(coords):
+    """Converts EPSG:3857 (meters) to EPSG:4326 (lat&lon)
+    but input is a whole list of EPSG:3857 coordinates
+    """
+    return [pcs2gcs(pt[0], pt[1]) for pt in coords]
+
+def pcs_reset(coords: list[list|tuple]):
+    """Transforms the EPSG:3857 coordinates so all coordinates in 'coords' are positive.
+    Returns 1) the transformed set of coords,
+    and     2) a transformation function that takes in the all-positive coordinates
+               and gives the original EPSG:3857 coordinates
+               
+    coords: a list of iterables with coordinates in EPSG:3857
+    """
+    x_transform, y_transform = 0, 0
+    min_xval = min([pt[0] for pt in coords])
+    min_yval = min([pt[1] for pt in coords])
+    
+    if min_xval < 0:
+        updated_x = [(pt[0] + abs(min_xval), pt[1]) for pt in coords]
+        x_transform = min_xval
+    else:
+        updated_x = coords
+    if min_yval < 0:
+        updated_x = [(pt[0], pt[1] + abs(min_yval)) for pt in updated_x]
+        y_transform = min_yval
+    else:
+        updated_y = updated_x
+    final_transformed = updated_y
+    
+    def trans_constructor(deltax, deltay):
+        def trans(transformed):
+            """Inverses the custom transformation"""
+            inv_trans_coords = [(pt[0] + deltax, pt[1] + deltay) for pt in transformed]
+            return inv_trans_coords
+        return trans
+    
+    return final_transformed, trans_constructor(x_transform, y_transform)
+
+
+
+"""
+===============================
+=== Running Program Related ===
+===============================
+"""
 def disp_time(hour):
     """Convert inputed hours to the format of hour:minute"""
     return f"{round(hour//1, 0)} hours, {round(hour%1*60, 0)} minutes"
