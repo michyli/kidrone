@@ -1,9 +1,6 @@
 import numpy as np
-<<<<<<< HEAD
-=======
 import matplotlib.pyplot as plt
 from pyproj import Geod, Transformer
->>>>>>> a4480149b612febe6029c7b2ca13bc97fe3bb440
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
 
 """
