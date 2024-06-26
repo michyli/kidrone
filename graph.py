@@ -14,3 +14,149 @@ An aggregation of all graphing functions
 #3. Graph a Path using stem plot.
         #Takes in a path and a second input in the form of an iterable with the same length as the number of lines in Path.
         #The second argument can be velocity, or height, etc as example. use that to generate a 3D plot using matplotlib.
+
+def showpoly(polygon, polys = None):
+        """Plots the polygon, with the option to plot additional polygon on the same plot
+        
+        polygon: main PolygonCreate object
+        poly: a list of child PolygonCreate objects that will be plotted onto 'polygon'
+
+        example execution of plotting one polygon
+        >>> points = [(10, 10), (30, 10), (10, 30)]
+        >>> tri = PolygonCreate(points)
+        >>> tri.showpoly()
+        
+        example execution of plotting more than one polygon
+        >>> points_2 = [(10, 10), (30, 10), (10, 40), (15, 30)]
+        >>> quad = PolygonCreate(points_2)
+        >>> new_tri = tri.poly_offset(1)
+        >>> tri.showpoly([new_tri, quad])
+        """
+        x, y = list(polygon.xcord), list(polygon.ycord)
+        x.append(x[0])
+        y.append(y[0])
+        fig, ax = plt.subplots()
+        ax.plot(x, y, "ro-.", ms=4)
+        
+        #Plotting additional polygons if there are any
+        if polys:
+            for poly in polys:
+                x, y = list(poly.xcord), list(poly.ycord)
+                x.append(x[0])
+                y.append(y[0])
+                plt.plot(x, y, "ro:", ms=4)    
+        
+        plt.title("Full Coverage Drone Flight Path")
+        plt.xlabel("Latitude")
+        plt.ylabel("Longtitude")
+        buffer = 0.2 * max(polygon.xmax - polygon.xmin, polygon.ymax - polygon.ymin)
+        plt.xlim(min(polygon.xmin, polygon.ymin) - buffer, max(polygon.xmax, polygon.ymax) + buffer)
+        plt.ylim(min(polygon.xmin, polygon.ymin) - buffer, max(polygon.xmax, polygon.ymax) + buffer)
+
+def showswath(full_path):     
+    """Plots the complete swath
+    full_path: a Path object. the .path attribute extracts the list of LineString that makes the Path object
+    """   
+    for lines in full_path.path:
+        start, end = lines.coords[0], lines.coords[1]
+        xx, yy = [start[0], end[0]], [start[1], end[1]]
+        plt.plot(xx, yy, 'go-', ms=6, linewidth=2.5)
+
+def showPolyAndPath(polygon, full_path, polys = None):
+        """Plots the polygon, with the option to plot additional polygon on the same plot
+        
+        polygon: main PolygonCreate object
+        poly: a list of child PolygonCreate objects that will be plotted onto 'polygon'
+
+        example execution of plotting one polygon
+        >>> points = [(10, 10), (30, 10), (10, 30)]
+        >>> tri = PolygonCreate(points)
+        >>> tri.showpoly()
+        
+        example execution of plotting more than one polygon
+        >>> points_2 = [(10, 10), (30, 10), (10, 40), (15, 30)]
+        >>> quad = PolygonCreate(points_2)
+        >>> new_tri = tri.poly_offset(1)
+        >>> tri.showpoly([new_tri, quad])
+        """
+        x, y = list(polygon.xcord), list(polygon.ycord)
+        x.append(x[0])
+        y.append(y[0])
+        fig, ax = plt.subplots()
+        ax.plot(x, y, "ro-.", ms=4)
+        
+        #Plotting additional polygons if there are any
+        if polys:
+            for poly in polys:
+                x, y = list(poly.xcord), list(poly.ycord)
+                x.append(x[0])
+                y.append(y[0])
+                plt.plot(x, y, "ro:", ms=4)    
+        
+        plt.title("Full Coverage Drone Flight Path")
+        plt.xlabel("Latitude")
+        plt.ylabel("Longtitude")
+        buffer = 0.2 * max(polygon.xmax - polygon.xmin, polygon.ymax - polygon.ymin)
+        plt.xlim(min(polygon.xmin, polygon.ymin) - buffer, max(polygon.xmax, polygon.ymax) + buffer)
+        plt.ylim(min(polygon.xmin, polygon.ymin) - buffer, max(polygon.xmax, polygon.ymax) + buffer)
+
+        # plotting path
+        showswath(full_path)
+
+        # plotting baseline
+        plt.plot([polygon.baseline.boundary.geoms[0].x, 
+                 polygon.baseline.boundary.geoms[1].x], 
+                 [polygon.baseline.boundary.geoms[0].y, 
+                 polygon.baseline.boundary.geoms[1].y], 
+                 'ko:', ms=4, alpha=0.2)
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+def showprojection(ax, full_path):
+        """
+        Plots the baseline on the XY plane.
+        
+        ax: The 3D axis object to plot on.
+        full_path: a Path object. The .path attribute extracts the list of LineString that makes the Path object.
+        """
+        for lines in full_path.path:
+                start, end = lines.coords[0], lines.coords[1]
+                xx, yy = [start[0], end[0]], [start[1], end[1]]
+                zz = [0, 0]  # Baseline at z=0
+                ax.plot(xx, yy, zz, 'k--', ms=4, linewidth=1.5)
+
+def show3DPath(full_path, values):
+        """
+        IN PROGRESS
+        
+        Plots the complete 3D path.
+        
+        full_path: a Path object. The .path attribute extracts the list of LineString that makes the Path object.
+        values: an iterable (e.g., list, numpy array) with the same length as the number of lines in Path.
+                Can represent velocity, height, etc.
+        """
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        
+        for lines, value in zip(full_path.path, values):
+                start, end = lines.coords[0], lines.coords[1]
+                xx, yy = [start[0], end[0]], [start[1], end[1]]
+                zz = [value, value]
+                ax.plot(xx, yy, zz, 'go-', ms=6, linewidth=2.5)
+                
+                # Plot vertical lines to connect path and baseline
+                for (x, y) in zip(xx, yy):
+                        ax.plot([x, x], [y, y], [0, value], 'r.', linewidth=0.5)
+
+        showprojection(ax, full_path)
+
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z (values)')
+        plt.show()
+
+
+
+
+

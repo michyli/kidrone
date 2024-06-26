@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
 
 """
@@ -188,12 +187,3 @@ def break_line(line: LineString) -> list[LineString]:
 def disp_time(hour):
     """Convert inputed hours to the format of hour:minute"""
     return f"{round(hour//1, 0)} hours, {round(hour%1*60, 0)} minutes"
-
-def showswath(full_path):     
-    """Plots the complete swath
-    full_path: a Path object. the .path attribute extracts the list of LineString that makes the Path object
-    """   
-    for lines in full_path.path:
-        start, end = lines.coords[0], lines.coords[1]
-        xx, yy = [start[0], end[0]], [start[1], end[1]]
-        plt.plot(xx, yy, 'go-', ms=6, linewidth=2.5)
