@@ -105,6 +105,7 @@ class Path:
             
             velo1: velocity of the drone before changing travel direction
             """
+            #! NEED CHANGE line_angle() function changed and the output angle is defined differently
             delta_angle = line_angle(line1, line2)-90
             if delta_angle == 90:
                 return self.default_turn_velo
