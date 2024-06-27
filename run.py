@@ -65,7 +65,7 @@ path = generate_path(eg4, 1.5, 0.2, vis=True)
 values = generate_height_values(63, 10, 30)
 show3DPath(path, values) """
 
-""" eg5 = [[-120.1833426, 47.7411704],[
+eg5 = [[-120.1833426, 47.7411704],[
         -119.9911309, 47.7651762],[
         -119.8758039, 47.8979308],[
         -119.6671169, 47.9935979],[
@@ -81,14 +81,7 @@ show3DPath(path, values) """
         -120.181512, 47.7387076],[
         -120.1833426, 47.7411704]]
 coords, func = pcs_reset(gcs2pcs_batch(eg5))
-print(coords)
-path = generate_path(coords, 20, 1, vis=True) """
-
-eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)]
-poly = Outline(eg4)
-polynew = poly.poly_offset(3)
-showpoly([poly, polynew])
-plt.show()
+path = generate_path(coords, 20, 1, vis=True)
 
 
 #Demonstrates what the returned data type looks like (list of LineString object)

@@ -223,43 +223,6 @@ class Outline:
         print(np.array(final_path))
         return Path(final_path, self, opp_slope)
 
-    def showpoly(self, polys = None):
-        """Plots the polygon, with the option to plot additional polygon on the same plot
-        
-        poly: a list of CreatePolygon objects that will be plotted in addition to 'self'
-
-        example execution of plotting one polygon
-        >>> points = [(10, 10), (30, 10), (10, 30)]
-        >>> tri = Outline(points)
-        >>> tri.showpoly()
-        
-        example execution of plotting more than one polygon
-        >>> points_2 = [(10, 10), (30, 10), (10, 40), (15, 30)]
-        >>> quad = Outline(points_2)
-        >>> new_tri = tri.poly_offset(1)
-        >>> tri.showpoly([new_tri, quad])
-        """
-        x, y = list(self.xcord), list(self.ycord)
-        x.append(x[0])
-        y.append(y[0])
-        fig, ax = plt.subplots()
-        ax.plot(x, y, "ro-.", ms=4)
-        
-        #Plotting additional polygons if there are any
-        if polys:
-            for poly in polys:
-                x, y = list(poly.xcord), list(poly.ycord)
-                x.append(x[0])
-                y.append(y[0])
-                plt.plot(x, y, "ro:", ms=4)    
-        
-        plt.title("Full Coverage Drone Flight Path")
-        plt.xlabel("Latitude")
-        plt.ylabel("Longtitude")
-        buffer = 0.2 * max(self.xmax - self.xmin, self.ymax - self.ymin)
-        plt.xlim(min(self.xmin, self.ymin) - buffer, max(self.xmax, self.ymax) + buffer)
-        plt.ylim(min(self.xmin, self.ymin) - buffer, max(self.xmax, self.ymax) + buffer)
-
     def show_children(self):
         """Output points of children"""
         
