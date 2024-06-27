@@ -9,17 +9,16 @@ from path import *
 ====== Class ======
 ===================
 """
-class PolygonCreate:
+class Outline:
     """
     Creates a polygon object with inherit attributes.
     """
-    def __init__(self, points, children=None, offsetparent=None):
+    def __init__(self, points, rev_func=None, children=None, offsetparent=None):
         """ Initialization of Polygon object.
         
-        points:     tuple / list of (x, y) coordinates
+        points:     tuple / list of (x, y) coordinates, in EPSG:3857 (meters)
         >>> points = [(10, 10), (30, 10), (10, 30)]
-        #* In later implementation, x should represent latitude and y should represent longtitude.
-        children:   a list of PolygonCreate Objects
+        children:   a list of Outline Objects
         """
         #Initialization of basic polygon information from given points
         self.xcord = [i[0] for i in points]
@@ -29,6 +28,9 @@ class PolygonCreate:
         self.xcentroid = sum(self.xcord) / len(self.xcord)
         self.ycentroid = sum(self.ycord) / len(self.ycord)
         self.centroid = Point(self.xcentroid, self.ycentroid)
+        
+        #Define reverse function to unshift the coordinates
+        self.rev_func = rev_func
         
         #Basic polygon information defined in shapely objects, necesary for executing Shapely functions
         self.points = [Point(i[0], i[1]) for i in points]
@@ -45,53 +47,14 @@ class PolygonCreate:
         self.offsetparent = offsetparent
 
     def poly_offset(self, offset):
-        """ Returns a new PolygonCreate object of the offsetted polygon, where
-        all the edges are offsetted inward.
-        By default, positive offset is inward-offset.
+        """Returns an offsetted polygon (Outline object). Defaults to inward offset.
         
-        offset: perpendicular distance between new edge and original edge.
-        
-        example execution:
-        >>> points = [(10, 10), (30, 10), (10, 30)]
-        >>> tri = PolygonCreate(points)
-        >>> new_tri = tri.poly_offset(1)
-
-        using the method here: https://stackoverflow.com/a/54042831/25136494
+        offset: offset distance, in unit of meters
         """
-        oldX = self.xcord
-        oldY = self.ycord
-        newX = []
-        newY = []
-        num_points = len(oldX)
-        for curr in range(num_points):
-            prev = (curr + num_points - 1) % num_points
-            next = (curr + 1) % num_points
-            #Find the normalized vector of an edge
-            vnX =  oldX[next] - oldX[curr]
-            vnY =  oldY[next] - oldY[curr]
-            vnnX, vnnY = normalizeVec(vnX,vnY)
-            #Find the orthogonal vector to the edge
-            nnnX = -vnnY
-            nnnY = vnnX
-            #Find the normalized vector to the other adjacent edge
-            vpX =  oldX[curr] - oldX[prev]
-            vpY =  oldY[curr] - oldY[prev]
-            vpnX, vpnY = normalizeVec(vpX,vpY)
-            #Find the orthogonal vector to the edge
-            npnX = -vpnY
-            npnY = vpnX
-            #Bisector is the sum of two vectors orthogonal to the edges
-            bisX = (nnnX + npnX)
-            bisY = (nnnY + npnY)
-            #Determine length of bisector based on the needed offset
-            bisnX, bisnY = normalizeVec(bisX,  bisY)
-            bislen = offset / np.sqrt((1 + nnnX*npnX + nnnY*npnY)/2)
-            #Create the new offset polygon coordinates
-            newX.append(oldX[curr] + bislen * bisnX)
-            newY.append(oldY[curr] + bislen * bisnY)
-
-            new_points = [(newX[i], newY[i]) for i in range(len(newX))]
-        return PolygonCreate(new_points, self.children, self)
+        newpoly = self.polygon.buffer(-offset, quad_segs=3)
+        x, y = newpoly.exterior.xy
+        coord_set = [(x[i], y[i]) for i in range(len(x))]
+        return Outline(coord_set, rev_func=self.rev_func, children=self.children, offsetparent=self)
 
     def extrapolate_line(self, point: Point, slope):
         """ Construct a line from a point and a slope, then extend a line to the maximum boundry of the polygon.
@@ -267,12 +230,12 @@ class PolygonCreate:
 
         example execution of plotting one polygon
         >>> points = [(10, 10), (30, 10), (10, 30)]
-        >>> tri = PolygonCreate(points)
+        >>> tri = Outline(points)
         >>> tri.showpoly()
         
         example execution of plotting more than one polygon
         >>> points_2 = [(10, 10), (30, 10), (10, 40), (15, 30)]
-        >>> quad = PolygonCreate(points_2)
+        >>> quad = Outline(points_2)
         >>> new_tri = tri.poly_offset(1)
         >>> tri.showpoly([new_tri, quad])
         """
@@ -306,7 +269,7 @@ class PolygonCreate:
     def add_child(self, child):
         """Adds a child to the polygon's list of children
 
-        child: PolygonCreate object
+        child: Outline object
 
         """
         self.children.append(child)
@@ -314,7 +277,7 @@ class PolygonCreate:
     def remove_child(self, child):
         """Removes a child from the polygon's list of children
 
-        child: PolygonCreate object
+        child: Outline object
 
         """
         for i in range(len(self.children)):

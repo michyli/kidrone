@@ -244,13 +244,13 @@ def pcs_reset(coords: list[list|tuple]):
     min_yval = min([pt[1] for pt in coords])
     
     if min_xval < 0:
-        updated_x = [(pt[0] + abs(min_xval), pt[1]) for pt in coords]
-        x_transform = min_xval
+        updated_x = [(pt[0] + abs(min_xval) + 10, pt[1]) for pt in coords]
+        x_transform = min_xval + 10
     else:
         updated_x = coords
     if min_yval < 0:
-        updated_x = [(pt[0], pt[1] + abs(min_yval)) for pt in updated_x]
-        y_transform = min_yval
+        updated_x = [(pt[0], pt[1] + abs(min_yval) + 10) for pt in updated_x]
+        y_transform = min_yval + 10
     else:
         updated_y = updated_x
     final_transformed = updated_y

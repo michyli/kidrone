@@ -19,7 +19,7 @@ def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert =
     vis:            True for visualization of path
     invert:         True to show inverted path with same swath
     """
-    outline = PolygonCreate(points)
+    outline = Outline(points)
     offset_outline = outline.poly_offset(disp_diam / 2)
     outline.showpoly([offset_outline])
     
@@ -58,14 +58,38 @@ path = generate_path(eg3, 3, 9, vis=True)
 """
 
 
-eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
+""" eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
 path = generate_path(eg4, 1.5, 0.2, vis=True)
 
 # values = [random.randint(6,10) for i in range(63)]
 values = generate_height_values(63, 10, 30)
-show3DPath(path, values)
+show3DPath(path, values) """
 
+""" eg5 = [[-120.1833426, 47.7411704],[
+        -119.9911309, 47.7651762],[
+        -119.8758039, 47.8979308],[
+        -119.6671169, 47.9935979],[
+        -119.3321193, 48.0193242],[
+        -118.9861382, 48.0119751],[
+        -118.9559335, 47.9089783],[
+        -118.5605266, 47.8776708],[
+        -118.4982865, 47.7294713],[
+        -118.7728747, 47.4980293],[
+        -119.1188558, 47.2152152],[
+        -119.9645873, 47.1648199],[
+        -120.2748719, 47.4404731],[
+        -120.181512, 47.7387076],[
+        -120.1833426, 47.7411704]]
+coords, func = pcs_reset(gcs2pcs_batch(eg5))
+print(coords)
+path = generate_path(coords, 20, 1, vis=True) """
+
+eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)]
+poly = Outline(eg4)
+polynew = poly.poly_offset(3)
+showpoly([poly, polynew])
+plt.show()
 
 
 #Demonstrates what the returned data type looks like (list of LineString object)
-print(np.array(path))
+""" print(np.array(path)) """
