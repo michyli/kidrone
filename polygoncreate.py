@@ -10,46 +10,44 @@ from path import *
 ===================
 """
 class Outline:
-    """
-    Creates a polygon object with inherit attributes.
-    """
-    def __init__(self, points, rev_func=None, children=None, offsetparent=None):
-        """ Initialization of Polygon object.
-        
-        points:     tuple / list of (x, y) coordinates, in EPSG:3857 (meters)
-        >>> points = [(10, 10), (30, 10), (10, 30)]
-        children:   a list of Outline Objects
+    def __init__(self, points, children=None, offsetparent=None, rev_func=None):
         """
-        #Initialization of basic polygon information from given points
+        points:         list of (x, y) coordinates, in EPSG:3857 (meters)
+        children:       a list of Outline Objects
+        offsetparent:   an Outline object. If self is a polygon offsetted from another, it shows its parent here.
+        rev_func:       a callable, a reverse function to reverse coordinate from previous shift.
+        """
+        #Initialize basic polygon information from given points
         self.xcord = [i[0] for i in points]
         self.ycord = [i[1] for i in points]
         self.xmax, self.xmin = max(self.xcord), min(self.xcord)
         self.ymax, self.ymin = max(self.ycord), min(self.ycord)
-        self.xcentroid = sum(self.xcord) / len(self.xcord)
-        self.ycentroid = sum(self.ycord) / len(self.ycord)
-        self.centroid = Point(self.xcentroid, self.ycentroid)
         
         #Define reverse function to unshift the coordinates
         self.rev_func = rev_func
         
-        #Basic polygon information defined in shapely objects, necesary for executing Shapely functions
+        #define basic polygon information in shapely objects, necesary for executing Shapely functions
         self.points = [Point(i[0], i[1]) for i in points]
-        self.edges = [LineString([self.points[i], self.points[i+1]]) for i in range(len(points) - 1)]
         self.ring = LinearRing(tuple(self.points))
         self.polygon = Polygon(tuple(self.points))
+        self.centroid = self.polygon.centroid
 
-        #Defining children
-        if isinstance(children, list):
+        #Define children
+        if children:
             for c in children:
                 if not c.within(self.polygon):
                     raise AssertionError("The children are not fully contained in the overall polygon.")
         self.children = children
         self.offsetparent = offsetparent
+        
+        #Define reverse function to shift coordinate back, if it was re-zeroed at any point.
+        self.rev_func = rev_func
 
     def poly_offset(self, offset):
-        """Returns an offsetted polygon (Outline object). Defaults to inward offset.
+        """Returns an offsetted polygon as an Outline object.
         
         offset: offset distance, in unit of meters
+        * Positive = inward offset, negative = outward offset
         """
         newpoly = self.polygon.buffer(-offset, quad_segs=3)
         x, y = newpoly.exterior.xy
@@ -57,7 +55,7 @@ class Outline:
         return Outline(coord_set, rev_func=self.rev_func, children=self.children, offsetparent=self)
 
     def extrapolate_line(self, point: Point, slope):
-        """ Construct a line from a point and a slope, then extend a line to the maximum boundry of the polygon.
+        """Construct a line from a point and a slope, then extend a line to the maximum boundry of the polygon.
         Returns the new extrapolated line as LineString object.
         
         point: a Point object that anchors the line
@@ -223,6 +221,9 @@ class Outline:
         print(np.array(final_path))
         return Path(final_path, self, opp_slope)
 
+    """
+    === Children Manipulation ===
+    """
     def show_children(self):
         """Output points of children"""
         
@@ -233,16 +234,18 @@ class Outline:
         """Adds a child to the polygon's list of children
 
         child: Outline object
-
         """
+        if not isinstance(child, Outline):
+            raise ValueError("input must be an Outline object")
         self.children.append(child)
     
     def remove_child(self, child):
         """Removes a child from the polygon's list of children
 
         child: Outline object
-
         """
+        if not isinstance(child, Outline):
+            raise ValueError("input must be an Outline object")
         for i in range(len(self.children)):
             if self.children[i] == child:
                 self.children = self.children.splice(i, i)

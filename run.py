@@ -13,24 +13,25 @@ def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert =
     """
     A compacted set of commands to generate a function based on all the necessary informations
     
-    points:         points of the polygon outline (in sequence)
+    points:         points of the polygon outline in a list of (longtitude, latitude)
     disp_diam:      dispersion diameter of the drone (m)
     baseline_slope: slope of the baseline (line that swath are perpendicular to)
     vis:            True for visualization of path
     invert:         True to show inverted path with same swath
     """
-    outline = Outline(points)
+    coords, func = pcs_reset(gcs2pcs_batch(points))
+    outline = Outline(coords, rev_func=func)
     offset_outline = outline.poly_offset(disp_diam / 2)
-    outline.showpoly([offset_outline])
+    showpoly([outline, offset_outline])
     
-    path = offset_outline.swath_gen(disp_diam, baseline_slope, invert, show_baseline=True)
+    #path = offset_outline.swath_gen(disp_diam, baseline_slope, invert, show_baseline=True)
     
     #Visualization
-    if vis:
-        showswath(path)
-        plt.show()
+    """ if vis:
+        showswath(path)"""
+    plt.show()
         
-    return path
+    #return path
     
     
 """
@@ -65,7 +66,7 @@ path = generate_path(eg4, 1.5, 0.2, vis=True)
 values = generate_height_values(63, 10, 30)
 show3DPath(path, values) """
 
-eg5 = [[-120.1833426, 47.7411704],[
+""" eg5 = [[-120.1833426, 47.7411704],[
         -119.9911309, 47.7651762],[
         -119.8758039, 47.8979308],[
         -119.6671169, 47.9935979],[
@@ -80,8 +81,7 @@ eg5 = [[-120.1833426, 47.7411704],[
         -120.2748719, 47.4404731],[
         -120.181512, 47.7387076],[
         -120.1833426, 47.7411704]]
-coords, func = pcs_reset(gcs2pcs_batch(eg5))
-path = generate_path(coords, 20, 1, vis=True)
+path = generate_path(eg5, 20, 1, vis=True) """
 
 
 #Demonstrates what the returned data type looks like (list of LineString object)

@@ -26,16 +26,9 @@ def showpoly(polygons:list[Outline]):
             ax.plot(xx, yy, 'o-.', ms=4)      
         
         ax.set_title("Full Coverage Drone Flight Path")
-        ax.set_xlabel("Latitude")
-        ax.set_ylabel("Longtitude")
-        xmax = max([polys.xmax for polys in polygons])
-        ymax = max([polys.ymax for polys in polygons])
-        xmin = max([polys.xmin for polys in polygons])
-        ymin = max([polys.ymin for polys in polygons])
-        buffer = 0.2 * max(xmax - xmin, ymax - ymin)
-        ax.set_xlim(min(xmin, ymin) - buffer, max(xmax, ymax) + buffer)
-        ax.set_ylim(min(xmin, ymin) - buffer, max(xmax, ymax) + buffer)
-
+        ax.set_xlabel("y (meters)")
+        ax.set_ylabel("x (meters)")
+        
 def showswath(full_path):     
     """Plots the complete swath
     full_path: a Path object. the .path attribute extracts the list of LineString that makes the Path object
