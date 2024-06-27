@@ -57,10 +57,17 @@ path = generate_path(eg2, 2, 0.1, vis=True) """
 path = generate_path(eg3, 3, 9, vis=True)
 """
 
+<<<<<<< HEAD
 eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
 path = generate_path(eg4, 1.5, 0.2, vis=True)
 values = [random.randint(6,10) for i in range(63)]
 show3DPath(path, values)
+=======
+""" eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
+path = generate_path(eg4, 1.5, 0.2, vis=True)
+values = [random.randint(6,10) for i in range(63)]
+show3DPath(path, values) """
+>>>>>>> e9a994ec3f80e199b4e7c5be1886dbf1afc87f82
 
 #Demonstrates what the returned data type looks like (list of LineString object)
 """print(np.array(path))"""
