@@ -57,10 +57,15 @@ path = generate_path(eg2, 2, 0.1, vis=True) """
 path = generate_path(eg3, 3, 9, vis=True)
 """
 
+
 eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
 path = generate_path(eg4, 1.5, 0.2, vis=True)
-values = [random.randint(6,10) for i in range(63)]
+
+# values = [random.randint(6,10) for i in range(63)]
+values = generate_height_values(63, 10, 30)
 show3DPath(path, values)
 
+
+
 #Demonstrates what the returned data type looks like (list of LineString object)
-"""print(np.array(path))"""
+print(np.array(path))

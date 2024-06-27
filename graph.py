@@ -110,53 +110,58 @@ def showPolyAndPath(polygon, full_path, polys = None):
                  polygon.baseline.boundary.geoms[1].y], 
                  'ko:', ms=4, alpha=0.2)
 
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-
 def showprojection(ax, full_path):
-        """
-        Plots the baseline on the XY plane.
-        
-        ax: The 3D axis object to plot on.
-        full_path: a Path object. The .path attribute extracts the list of LineString that makes the Path object.
-        """
-        for lines in full_path.path:
-                start, end = lines.coords[0], lines.coords[1]
-                xx, yy = [start[0], end[0]], [start[1], end[1]]
-                zz = [0, 0]  # Baseline at z=0
-                ax.plot(xx, yy, zz, 'k--', ms=4, linewidth=1.5)
+    """
+    Plots the baseline on the XY plane.
+    
+    ax: The 3D axis object to plot on.
+    full_path: a Path object. The .path attribute extracts the list of LineString that makes the Path object.
+    """
+    for lines in full_path.path:
+        start, end = lines.coords[0], lines.coords[1]
+        xx, yy = [start[0], end[0]], [start[1], end[1]]
+        zz = [0, 0]  # Baseline at z=0
+        ax.plot(xx, yy, zz, 'k--', ms=4, linewidth=1.5)
 
 def show3DPath(full_path, values):
-        """
-        IN PROGRESS
+    """
+    Plots the complete 3D path.
+    
+    full_path: a Path object. The .path attribute extracts the list of LineString that makes the Path object.
+    values: an iterable (e.g., list, numpy array) with the same length as the number of lines in Path.
+            Can represent velocity, height, etc.
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    
+    # Plot each LineString with its start and end points at the correct height
+    for lines, (start_value, end_value) in zip(full_path.path, values):
+        start, end = lines.coords[0], lines.coords[1]
+        xx, yy = [start[0], end[0]], [start[1], end[1]]
+        zz = [start_value, end_value]
+        ax.plot(xx, yy, zz, color='g', linestyle='-', marker=None, linewidth=2.5)
         
-        Plots the complete 3D path.
-        
-        full_path: a Path object. The .path attribute extracts the list of LineString that makes the Path object.
-        values: an iterable (e.g., list, numpy array) with the same length as the number of lines in Path.
-                Can represent velocity, height, etc.
-        """
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        
-        for lines, value in zip(full_path.path, values):
-                start, end = lines.coords[0], lines.coords[1]
-                xx, yy = [start[0], end[0]], [start[1], end[1]]
-                zz = [value, value]
-                ax.plot(xx, yy, zz, 'go-', ms=6, linewidth=2.5)
-                
-                # Plot vertical lines to connect path and baseline
-                for (x, y) in zip(xx, yy):
-                        ax.plot([x, x], [y, y], [0, value], 'r.', linewidth=0.5)
+        # Plot vertical lines to connect path and baseline
+        ax.plot([start[0], start[0]], [start[1], start[1]], [0, start_value], 'r--', linewidth=1, alpha=0.5)
+        ax.plot([end[0], end[0]], [end[1], end[1]], [0, end_value], 'r--', linewidth=1, alpha=0.5)
 
-        showprojection(ax, full_path)
+    showprojection(ax, full_path)
 
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_zlabel('Z (values)')
-        plt.show()
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z (values)')
+    plt.show()
 
+def generate_height_values(num_lines, min_height=10, max_height=50):
+    """
+    Function used for generating test data for show3DPath
 
-
-
-
+    Generate a list of tuples representing heights for each line segment.
+    
+    num_lines: The number of LineString objects.
+    min_height: The minimum height value.
+    max_height: The maximum height value.
+    """
+    heights = np.linspace(min_height, max_height, num_lines)
+    values = [(heights[i], heights[i+1]) for i in range(len(heights)-1)]
+    return values
