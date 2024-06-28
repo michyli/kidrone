@@ -10,7 +10,7 @@ from path import *
 ===================
 """
 class Outline:
-    def __init__(self, points, children=None, offsetparent=None):
+    def __init__(self, name, points, children={}, offsetparent=None):
         """
         points:         list of (x, y) coordinates, in EPSG:3857 (meters)
         children:       a list of Outline Objects
@@ -21,6 +21,7 @@ class Outline:
         self.ycord = [i[1] for i in points]
         self.xmax, self.xmin = max(self.xcord), min(self.xcord)
         self.ymax, self.ymin = max(self.ycord), min(self.ycord)
+        self.name = name
         
         #define basic polygon information in shapely objects, necesary for executing Shapely functions
         self.points = [Point(i[0], i[1]) for i in points]
@@ -30,12 +31,18 @@ class Outline:
         self.centroid = self.polygon.centroid
         self.area = self.polygon.area / 1000**2 #KM^2
 
-        #Define children
+        #Check if children are contained in
         if children:
             for c in children:
                 if not c.polygon.within(self.polygon):
                     raise AssertionError("The children are not fully contained in the overall polygon.")
-        self.children = children
+
+        #Populate children in a hashmap
+        self.children = {}
+        if children:
+            for c in children:
+                self.children[c.name] = c
+        
         self.offsetparent = offsetparent
 
     def poly_offset(self, offset):
@@ -47,7 +54,7 @@ class Outline:
         newpoly = self.polygon.buffer(-offset, quad_segs=3)
         x, y = newpoly.exterior.xy
         coord_set = [(x[i], y[i]) for i in range(len(x))]
-        return Outline(coord_set, offsetparent=self)
+        return Outline('offset', coord_set, offsetparent=self)
 
     def extrapolate_line(self, point: Point, slope):
         """Construct a line from a point and a slope, then extend a line to the maximum boundry of the polygon.
@@ -224,7 +231,6 @@ class Outline:
     """
     def show_children(self):
         """Output points of children"""
-        
         for c in self.children:
             print(c.points)
 
@@ -235,9 +241,7 @@ class Outline:
         """
         if not isinstance(child, Outline):
             raise ValueError("input must be an Outline object")
-        if self.children is None:
-            self.children = []
-        self.children.append(child)
+        self.children[child.name] = child
     
     def remove_child(self, child):
         """Removes a child from the polygon's list of children
@@ -249,8 +253,5 @@ class Outline:
         if self.children is None:
             print("There are no children to remove.")
         else:
-            for i in range(len(self.children)):
-                if self.children[i] == child:
-                    self.children = self.children.splice(i, i)
-                    break
+            self.children.pop(child.name)
         

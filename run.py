@@ -25,7 +25,7 @@ def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert =
     if children:
         children = [Outline(gcs2pcs_batch(child)) for child in children]
     
-    outline = Outline(coords, children=children)
+    outline = Outline('outline', coords, children=children)
     offset_outline = outline.poly_offset(disp_diam / 2)
     
     print(outline.children)
@@ -68,12 +68,14 @@ path = generate_path(eg2, 2, 0.1, vis=True) """
 path = generate_path(eg3, 3, 9, vis=True)
 """
 
-""" eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
-path = generate_path(eg4, 1.5, 0.2, vis=True)
+"""
+eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
+path = generate_path(eg4, 1.5, 0.2, vis=False)
 
 # values = [random.randint(6,10) for i in range(63)]
 values = generate_height_values(63, 10, 30)
-show3DPath(path, values) """
+show3DPath(path, values)
+"""
 
 """ lake1 =[
       [
@@ -94,12 +96,17 @@ show3DPath(path, values) """
       ]
     ] """
 
+
 with open('coordinates.csv', 'r') as csvfile:
     next(csvfile)
     csv_reader = csv.reader(csvfile)
     coords = [(row[0], row[1]) for row in csv_reader]
     
+
 path = generate_path(coords, 5000, 1, vis=True)
+values = generate_height_values(63, 10, 30)
+show3DPath(path, values)
+
 
 
 
