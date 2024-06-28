@@ -144,6 +144,16 @@ def break_line(line: LineString) -> list[LineString]:
     coords = list(line.coords)
     return [LineString([coords[i], coords[i+1]]) for i in range(len(coords)-1)]
 
+def check_continuity(lines: list[LineString]):
+    """check if the list of lines are continuous
+    
+    lines: a list of LineStrings to be checked
+    """
+    count = 1
+    for i in range(1, len(lines)-1):
+        assert lines[i-1].boundary.geoms[1] == lines[i].boundary.geoms[0], f"line{i-1} and line{i} are not continuous"
+        count += 1
+    return True
 
 
 """
@@ -180,7 +190,7 @@ def extract_coords(shape: Point|MultiPoint|LineString) -> list[tuple]:
     assert isinstance(shape, (Point, MultiPoint, LineString)), "input must be a Point, MultiPoint, or LineString object"
     
     if isinstance(shape, Point):
-        return (shape.x, shape.y)
+        return [(shape.x, shape.y)]
     if isinstance(shape, MultiPoint):
         return [(pt.x, pt.y) for pt in shape.geoms]
     if isinstance(shape, LineString):
@@ -220,39 +230,6 @@ def pcs2gcs_batch(coords):
     but input is a whole list of EPSG:3857 coordinates
     """
     return [pcs2gcs(pt[0], pt[1]) for pt in coords]
-
-def pcs_reset(coords: list[list|tuple]):
-    """Transforms the EPSG:3857 coordinates so all coordinates in 'coords' are positive.
-    Returns 1) the transformed set of coords,
-    and     2) a transformation function that takes in the all-positive coordinates
-               and gives the original EPSG:3857 coordinates
-               
-    coords: a list of iterables with coordinates in EPSG:3857
-    """
-    x_transform, y_transform = 0, 0
-    min_xval = min([pt[0] for pt in coords])
-    min_yval = min([pt[1] for pt in coords])
-    
-    if min_xval < 0:
-        updated_x = [(pt[0] + abs(min_xval) + 10, pt[1]) for pt in coords]
-        x_transform = min_xval + 10
-    else:
-        updated_x = coords
-    if min_yval < 0:
-        updated_x = [(pt[0], pt[1] + abs(min_yval) + 10) for pt in updated_x]
-        y_transform = min_yval + 10
-    else:
-        updated_y = updated_x
-    final_transformed = updated_y
-    
-    def trans_constructor(deltax, deltay):
-        def trans(transformed):
-            """Inverses the custom transformation"""
-            inv_trans_coords = [(pt[0] + deltax, pt[1] + deltay) for pt in transformed]
-            return inv_trans_coords
-        return trans
-    
-    return final_transformed, trans_constructor(x_transform, y_transform)
 
 
 

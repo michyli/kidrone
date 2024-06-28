@@ -10,12 +10,11 @@ from path import *
 ===================
 """
 class Outline:
-    def __init__(self, points, children=None, offsetparent=None, rev_func=None):
+    def __init__(self, points, children=None, offsetparent=None):
         """
         points:         list of (x, y) coordinates, in EPSG:3857 (meters)
         children:       a list of Outline Objects
         offsetparent:   an Outline object. If self is a polygon offsetted from another, it shows its parent here.
-        rev_func:       a callable, a reverse function to reverse coordinate from previous shift.
         """
         #Initialize basic polygon information from given points
         self.xcord = [i[0] for i in points]
@@ -23,25 +22,21 @@ class Outline:
         self.xmax, self.xmin = max(self.xcord), min(self.xcord)
         self.ymax, self.ymin = max(self.ycord), min(self.ycord)
         
-        #Define reverse function to unshift the coordinates
-        self.rev_func = rev_func
-        
         #define basic polygon information in shapely objects, necesary for executing Shapely functions
         self.points = [Point(i[0], i[1]) for i in points]
         self.ring = LinearRing(tuple(self.points))
         self.polygon = Polygon(tuple(self.points))
+        
         self.centroid = self.polygon.centroid
+        self.area = self.polygon.area / 1000**2 #KM^2
 
         #Define children
         if children:
             for c in children:
-                if not c.within(self.polygon):
+                if not c.polygon.within(self.polygon):
                     raise AssertionError("The children are not fully contained in the overall polygon.")
         self.children = children
         self.offsetparent = offsetparent
-        
-        #Define reverse function to shift coordinate back, if it was re-zeroed at any point.
-        self.rev_func = rev_func
 
     def poly_offset(self, offset):
         """Returns an offsetted polygon as an Outline object.
@@ -52,7 +47,7 @@ class Outline:
         newpoly = self.polygon.buffer(-offset, quad_segs=3)
         x, y = newpoly.exterior.xy
         coord_set = [(x[i], y[i]) for i in range(len(x))]
-        return Outline(coord_set, rev_func=self.rev_func, children=self.children, offsetparent=self)
+        return Outline(coord_set, offsetparent=self)
 
     def extrapolate_line(self, point: Point, slope):
         """Construct a line from a point and a slope, then extend a line to the maximum boundry of the polygon.
@@ -101,9 +96,10 @@ class Outline:
             intersection_points = sorted(intersection_points, key=lambda pt: pt[1])
         else:
             intersection_points = sorted(intersection_points, key=lambda pt: pt[0])
+        
         return LineString(intersection_points) if len(intersection_points) >= 2 else Point(intersection_points[0])
 
-    def swath_gen(self, interval, slope, invert = False, show_baseline = False, _F_single_point = False, _R_single_point = False):
+    def swath_gen(self, interval, slope, invert = False, _F_single_point = False, _R_single_point = False):
         """Generates evenly spaced swath lines based on a baseline.
         The baseline is a line that passes through the centroid with the input slope.
         Returns a complete path, which is a list of LineStrings
@@ -142,31 +138,31 @@ class Outline:
             opp_slope = -(1 / slope)
         
         #generate baseline
-        #* baseline is extrapolated to the minimum bounding box that is slanted according to the desired slope of the baseline
+        #* This method finds the minimum bounding box of the polygon in the direction of the baseline, and find max and min point baseline can extend to.
         #* this implementation will ensure that no corners of the mapped area are left out in the constructed path (essentially addressing for edge cases)
         proj_pt = []
         baseline = self.extrapolate_line(self.centroid, slope)
         for point in self.points:
-            proj_pt.append(pt_to_line(point, baseline))
-        rightmostpoint = [max(proj_pt, key=lambda pt: pt.x)]
-        leftmostpoint = [min(proj_pt, key=lambda pt: pt.x)]
-        if slope > 0:
-            max_point = max(rightmostpoint, key=lambda pt: pt.y)
-            min_point = min(leftmostpoint, key=lambda pt: pt.y)
+            proj_pt.append(pt_to_line(point, baseline)) #project all vertices of polygon onto the extrapolated line
+        #find the points on either end of the extrapolated line
+        if slope == "vertical":
+            topmostpoint = [max(proj_pt, key=lambda pt: pt.y)]
+            bottommostpoint = [min(proj_pt, key=lambda pt: pt.y)]
+            
+            baseline = LineString([topmostpoint[0], bottommostpoint[0]])
         else:
-            max_point = min(rightmostpoint, key=lambda pt: pt.y)
-            min_point = max(leftmostpoint, key=lambda pt: pt.y)
+            rightmostpoint = [max(proj_pt, key=lambda pt: pt.x)]
+            leftmostpoint = [min(proj_pt, key=lambda pt: pt.x)]
+            if slope > 0:
+                max_point = max(rightmostpoint, key=lambda pt: pt.y)
+                min_point = min(leftmostpoint, key=lambda pt: pt.y)
+            else:
+                max_point = min(rightmostpoint, key=lambda pt: pt.y)
+                min_point = max(leftmostpoint, key=lambda pt: pt.y)
                         
-        baseline = LineString([line_intersection(self.centroid, slope, min_point, opp_slope), line_intersection(self.centroid, slope, max_point, opp_slope)])
-        inter_points = split_line(baseline, interval)
+            baseline = LineString([line_intersection(self.centroid, slope, min_point, opp_slope), line_intersection(self.centroid, slope, max_point, opp_slope)])
         
-        #Visualizing Baseline
-        if show_baseline:
-            """
-            for i in inter_points:
-                plt.plot(i.x, i.y, 'ko', ms=4, alpha=0.2)
-            """
-            plt.plot([baseline.boundary.geoms[0].x, baseline.boundary.geoms[1].x], [baseline.boundary.geoms[0].y, baseline.boundary.geoms[1].y], 'ko:', ms=4, alpha=0.2)           
+        inter_points = split_line(baseline, interval) #generate evenly spaced points on the baseline           
         
         #Generate swath if it intersects with the polygon.
         swath = [self.extrapolate_line(i, opp_slope) for i in inter_points if self.ring.intersects(self.extrapolate_line(i, opp_slope))]
@@ -211,14 +207,17 @@ class Outline:
             complete_path.insert(0, first_line)
         if _R_single_point:
             last_line = LineString([swath[-1].boundary.geoms[1], last_point])
-            complete_path.insert(-1, last_line)
-            
+            complete_path.append(last_line)
+
         #Break multi-point swath into multiple 2-point LineStrings
         final_path = []
         for line in complete_path:
             final_path.extend(break_line(line))
+
+        check_continuity(final_path)
         
         return Path(final_path, self, opp_slope)
+
 
     """
     === Children Manipulation ===
@@ -236,6 +235,8 @@ class Outline:
         """
         if not isinstance(child, Outline):
             raise ValueError("input must be an Outline object")
+        if self.children is None:
+            self.children = []
         self.children.append(child)
     
     def remove_child(self, child):
@@ -245,8 +246,11 @@ class Outline:
         """
         if not isinstance(child, Outline):
             raise ValueError("input must be an Outline object")
-        for i in range(len(self.children)):
-            if self.children[i] == child:
-                self.children = self.children.splice(i, i)
-                break
+        if self.children is None:
+            print("There are no children to remove.")
+        else:
+            for i in range(len(self.children)):
+                if self.children[i] == child:
+                    self.children = self.children.splice(i, i)
+                    break
         

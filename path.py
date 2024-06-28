@@ -63,7 +63,9 @@ class Path:
         """
         map = []
         for line in self.path:
-            if not np.isclose(line_slope(line), self.swath_slope, rtol=1e-05, atol=1e-08, equal_nan=False):
+            if type(line_slope(line)) != type(self.swath_slope):
+                map.append(False)
+            elif not np.isclose(line_slope(line), self.swath_slope, rtol=1e-05, atol=1e-08, equal_nan=False):
             #If the slope doesn't match the swath slope, then the line is a intermediate line that connects the swath, hence not a dispersing line.
                 map.append(False)
             elif not self.parent.polygon.buffer(1e-8).contains(line):

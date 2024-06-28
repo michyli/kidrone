@@ -1,7 +1,8 @@
-from polygoncreate import *
+from outline import *
 from graph import *
 from basic_functions import *
 import random
+import csv
 
 """
 ============================
@@ -9,7 +10,7 @@ import random
 ============================
 """
 
-def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert = False) -> Path:
+def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert = False, children:list=None) -> Path:
     """
     A compacted set of commands to generate a function based on all the necessary informations
     
@@ -19,14 +20,22 @@ def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert =
     vis:            True for visualization of path
     invert:         True to show inverted path with same swath
     """
-    coords, func = pcs_reset(gcs2pcs_batch(points))
-    outline = Outline(coords, rev_func=func)
+
+    coords = gcs2pcs_batch(points)
+    if children:
+        children = [Outline(gcs2pcs_batch(child)) for child in children]
+    
+    outline = Outline(coords, children=children)
     offset_outline = outline.poly_offset(disp_diam / 2)
+    
+    print(outline.children)
     
     #plot polygon
     showpoly([outline, offset_outline])
     
-    path = offset_outline.swath_gen(disp_diam, baseline_slope, invert, show_baseline=True)
+    path = offset_outline.swath_gen(disp_diam, baseline_slope, invert)
+    path.airtime_disp()
+    print(f"Covering area of {round(outline.area, 2)} KM^2")
     
     #Visualization
     if vis:
@@ -46,9 +55,8 @@ def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert =
 
 #Quadualateral
 """ eg1 = [(12, 10), (20, 10), (20, 20), (10, 20)] 
-path = generate_path(eg1, 1, 1, vis=True)
-path.airtime_disp()
-"""
+path = generate_path(eg1, 1, "vertical", vis=True) """
+
 
 #Hexalateral
 """ eg2 = [(5, 9), (30, 6), (40, 20), (35, 37), (27, 41), (12, 30)]
@@ -60,7 +68,6 @@ path = generate_path(eg2, 2, 0.1, vis=True) """
 path = generate_path(eg3, 3, 9, vis=True)
 """
 
-
 """ eg4 = [(20, 10), (36, 19), (50, 15), (55, 22), (60, 38), (40, 40), (30, 50), (20, 43), (27, 30), (21, 20)] #More complicated shape
 path = generate_path(eg4, 1.5, 0.2, vis=True)
 
@@ -68,23 +75,36 @@ path = generate_path(eg4, 1.5, 0.2, vis=True)
 values = generate_height_values(63, 10, 30)
 show3DPath(path, values) """
 
-""" eg5 = [[-120.1833426, 47.7411704],[
-        -119.9911309, 47.7651762],[
-        -119.8758039, 47.8979308],[
-        -119.6671169, 47.9935979],[
-        -119.3321193, 48.0193242],[
-        -118.9861382, 48.0119751],[
-        -118.9559335, 47.9089783],[
-        -118.5605266, 47.8776708],[
-        -118.4982865, 47.7294713],[
-        -118.7728747, 47.4980293],[
-        -119.1188558, 47.2152152],[
-        -119.9645873, 47.1648199],[
-        -120.2748719, 47.4404731],[
-        -120.181512, 47.7387076],[
-        -120.1833426, 47.7411704]]
-path = generate_path(eg5, 1000, 1, vis=True)
-path.airtime_disp() """
+""" lake1 =[
+      [
+        -119.3234427,
+        47.6949743
+      ],
+      [
+        -119.3014756,
+        47.349989
+      ],
+      [
+        -118.9774616,
+        47.52462
+      ],
+      [
+        -119.3069674,
+        47.6949743
+      ]
+    ] """
+
+with open('coordinates.csv', 'r') as csvfile:
+    next(csvfile)
+    csv_reader = csv.reader(csvfile)
+    coords = [(row[0], row[1]) for row in csv_reader]
+    
+path = generate_path(coords, 5000, 1, vis=True)
+
+
+
+
+
 
 
 #Demonstrates what the returned data type looks like (list of LineString object)

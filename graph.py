@@ -1,4 +1,4 @@
-from polygoncreate import *
+from outline import *
 
 """
 An aggregation of all graphing functions
@@ -20,8 +20,12 @@ def showpoly(polygons:list[Outline]):
         polygon: a list of Outline objects
         """
         fig, ax = plt.subplots()
+        graphed = list(polygons)
         for polys in polygons:
-            xx, yy = polys.polygon.exterior.xy
+            if polys.children:
+                graphed.extend(polys.children)       
+        for graph in graphed:      
+            xx, yy = graph.polygon.exterior.xy
             ax.plot(xx, yy, 'o-.', ms=4)      
         
         ax.set_title("Full Coverage Drone Flight Path")

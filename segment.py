@@ -31,7 +31,7 @@ class Segment:
         self.length = line.length / 1000 #KM
         
         #@property definition
-        self.time = _time
+        self.time = _time #hours
 
     @property
     def time(self):
@@ -44,22 +44,26 @@ class Segment:
         if any(i is None for i in [self.prev_velo, self.curr_velo, self.next_velo]):
             raise ValueError("all velocities need to be assigned before time can be determined.")
         
-        #determine starting velocity and acceleration time
+        #determine starting velocity of the initial acc/deeleration
         if self.prev_angle:
             init_velo = (self.prev_velo + self.curr_velo) / 2 if self.prev_angle <= 90 else 0
         else:
             init_velo = self.prev_velo
-        init_time = (2 * self.parent.turn_dist) / (init_velo + self.curr_velo)
-        
-        #determine ending velocit and acceleration time
+        #determine ending velocity of the initial acc/deeleration
         if self.next_angle:
             end_velo = (self.curr_velo + self.next_velo) / 2 if self.next_angle <= 90 else 0
         else:
             end_velo = self.next_velo
-        end_time = (2 * self.parent.turn_dist) / (self.curr_velo + end_velo)
         
-        #determine time to cover constant velocity
-        curr_time = (self.length - 2 * self.parent.turn_dist) / self.curr_velo
+        if self.length > 2 * self.parent.turn_dist:
+            #determine the acc/deceleration time
+            init_time = (2 * self.parent.turn_dist) / (init_velo + self.curr_velo)
+            end_time = (2 * self.parent.turn_dist) / (self.curr_velo + end_velo)
+            #determine constant velocity time
+            curr_time = (self.length - 2 * self.parent.turn_dist) / self.curr_velo
+            
+            tot_time = init_time + end_time + curr_time
+        else:
+            tot_time = (2 * self.length) / (self.prev_velo + self.next_velo)  
         
-        tot_time = init_time + end_time + curr_time
         self.__time = tot_time #hours
