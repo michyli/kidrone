@@ -6,10 +6,14 @@ class Path:
     """
     Path class processes the path object and extracts information about the path.
     """
-    def __init__(self, path: list[LineString], parent, swath_slope, start_velo=0, end_velo=0, _disp_map=[], _pathlength=None, _airtime=None):
+    def __init__(self, path: list[LineString], parent, swath_slope, start_velo=0, end_velo=0,
+                 _disp_map=[], _pathlength=None, _airtime=None):
         """      
-        path:   a list of LineStrings. Usually the output of generate_path() function
-        parent: the polygon object the path belongs to
+        path:           a list of LineStrings. Usually the output of generate_path() function
+        parent:         the polygon object the path belongs to
+        swath_slope:    the slope of the swath lines of this path instance
+        start_velo:     starting velocity of this path, static (0) by default
+        end_velo:     ending velocity of this path, static (0) by default
         """
         self.path = path
         self.parent = parent
@@ -30,7 +34,6 @@ class Path:
         """
         self.disp_velo = 100 #KM/h
         self.nondisp_velo = 200 #KM/h
-        self.default_turn_velo = 50 #%, max percentage of current velocity the drone can travel when performing a 90 degree turn
         self.turn_dist = 0.1 #KM, minimum distance for drone to accelerate or decelerate to disp_velo
         
         #@property definition
@@ -50,6 +53,7 @@ class Path:
         
     @property
     def disp_map(self):
+        #set disp_map as an attribute
         return self._disp_map
     
     @disp_map.setter
@@ -76,6 +80,7 @@ class Path:
         
     @property
     def pathlength(self):
+        #set pathlength as an attribute
         return self.__pathlength
     
     @pathlength.setter
@@ -83,7 +88,7 @@ class Path:
         """Returns the length of path in KM
         Note that the point coordinates in self.path are in unit of longtitude and latitude.
         """
-        self.__pathlength = sum([linestring_dist(line) for line in self.path])
+        self.__pathlength = sum([line.length for line in self.path]) / 1000
     
     @property
     def airtime(self):
@@ -92,43 +97,31 @@ class Path:
     @airtime.setter
     def airtime(self, value):
         """Returns the projected airtime when executing the given path"""
-        def mapper(index):
+        def velo_mapper(index):
             """Returns the velocity of the segment depending on whether 
             the number 'index' path in self.path is a dispersing of non-dispersing path.
+            e.g. mapper(2) -> 'dispersing_velocity' if the 3rd line in self.path is a dispersing path, 'nondispersing_velocity' if not.
             """
             return self.disp_velo if self.disp_map[index] else self.nondisp_velo
-                
-        def angle_to_velo(line1, line2, velo1):
-            """Returns the turning velocity given two consecutive LineStrings
-            Assuming linear acc/deceleration -> Drone slows down to self.default_turn_velo if turning 90 degrees,
-            and fully stops if turning 180 degrees. Assume acc/deceleration as a linear function in between.
-            
-            velo1: velocity of the drone before changing travel direction
-            """
-            #! NEED CHANGE line_angle() function changed and the output angle is defined differently
-            delta_angle = line_angle(line1, line2)-90
-            if delta_angle == 90:
-                return self.default_turn_velo
-            if delta_angle > 90:
-                return velo1 * self.default_turn_velo + (delta_angle-90) * ((velo1 - velo1 * self.default_turn_velo) / 90)
-            if delta_angle < 90:
-                return velo1 * self.default_turn_velo + (delta_angle-90) * ((velo1 * self.default_turn_velo) / 90)
-        
+                       
         #Construct each LineString into Segment instances
         airtime_list = []
-        for index, line in enumerate(self.path):
+        for index in range(len(self.path)):
             if index == 0:
-                #define the first line of the path
-                airtime_list.append(Segment(self.path[0], self, self.start_velo, mapper(0), angle_to_velo(self.path[0], self.path[1], mapper(0))))
+                #define the first segment of the path
+                airtime_list.append(Segment(self.path[0], self, self.start_velo, velo_mapper(0), velo_mapper(1),
+                                            prev_angle=None, next_angle=line_angle(self.path[0], self.path[1])))
                 continue
             if index == len(self.path)-1:
-                #define the last line of the path
-                airtime_list.append(Segment(self.path[-1], self, angle_to_velo(self.path[-2], self.path[-1], mapper(-2)), mapper(-1), self.end_velo))
+                #define the last segment of the path
+                airtime_list.append(Segment(self.path[-1], self, velo_mapper(-2), velo_mapper(-1), self.end_velo,
+                                            prev_angle=line_angle(self.path[-2], self.path[-1]), next_angle=None))
                 continue
-            start_turn_velo = angle_to_velo(self.path[index-1], line, mapper(index-1))
-            end_turn_velo = angle_to_velo(line, self.path[index+1], mapper(index))
-            airtime_list.append(Segment(line, self, start_turn_velo, mapper(index), end_turn_velo))
-
+            #define all the segments in between
+            airtime_list.append(Segment(self.path[index], self, velo_mapper(index-1), velo_mapper(index), velo_mapper(index+1),
+                                        prev_angle=line_angle(self.path[index-1], self.path[index]), next_angle=line_angle(self.path[index], self.path[index+1])))
+        
+        #compute total path time from all segment instances
         tot_hour = sum([seg.time for seg in airtime_list])
         
         self.__airtime = tot_hour

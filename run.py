@@ -22,16 +22,18 @@ def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert =
     coords, func = pcs_reset(gcs2pcs_batch(points))
     outline = Outline(coords, rev_func=func)
     offset_outline = outline.poly_offset(disp_diam / 2)
+    
+    #plot polygon
     showpoly([outline, offset_outline])
     
-    #path = offset_outline.swath_gen(disp_diam, baseline_slope, invert, show_baseline=True)
+    path = offset_outline.swath_gen(disp_diam, baseline_slope, invert, show_baseline=True)
     
     #Visualization
-    """ if vis:
-        showswath(path)"""
+    if vis:
+        showswath(path)
     plt.show()
         
-    #return path
+    return path
     
     
 """
@@ -81,7 +83,8 @@ show3DPath(path, values) """
         -120.2748719, 47.4404731],[
         -120.181512, 47.7387076],[
         -120.1833426, 47.7411704]]
-path = generate_path(eg5, 20, 1, vis=True) """
+path = generate_path(eg5, 1000, 1, vis=True)
+path.airtime_disp() """
 
 
 #Demonstrates what the returned data type looks like (list of LineString object)

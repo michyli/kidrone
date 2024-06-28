@@ -218,7 +218,6 @@ class Outline:
         for line in complete_path:
             final_path.extend(break_line(line))
         
-        print(np.array(final_path))
         return Path(final_path, self, opp_slope)
 
     """

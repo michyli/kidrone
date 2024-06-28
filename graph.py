@@ -17,7 +17,6 @@ An aggregation of all graphing functions
 
 def showpoly(polygons:list[Outline]):
         """Plots all polygons in the list 'polygons'
-        
         polygon: a list of Outline objects
         """
         fig, ax = plt.subplots()

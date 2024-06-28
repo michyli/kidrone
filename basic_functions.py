@@ -13,6 +13,23 @@ They are very helpful to manipulate Shapely datatypes and vectors to gear toward
 """
 
 """
+======================
+=== Vector Related ===
+======================
+"""
+def normalizeVec(x, y):
+    """Normalize a vector (x, y)"""
+    
+    if x == 0:
+        assert y != 0, "Zero vector cannot be normalized"
+    if y == 0:
+        assert x != 0, "Zero vector cannot be normalized"
+    
+    norm = 1 / np.sqrt(x ** 2 + y ** 2)
+    return x * norm, y * norm
+
+
+"""
 ==========================
 === LineString Related ===
 ==========================
@@ -53,7 +70,8 @@ def line_angle(line1: LineString, line2: LineString):
     vec2n = normalizeVec(vec2[0], vec2[1])
 
     angle = np.rad2deg(np.arccos(np.dot(vec1n, vec2n)))
-    return angle
+    #Range of arccos() is (0, pi) or (0, 180)
+    return angle  
 
 def line_intersection(point1: Point, slope1, point2: Point, slope2):
     """Finds the point of intersection between two straight lines given the point and slope of both lines.
@@ -81,17 +99,6 @@ def line_intersection(point1: Point, slope1, point2: Point, slope2):
     x = (b2 - b1) / (slope1 - slope2)
     y = slope1 * x + b1
     return Point([x, y])
-
-def normalizeVec(x, y):
-    """Normalize a vector (x, y)"""
-    
-    if x == 0:
-        assert y != 0, "Zero vector cannot be normalized"
-    if y == 0:
-        assert x != 0, "Zero vector cannot be normalized"
-    
-    norm = 1 / np.sqrt(x ** 2 + y ** 2)
-    return x * norm, y * norm
 
 def split_line(line: LineString, interval) -> list[Point]:
     """Splits a line into equal distances
@@ -137,23 +144,6 @@ def break_line(line: LineString) -> list[LineString]:
     coords = list(line.coords)
     return [LineString([coords[i], coords[i+1]]) for i in range(len(coords)-1)]
 
-#! CHANGE TO USE PYPLOT
-def linestring_dist(line: LineString):
-    """Returns the distance in KM given a LineString (with geographic coordinates) as input
-    LineString should be a 2-point LineString
-    
-    The more accurate calculation involves Haversin Formula.
-    But for the purpose here, a rough estimate is sufficient.
-    """
-    assert isinstance(line, LineString), "input line should be a LineString object"
-    assert len(line.coords) == 2, "the input LineString should have 2 points only"
-    
-    # 1° of latitude is always 111.32 km
-    dx = (line.coords[1][0] - line.coords[0][0]) * 111.32
-    # 1° of longitude is 40075 km * cos(latitude) / 360
-    dy = 40075 * np.cos((line.coords[1][1] - line.coords[0][1])) / 360
-    length = np.sqrt(dx**2 + dy**2)
-    return length
 
 
 """
@@ -272,5 +262,5 @@ def pcs_reset(coords: list[list|tuple]):
 ===============================
 """
 def disp_time(hour):
-    """Convert inputed hours to the format of hour:minute"""
-    return f"{round(hour//1, 0)} hours, {round(hour%1*60, 0)} minutes"
+    """Convert inputed hours to the format of day:hour:minute"""
+    return f"This path is projected to take {int(hour//24)} days, {int(hour%24//1)} hours, and {round(hour%1*60, 1)} minutes"

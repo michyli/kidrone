@@ -10,7 +10,8 @@ class Segment:
     This stored information is necessary to calculate airtime as there will be an acceleration / deceleration
     curve at the start and end of each path.
     """
-    def __init__(self, line, parent, _prev_velo=None, _curr_velo=None, _next_velo=None, _time=None):
+    def __init__(self, line, parent, prev_velo=None, curr_velo=None, next_velo=None, prev_angle=None, next_angle=None,
+                 _time=None):
         """
         line: a LineString object that contains the coordinates of the line
         parent: the parent Path object 'line' belongs to
@@ -20,11 +21,14 @@ class Segment:
         """
         self.line = line
         self.parent = parent
-        self.prev_velo = _prev_velo
-        self.curr_velo = _curr_velo
-        self.next_velo = _next_velo
         
-        self.length = linestring_dist(line)
+        self.prev_velo = prev_velo
+        self.curr_velo = curr_velo
+        self.next_velo = next_velo
+        self.prev_angle = prev_angle
+        self.next_angle = next_angle
+        
+        self.length = line.length / 1000 #KM
         
         #@property definition
         self.time = _time
@@ -36,22 +40,26 @@ class Segment:
     @time.setter
     def time(self, value):
         """Gives the time it takes to cover this path, with acceleration / deceleration taken into consideration """
+        #double check if all velocities are assigned
         if any(i is None for i in [self.prev_velo, self.curr_velo, self.next_velo]):
             raise ValueError("all velocities need to be assigned before time can be determined.")
         
-        if self.length >= 2 * self.parent.turn_dist:
-            start_acc_time = (self.curr_velo ** 2 - self.prev_velo ** 2) / self.parent.turn_dist
-            const_velo_time = (self.length - (2 * self.parent.turn_dist)) / self.curr_velo
-            end_dec_time = (self.next_velo ** 2 - self.curr_velo ** 2) / self.parent.turn_dist
-            tot_time = start_acc_time + const_velo_time + end_dec_time
+        #determine starting velocity and acceleration time
+        if self.prev_angle:
+            init_velo = (self.prev_velo + self.curr_velo) / 2 if self.prev_angle <= 90 else 0
         else:
-            if self.prev_velo == self.next_velo:
-                tot_time = self.length / self.prev_velo
-            elif self.prev_velo > self.next_velo:
-                const_velo_time = (self.length - self.parent.turn_dist) / self.prev_velo
-                end_dec_time = (self.next_velo ** 2 - self.prev_velo ** 2) / self.parent.turn_dist
-                tot_time = const_velo_time + end_dec_time
-            else:
-                tot_time = (self.next_velo ** 2 - self.prev_velo ** 2) / self.length
+            init_velo = self.prev_velo
+        init_time = (2 * self.parent.turn_dist) / (init_velo + self.curr_velo)
         
-        self.__time = tot_time
+        #determine ending velocit and acceleration time
+        if self.next_angle:
+            end_velo = (self.curr_velo + self.next_velo) / 2 if self.next_angle <= 90 else 0
+        else:
+            end_velo = self.next_velo
+        end_time = (2 * self.parent.turn_dist) / (self.curr_velo + end_velo)
+        
+        #determine time to cover constant velocity
+        curr_time = (self.length - 2 * self.parent.turn_dist) / self.curr_velo
+        
+        tot_time = init_time + end_time + curr_time
+        self.__time = tot_time #hours
