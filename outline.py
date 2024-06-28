@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
 from basic_functions import *
 from path import *

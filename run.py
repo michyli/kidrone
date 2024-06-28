@@ -20,28 +20,30 @@ def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert =
     vis:            True for visualization of path
     invert:         True to show inverted path with same swath
     """
-
     coords = gcs2pcs_batch(points)
     if children:
         children = [Outline(gcs2pcs_batch(child)) for child in children]
     
     outline = Outline('outline', coords, children=children)
     offset_outline = outline.poly_offset(disp_diam / 2)
-    
-    print(outline.children)
-    
-    #plot polygon
-    showpoly([outline, offset_outline])
-    
     path = offset_outline.swath_gen(disp_diam, baseline_slope, invert)
-    path.airtime_disp()
-    print(f"Covering area of {round(outline.area, 2)} KM^2")
     
-    #Visualization
-    if vis:
-        showswath(path)
-    plt.show()
+    #graphing
+    fig = plt.figure(figsize=(12, 8))
+    fig.suptitle("Full Coverage Drone Flight Path", fontsize=16)
+    
+    ax1 = fig.add_subplot(1, 2, 1)
+    ax2 = fig.add_subplot(1, 2, 2, projection='3d')
+    
+    path.path_disp(ax1)   #plot path
+    path.airtime_disp()   #print airtime
+    path.coverage_disp()  #print coverage
         
+    values = generate_height_values(63, 10, 30)
+    show3DPath(ax2, path, ("height", values))
+    
+    fig.tight_layout()
+    plt.show()
     return path
     
     
@@ -102,10 +104,7 @@ with open('coordinates.csv', 'r') as csvfile:
     csv_reader = csv.reader(csvfile)
     coords = [(row[0], row[1]) for row in csv_reader]
     
-
-path = generate_path(coords, 5000, 1, vis=True)
-values = generate_height_values(63, 10, 30)
-show3DPath(path, values)
+path = generate_path(coords, 100, 1, vis=True)
 
 
 

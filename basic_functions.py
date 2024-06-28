@@ -234,10 +234,12 @@ def pcs2gcs_batch(coords):
 
 
 """
-===============================
-=== Running Program Related ===
-===============================
+==============
+=== Others ===
+==============
 """
 def disp_time(hour):
     """Convert inputed hours to the format of day:hour:minute"""
     return f"This path is projected to take {int(hour//24)} days, {int(hour%24//1)} hours, and {round(hour%1*60, 1)} minutes"
+
+

@@ -1,6 +1,7 @@
 import numpy as np
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
 from segment import *
+from graph import *
 
 class Path:
     """
@@ -128,6 +129,40 @@ class Path:
         
         self.__airtime = tot_hour
     
+    """
+    ===============
+    === Display ===
+    ===============
+    """
+    
+    def path_disp(self, ax):
+        """Plots the complete path
+        full_path:  a Path object. the .path attribute extracts the list of LineString that makes the Path object
+        ax:         The axes to plot on
+        """
+        related_polys = [self.parent]
+        if self.parent.offsetparent:
+            related_polys.append(self.parent.offsetparent)
+        showpoly(ax, related_polys)
+        for lines in self.path:
+            start, end = lines.coords[0], lines.coords[1]
+            xx, yy = [start[0], end[0]], [start[1], end[1]]
+            ax.plot(xx, yy, 'go-', ms=6, linewidth=2.5)
+            
+        ax.set_title("2D Aerial View")
+        ax.set_xlabel("x (m)")
+        ax.set_ylabel("y (m)")
+        ax.xaxis.set_major_locator(plt.MaxNLocator(2))
+        ax.yaxis.set_major_locator(plt.MaxNLocator(2))
+        ax.set_aspect('equal', adjustable="box")
+        return ax
+    
     def airtime_disp(self):
         time_disp = disp_time(self.airtime)
         print(time_disp)
+        
+    def coverage_disp(self):
+        if self.parent.offsetparent:
+            print(f"Covering area of {round(self.parent.offsetparent.area, 2)} KM^2")
+        else:
+            print(f"Covering area of {round(self.parent.area, 2)} KM^2")
