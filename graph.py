@@ -31,6 +31,7 @@ def showpoly(polygons:list[Outline]):
         ax.set_title("Full Coverage Drone Flight Path")
         ax.set_xlabel("y (meters)")
         ax.set_ylabel("x (meters)")
+        ax.set_aspect('equal', adjustable="box")
         
 def showswath(full_path):     
     """Plots the complete swath
