@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from pyproj import Transformer
 from shapely.geometry import LineString, Point, MultiPoint, Polygon
 import random
+import csv
 
 """
 ======================
@@ -214,6 +215,13 @@ def extract_coords(shape: Point|MultiPoint|LineString) -> list[tuple]:
     if isinstance(shape, LineString):
         return [(pt[0], pt[1]) for pt in shape.coords]
 
+def csv2coords(csvfile):
+    """extract coordinate from a .csv file"""
+    with open(csvfile, 'r') as csvfile:
+        next(csvfile)
+        csv_reader = csv.reader(csvfile)
+        coords = [(row[0], row[1]) for row in csv_reader]
+    return coords
 
 
 """

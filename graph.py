@@ -19,6 +19,29 @@ def showpoly(ax, polygons, label=None, color=None):
         ax.plot(xx, yy, '-.', color=color, label=label, ms=4)
         return ax
 
+def showpath(path):
+    """plot all relevant information about the path
+    path: a Path instance
+    """
+    fig1 = plt.figure(figsize=(16, 8))
+    fig1.suptitle("Full Coverage Drone Flight Path", fontsize=16)
+    ax1 = fig1.add_subplot(1, 3, 1)
+    ax2 = fig1.add_subplot(1, 3, 2, projection='3d')
+    ax3 = fig1.add_subplot(1, 3, 3)
+    
+    path.path_disp(ax1)       #plot path
+    path.airtime_print()      #print airtime
+    path.coverage_print()     #print coverage
+    path.length_print()       #print path length
+    
+    heights = arbit_list(len(path.path), 10, 30)
+    velocity = [seg.curr_velo for seg in path.segment_list]
+    show3DPath(ax2, path, ("height", heights))
+    path.coverage_disp(ax3)   #plot coverage
+    
+    plt.tight_layout()
+    plt.show()
+
 def showprojection(ax, full_path):
     """
     Plots the baseline and field projection on the XY plane.
