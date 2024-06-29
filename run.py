@@ -12,7 +12,8 @@ from optimization import *
             [-119.3069674, 47.6949743]] """
   
 
-points = csv2coords("coordinates.csv")
-pathlist = path_list_constructor(points, 100)
-optimized_path = optimizer(pathlist, shortest_airtime())
-showpath(optimized_path)
+points = csv2coords("coordinates.csv")                      #extract coords from coordinates.csv file
+disp_diam = 100                                             #meters
+pathlist = path_list_constructor(points, disp_diam)         #construct a list of path to iterate over
+optimized_path = optimizer(pathlist, shortest_airtime())    #calculates the optimized path
+showpath(optimized_path)                                    #show the optimized path
