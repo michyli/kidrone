@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pyproj import Transformer
 from shapely.geometry import LineString, Point, MultiPoint, Polygon
+import random
 
 """
 ======================
@@ -255,7 +256,7 @@ def pcs2gcs_batch(coords):
 === Others ===
 ==============
 """
-def randnum_list(num, min, max):
+def arbit_list(num, min, max):
     """
     Function used for generating test data for show3DPath
 

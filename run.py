@@ -1,7 +1,6 @@
 from outline import *
 from graph import *
 from basic_functions import *
-import random
 import csv
 
 """
@@ -41,7 +40,7 @@ def generate_path(points: list, disp_diam, baseline_slope, vis = False, invert =
       path.coverage_print()     #print coverage
       path.length_print()       #print path length
       
-      heights = randnum_list(len(path.path), 10, 30)
+      heights = arbit_list(len(path.path), 10, 30)
       velocity = [seg.curr_velo for seg in path.segment_list]
       show3DPath(ax2, path, ("height", heights))
       path.coverage_disp(ax3)   #plot coverage
