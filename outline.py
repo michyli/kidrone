@@ -222,11 +222,13 @@ class Outline:
 
         check_continuity(final_path)
         
-        return Path(final_path, self, opp_slope)
+        return Path(final_path, self, interval, opp_slope)
 
 
     """
-    === Children Manipulation ===
+    ===========================
+    === Children Management ===
+    ===========================
     """
     def show_children(self):
         """Output points of children"""

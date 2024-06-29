@@ -7,81 +7,42 @@ from basic_functions import *
 """
 An aggregation of all graphing functions
 """
-def showpoly(ax, polygons):
-        """Plots all polygons in the list 'polygons'
-
+def showpoly(ax, polygons, label=None, color=None):
+        """Plots polygon
         ax:         The axes to plot on
-        polygon:    a list of Outline objects
+        polygon:    an Outline objects to be graphed
         """
-        graphed = list(polygons)
-        for polys in polygons:
-            if polys.children:
-                graphed.extend(polys.children)       
-        for graph in graphed:      
-            xx, yy = graph.polygon.exterior.xy
-            ax.plot(xx, yy, 'o-.', ms=4)
+        if polygons.children:
+            for child in polygons.children:
+                showpoly(ax, child, color="darkcyan")
+     
+        xx, yy = polygons.polygon.exterior.xy
+        ax.plot(xx, yy, '-.', color=color, label=label, ms=4)
         return ax
-
-def showPolyAndPath(polygon, full_path, polys = None):
-        """Plots the polygon, with the option to plot additional polygon on the same plot
-        
-        polygon: main Outline object
-        poly: a list of child Outline objects that will be plotted onto 'polygon'
-
-        example execution of plotting one polygon
-        >>> points = [(10, 10), (30, 10), (10, 30)]
-        >>> tri = Outline(points)
-        >>> tri.showpoly()
-        
-        example execution of plotting more than one polygon
-        >>> points_2 = [(10, 10), (30, 10), (10, 40), (15, 30)]
-        >>> quad = Outline(points_2)
-        >>> new_tri = tri.poly_offset(1)
-        >>> tri.showpoly([new_tri, quad])
-        """
-        x, y = list(polygon.xcord), list(polygon.ycord)
-        x.append(x[0])
-        y.append(y[0])
-        fig, ax = plt.subplots()
-        ax.plot(x, y, "ro-.", ms=4)
-        
-        #Plotting additional polygons if there are any
-        if polys:
-            for poly in polys:
-                x, y = list(poly.xcord), list(poly.ycord)
-                x.append(x[0])
-                y.append(y[0])
-                plt.plot(x, y, "ro:", ms=4)    
-        
-        plt.title("Full Coverage Drone Flight Path")
-        plt.xlabel("Latitude")
-        plt.ylabel("Longtitude")
-        buffer = 0.2 * max(polygon.xmax - polygon.xmin, polygon.ymax - polygon.ymin)
-        plt.xlim(min(polygon.xmin, polygon.ymin) - buffer, max(polygon.xmax, polygon.ymax) + buffer)
-        plt.ylim(min(polygon.xmin, polygon.ymin) - buffer, max(polygon.xmax, polygon.ymax) + buffer)
-
-        # plotting path
-        showswath(full_path)
-
-        # plotting baseline
-        plt.plot([polygon.baseline.boundary.geoms[0].x, 
-                 polygon.baseline.boundary.geoms[1].x], 
-                 [polygon.baseline.boundary.geoms[0].y, 
-                 polygon.baseline.boundary.geoms[1].y], 
-                 'ko:', ms=4, alpha=0.2)
 
 def showprojection(ax, full_path):
     """
-    Plots the baseline on the XY plane.
+    Plots the baseline and field projection on the XY plane.
     
     ax: The 3D axis object to plot on.
     full_path: a Path object. The .path attribute extracts the list of LineString that makes the Path object.
     """
+    #plot projected path
     for lines in full_path.path:
         start, end = lines.coords[0], lines.coords[1]
         xx, yy = [start[0], end[0]], [start[1], end[1]]
         zz = [0, 0]  # Baseline at z=0
         ax.plot(xx, yy, zz, 'k--', ms=4, linewidth=1)
+    
+    #plot field outline
+    if full_path.parent.offsetparent:
+        x1, y1 = full_path.parent.offsetparent.polygon.exterior.xy
+        ax.plot(x1, y1, 0, color="teal", linestyle="-.")
+        x2, y2 = full_path.parent.polygon.exterior.xy
+        ax.plot(x2, y2, 0, color="paleturquoise", linestyle=":")
+    else:
+        x1, y1 = full_path.parent.polygon.exterior.xy
+        ax.plot(x1, y1, 0, color="teal", linestyle=":")
 
 def show3DPath(ax, full_path, z_values):
     """
@@ -91,6 +52,7 @@ def show3DPath(ax, full_path, z_values):
     values: an iterable (e.g., list, numpy array) with the same length as the number of lines in Path.
             Can represent velocity, height, etc.
     """
+    #Determine what the z-parameter is
     name, z_val = z_values[0], z_values[1]
     
     # Plot each LineString with its start and end points at the correct height
@@ -114,17 +76,3 @@ def show3DPath(ax, full_path, z_values):
     ax.zaxis.set_major_locator(plt.MaxNLocator(4))
     ax.set_zlabel(f'{name} ({"KM/h" if name=="velocity" else "m"})')
     ax.set_box_aspect((2,2,1.5))
-
-def generate_height_values(num_lines, min_height=10, max_height=50):
-    """
-    Function used for generating test data for show3DPath
-
-    Generate a list of tuples representing heights for each line segment.
-    
-    num_lines: The number of LineString objects.
-    min_height: The minimum height value.
-    max_height: The maximum height value.
-    """
-    heights = np.linspace(min_height, max_height, num_lines)
-    values = [(heights[i], heights[i+1]) for i in range(len(heights)-1)]
-    return values

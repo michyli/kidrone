@@ -7,8 +7,7 @@ class Path:
     """
     Path class processes the path object and extracts information about the path.
     """
-    def __init__(self, path: list[LineString], parent, swath_slope, start_velo=0, end_velo=0,
-                 _disp_map=[], _pathlength=None, _airtime=None):
+    def __init__(self, path: list[LineString], parent, disp_diam, swath_slope, start_velo=0, end_velo=0):
         """      
         path:           a list of LineStrings. Usually the output of generate_path() function
         parent:         the polygon object the path belongs to
@@ -18,6 +17,7 @@ class Path:
         """
         self.path = path
         self.parent = parent
+        self.disp_diam = disp_diam
         self.swath_slope = swath_slope
         
         #Assuming drone starts from and ends on static
@@ -36,11 +36,11 @@ class Path:
         self.disp_velo = 100 #KM/h
         self.nondisp_velo = 200 #KM/h
         self.turn_dist = 0.1 #KM, minimum distance for drone to accelerate or decelerate to disp_velo
-        
-        #@property definition
-        self.disp_map = _disp_map
-        self.pathlength = _pathlength
-        self.airtime = _airtime
+
+        self.disp_map = self.disp_map_setter()
+        self.pathlength = self.pathlength_setter()
+        self.segment_list = self.segment_list_setter()
+        self.airtime = self.airtime_setter()
         
     def offset_path(self, wind_dir, height, seed_weight):
         """Returns an offsetted path based on the wind direction, drone height, and seed weight.
@@ -51,21 +51,108 @@ class Path:
         """
         #TODO: need to be completed
         pass
-        
-    @property
-    def disp_map(self):
-        #set disp_map as an attribute
-        return self._disp_map
     
-    @disp_map.setter
-    def disp_map(self, value):
+    """
+    ===============
+    === Display ===
+    ===============
+    """
+    def path_disp(self, ax):
+        """Plots the complete path
+        full_path:  a Path object. the .path attribute extracts the list of LineString that makes the Path object
+        ax:         The axes to plot on
+        """
+        showpoly(ax, self.parent, color="lightcyan")
+        if self.parent.offsetparent:
+            showpoly(ax, self.parent.offsetparent, label="Field Outline", color="teal")
+        
+        label_helper_disp = False       #Create tracking variable so only 1 label appears on legend
+        label_helper_nondisp = False
+        for i, lines in enumerate(self.path):
+            start, end = lines.coords[0], lines.coords[1]
+            xx, yy = [start[0], end[0]], [start[1], end[1]]
+            if i == 0:
+                #store starting point
+                x_s, y_s = lines.boundary.geoms[0].x, lines.boundary.geoms[0].y
+            if i == len(self.path) - 1:
+                #store ending point
+                x_e, y_e = lines.boundary.geoms[1].x, lines.boundary.geoms[1].y
+            if self.disp_map[i]:
+                if label_helper_disp:
+                    ax.plot(xx, yy, 'go-', ms=6, linewidth=2.5)
+                else:
+                    ax.plot(xx, yy, 'go-', label='dispersing', ms=6, linewidth=2.5)
+                    label_helper_disp = True
+            else:
+                if label_helper_nondisp:
+                    ax.plot(xx, yy, 'bo-', ms=6, linewidth=2.5)
+                else:
+                    ax.plot(xx, yy, 'bo-', label='non-dispersing', ms=6, linewidth=2.5)
+                    label_helper_nondisp = True
+        #Plot starting and ending points
+        ax.plot(x_s, y_s, label="Start", ms=12, marker="*", mec="darkgoldenrod", mfc="goldenrod")    
+        ax.plot(x_e, y_e, label="End", ms=8, marker="8", mec="firebrick", mfc="lightcoral")
+        
+        ax.set_title("2D Aerial View")
+        ax.set_xlabel("x (m)")
+        ax.set_ylabel("y (m)")
+        ax.xaxis.set_major_locator(plt.MaxNLocator(2))
+        ax.yaxis.set_major_locator(plt.MaxNLocator(2))
+        ax.set_aspect('equal', adjustable="box")
+        ax.legend()
+        return ax
+    
+    def coverage_disp(self, ax):
+        """displays the coverage of the path along with the area to be covered.
+        """
+        if self.parent.offsetparent:
+            showpoly(ax, self.parent, label="Field Offset", color="paleturquoise")
+            showpoly(ax, self.parent.offsetparent, label="Field Outline", color="teal")
+        else:
+            showpoly(ax, self.parent, label="Field Outline", color="teal")
+        merged_path = merge_line(self.path)
+        coverage = merged_path.buffer(self.disp_diam / 2, quad_segs=3)
+        x, y = coverage.exterior.xy
+        ax.fill(x, y, color="salmon", alpha=0.3)
+        
+        ax.set_title(f"2D Coverage\n({self.disp_diam}m Dispersion Diameter)")
+        ax.set_xlabel("x (m)")
+        ax.set_ylabel("y (m)")
+        ax.xaxis.set_major_locator(plt.NullLocator())
+        ax.yaxis.set_major_locator(plt.NullLocator())
+        ax.set_aspect('equal', adjustable="box")
+        ax.legend()
+
+    def airtime_print(self):
+        time_disp = disp_time(self.airtime)
+        print(time_disp)
+    
+    def coverage_print(self):
+        if self.parent.offsetparent:
+            print(f"This path covers an area of {round(self.parent.offsetparent.area, 2)} KM^2")
+        else:
+            print(f"This path covers an area of {round(self.parent.area, 2)} KM^2")
+            
+    def length_print(self):
+        print(f"This path is {round(self.pathlength, 2)} KM long.")
+    
+    """
+    ========================
+    === Attribute Setter ===
+    ========================    
+    """
+    def disp_map_setter(self) -> list[bool]:
         """Determines the max velocity of each corresponding Segment within the Path within the Polygon.
         Note that lines that connects the swath are not dispersing lines.
         """
         map = []
         for line in self.path:
-            if type(line_slope(line)) != type(self.swath_slope):
+            if (line_slope(line) == "vertical" and self.swath_slope != "vertical"):
                 map.append(False)
+            elif (line_slope(line) != "vertical" and self.swath_slope == "vertical"):
+                map.append(False)
+            elif (line_slope(line) == "vertical" and self.swath_slope == "vertical"):
+                map.append(True)
             elif not np.isclose(line_slope(line), self.swath_slope, rtol=1e-05, atol=1e-08, equal_nan=False):
             #If the slope doesn't match the swath slope, then the line is a intermediate line that connects the swath, hence not a dispersing line.
                 map.append(False)
@@ -79,26 +166,15 @@ class Path:
                     map.append(False)
             else:
                 map.append(True)
-        self._disp_map = map
+        return map
         
-    @property
-    def pathlength(self):
-        #set pathlength as an attribute
-        return self.__pathlength
-    
-    @pathlength.setter
-    def pathlength(self, value):
+    def pathlength_setter(self):
         """Returns the length of path in KM
         Note that the point coordinates in self.path are in unit of longtitude and latitude.
         """
-        self.__pathlength = sum([line.length for line in self.path]) / 1000
-    
-    @property
-    def airtime(self):
-        return self.__airtime
-    
-    @airtime.setter
-    def airtime(self, value):
+        return sum([line.length for line in self.path]) / 1000
+
+    def segment_list_setter(self) -> list[Segment]:
         """Returns the projected airtime when executing the given path"""
         def velo_mapper(index):
             """Returns the velocity of the segment depending on whether 
@@ -124,45 +200,9 @@ class Path:
             airtime_list.append(Segment(self.path[index], self, velo_mapper(index-1), velo_mapper(index), velo_mapper(index+1),
                                         prev_angle=line_angle(self.path[index-1], self.path[index]), next_angle=line_angle(self.path[index], self.path[index+1])))
         
+        return airtime_list
+
+    def airtime_setter(self):
         #compute total path time from all segment instances
-        tot_hour = sum([seg.time for seg in airtime_list])
-        
-        self.__airtime = tot_hour
-    
-    """
-    ===============
-    === Display ===
-    ===============
-    """
-    
-    def path_disp(self, ax):
-        """Plots the complete path
-        full_path:  a Path object. the .path attribute extracts the list of LineString that makes the Path object
-        ax:         The axes to plot on
-        """
-        related_polys = [self.parent]
-        if self.parent.offsetparent:
-            related_polys.append(self.parent.offsetparent)
-        showpoly(ax, related_polys)
-        for lines in self.path:
-            start, end = lines.coords[0], lines.coords[1]
-            xx, yy = [start[0], end[0]], [start[1], end[1]]
-            ax.plot(xx, yy, 'go-', ms=6, linewidth=2.5)
-            
-        ax.set_title("2D Aerial View")
-        ax.set_xlabel("x (m)")
-        ax.set_ylabel("y (m)")
-        ax.xaxis.set_major_locator(plt.MaxNLocator(2))
-        ax.yaxis.set_major_locator(plt.MaxNLocator(2))
-        ax.set_aspect('equal', adjustable="box")
-        return ax
-    
-    def airtime_disp(self):
-        time_disp = disp_time(self.airtime)
-        print(time_disp)
-        
-    def coverage_disp(self):
-        if self.parent.offsetparent:
-            print(f"Covering area of {round(self.parent.offsetparent.area, 2)} KM^2")
-        else:
-            print(f"Covering area of {round(self.parent.area, 2)} KM^2")
+        tot_hour = sum([seg.time for seg in self.segment_list])
+        return tot_hour

@@ -37,11 +37,9 @@ def normalizeVec(x, y):
 def line_slope(line: LineString):
     """Returns the slope of a LineString based on the boundary of the LineString"""
     assert isinstance(line, LineString), "input should be a LineString object"
-    np.seterr(divide='ignore', invalid='ignore') #Ignore the warning of 0 division -> it is already accounted for by the except statement
-    
-    try:
+    if (line.boundary.geoms[1].x - line.boundary.geoms[0].x) != 0:
         slope = (line.boundary.geoms[1].y - line.boundary.geoms[0].y) / (line.boundary.geoms[1].x - line.boundary.geoms[0].x)
-    except ZeroDivisionError:
+    else:
         slope = "vertical"
     return slope
 
@@ -144,6 +142,25 @@ def break_line(line: LineString) -> list[LineString]:
     coords = list(line.coords)
     return [LineString([coords[i], coords[i+1]]) for i in range(len(coords)-1)]
 
+def merge_line(linelist: list[LineString]):
+    """Merge a list of continuous 2-point LineStrings into one single multi-point LineString
+    Returns a single LineString object
+    """
+    coords = []
+    start_coord = None
+    for line in linelist:
+        firstpoint = line.boundary.geoms[0]
+        secondpoint = line.boundary.geoms[1]
+        if not start_coord:
+            coords.append(firstpoint)
+            coords.append(secondpoint)
+            start_coord = secondpoint
+        else:
+            assert firstpoint == start_coord, "Lines are not continuous"
+            coords.append(secondpoint)
+            start_coord = secondpoint
+    return LineString(coords)            
+
 def check_continuity(lines: list[LineString]):
     """check if the list of lines are continuous
     
@@ -238,6 +255,20 @@ def pcs2gcs_batch(coords):
 === Others ===
 ==============
 """
+def randnum_list(num, min, max):
+    """
+    Function used for generating test data for show3DPath
+
+    Generate a list of tuples representing heights for each line segment.
+    
+    num_lines: The number of LineString objects.
+    min_height: The minimum height value.
+    max_height: The maximum height value.
+    """
+    heights = np.linspace(min, max, num)
+    values = [(heights[i], heights[i+1]) for i in range(len(heights)-1)]
+    return values
+
 def disp_time(hour):
     """Convert inputed hours to the format of day:hour:minute"""
     return f"This path is projected to take {int(hour//24)} days, {int(hour%24//1)} hours, and {round(hour%1*60, 1)} minutes"
