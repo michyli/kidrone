@@ -12,6 +12,8 @@ For running the code:
 
 * [Shapely](https://pypi.org/project/shapely/)
 
+* [pyproj](https://pyproj4.github.io/pyproj/stable/index.html)
+
 For development:
 
 * [pytest](https://docs.pytest.org/en/8.2.x/) (for unit tests)
@@ -23,6 +25,8 @@ For development:
 
 * [vscode-pdf](https://marketplace.visualstudio.com/items?itemName=tomoki1207.pdf) (Enables PDF viewing in VS Code for pdf files in the repo)
 
+* [Rainbow CSV](https://marketplace.visualstudio.com/items?itemName=mechatroner.rainbow-csv) (Highlights different columns in .csv files)
+
 ## Instructions
 1. Clone this repo
 ```bash
@@ -32,7 +36,8 @@ git clone https://github.com/michyli/kidrone.git
 ```bash
 pip install -r requirements.txt
 ```
-3. Test using the run.py file
+3. Generate coordinates from [here](https://www.keene.edu/campus/maps/tool/), and paste them into *coordinates.csv*
+4. Test using the run.py file
 ## Structures
 Below explains the structure of the algorithm
 <!-- TODO: Need to be Completed -->
