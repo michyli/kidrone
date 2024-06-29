@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from pyproj import Transformer
-from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
+from shapely.geometry import LineString, Point, MultiPoint, Polygon
 
 """
 ======================

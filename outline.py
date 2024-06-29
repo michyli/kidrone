@@ -1,4 +1,3 @@
-import numpy as np
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
 from basic_functions import *
 from path import *
@@ -9,7 +8,7 @@ from path import *
 ===================
 """
 class Outline:
-    def __init__(self, name, points, children={}, offsetparent=None):
+    def __init__(self, name:str, points, children={}, offsetparent=None):
         """
         points:         list of (x, y) coordinates, in EPSG:3857 (meters)
         children:       a list of Outline Objects

@@ -2,6 +2,13 @@
 
 This is an algorithm that generates the optimal flight path for a drone over a terrain with given constrains.
 
+- [KiDrone Drone Path Planning](#kidrone-drone-path-planning)
+  - [Requirements](#requirements)
+  - [Recommended Extensions](#recommended-extensions)
+  - [Instructions](#instructions)
+  - [Structures](#structures)
+  - [Credits](#credits)
+
 ## Requirements
 
 For running the code:
@@ -29,18 +36,30 @@ For development:
 
 ## Instructions
 1. Clone this repo
-```bash
+```
 git clone https://github.com/michyli/kidrone.git
 ```
 2. Install the required libraries
-```bash
+```
 pip install -r requirements.txt
 ```
-3. Generate coordinates from [here](https://www.keene.edu/campus/maps/tool/), and paste them into *coordinates.csv*
-4. Test using the run.py file
+3. cd into the directory of the repo
+```
+cd kidrone
+```
+4. Generate coordinates from [here](https://www.keene.edu/campus/maps/tool/), and paste them into *coordinates.csv*
+<br>
+5. Test using the run.py file
+```
+py run.py
+```
+```
+python3 run.py
+```
+
 ## Structures
 Below explains the structure of the algorithm
 <!-- TODO: Need to be Completed -->
 
-## Credits ##
-This repository contains the work of Michael Li, Jason Lee, and KiDrone. Do not use or reference the contents of this repository without properly crediting its author.
+## Credits
+This repository contains the work of *Michael Li*, *Jason Lee*, and *KiDrone*. Do not use or reference the contents of this repository without properly crediting its author.

@@ -1,5 +1,4 @@
-import numpy as np
-from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
+from basic_functions import *
 from segment import *
 from graph import *
 
@@ -102,6 +101,10 @@ class Path:
         ax.legend()
         return ax
     
+    def coverage(self) -> Polygon:
+        linepath = merge_line(self.path)
+        return linepath.buffer(self.disp_diam / 2, quad_segs=3)
+    
     def coverage_disp(self, ax):
         """displays the coverage of the path along with the area to be covered.
         """
@@ -110,9 +113,7 @@ class Path:
             showpoly(ax, self.parent.offsetparent, label="Field Outline", color="teal")
         else:
             showpoly(ax, self.parent, label="Field Outline", color="teal")
-        merged_path = merge_line(self.path)
-        coverage = merged_path.buffer(self.disp_diam / 2, quad_segs=3)
-        x, y = coverage.exterior.xy
+        x, y = self.coverage().exterior.xy
         ax.fill(x, y, color="salmon", alpha=0.3)
         
         ax.set_title(f"2D Coverage\n({self.disp_diam}m Dispersion Diameter)")
@@ -128,13 +129,15 @@ class Path:
         print(time_disp)
     
     def coverage_print(self):
-        if self.parent.offsetparent:
-            print(f"This path covers an area of {round(self.parent.offsetparent.area, 2)} KM^2")
-        else:
-            print(f"This path covers an area of {round(self.parent.area, 2)} KM^2")
+        covered_area = self.coverage().area / 1000**2
+        poly = self.parent.offsetparent if self.parent.offsetparent else self.parent
+        covered_area_desired = self.coverage().intersection(poly.polygon).area / 1000**2 #KM^2
+        perc = covered_area_desired / poly.area * 100
+        print(f"This path covers {round(covered_area_desired,2)} KM^2 within the field of {round(poly.area,2)} KM^2 ({round(perc,2)}%)")
             
     def length_print(self):
         print(f"This path is {round(self.pathlength, 2)} KM long.")
+        
     
     """
     ========================

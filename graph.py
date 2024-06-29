@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
 from basic_functions import *
 
 """
