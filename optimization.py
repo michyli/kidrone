@@ -33,7 +33,7 @@ def generate_path(points: list, disp_diam, baseline_slope, invert = False, child
 ====== Optimization ======
 ==========================
 """
-def path_list_constructor(coords, disp_diam, init_slope=-10, end_slope=10, num_path=50):
+def path_list_constructor(coords, disp_diam, init_slope=-10, end_slope=10, num_path=20):
     """construct a list of path to iterate through"""
     pathlist = []
     for slope in np.linspace(init_slope, end_slope, num_path):
@@ -41,6 +41,8 @@ def path_list_constructor(coords, disp_diam, init_slope=-10, end_slope=10, num_p
         path_inv = generate_path(coords, disp_diam, slope, invert=True)
         pathlist.append(path_uninv)
         pathlist.append(path_inv)
+    pathlist.append(generate_path(coords, disp_diam, "vertical", invert=False))
+    pathlist.append(generate_path(coords, disp_diam, "vertical", invert=True))
     return pathlist
 
 def optimizer(pathlist, op_func):
