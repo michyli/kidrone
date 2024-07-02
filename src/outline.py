@@ -1,6 +1,6 @@
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
-from basic_functions import *
-from path import *
+from src.basic_functions import *
+from src.path import *
 
 """
 ===================
@@ -8,7 +8,7 @@ from path import *
 ===================
 """
 class Outline:
-    def __init__(self, name:str, points, children={}, offsetparent=None):
+    def __init__(self, name:str, points, children=[], offsetparent=None):
         """
         points:         list of (x, y) coordinates, in EPSG:3857 (meters)
         children:       a list of Outline Objects
@@ -28,20 +28,18 @@ class Outline:
         
         self.centroid = self.polygon.centroid
         self.area = self.polygon.area / 1000**2 #KM^2
+        
+        self.offsetparent = offsetparent
 
-        #Check if children are contained in
-        if children:
-            for c in children:
-                if not c.polygon.within(self.polygon):
-                    raise AssertionError("The children are not fully contained in the overall polygon.")
-
-        #Populate children in a hashmap
         self.children = {}
+        #Populate children in a hashmap
         if children:
             for c in children:
                 self.children[c.name] = c
-        
-        self.offsetparent = offsetparent
+        #Check if children are contained in
+        for c in self.children:
+            if not c.polygon.within(self.polygon):
+                raise AssertionError("The children are not fully contained in the overall polygon.")
 
     def poly_offset(self, offset):
         """Returns an offsetted polygon as an Outline object.
@@ -55,7 +53,7 @@ class Outline:
         return Outline('offset', coord_set, offsetparent=self)
 
     def extrapolate_line(self, point: Point, slope):
-        """Construct a line from a point and a slope, then extend a line to the maximum boundry of the polygon.
+        """Construct a line from a point and a slope, then extend a line to the maximum boundary of the polygon.
         Returns the new extrapolated line as LineString object.
         
         point: a Point object that anchors the line
@@ -125,6 +123,7 @@ class Outline:
             swath: a list of LineStrings
             """
             def _dir(line):
+                """returns the direction (vector form) of the input line"""
                 start, end = line.boundary.geoms[0], line.boundary.geoms[1]
                 return np.array([end.x - start.x, end.y - start.y])
             base_direction = _dir(swath[0])

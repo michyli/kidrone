@@ -1,4 +1,4 @@
-from basic_functions import *
+from src.basic_functions import *
 
 class Segment:
     """

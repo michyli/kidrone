@@ -53,9 +53,6 @@ cd kidrone
 ```
 py run.py
 ```
-```
-python3 run.py
-```
 
 ## Structures
 Below explains the structure of the algorithm

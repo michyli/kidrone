@@ -1,6 +1,6 @@
-from outline import *
-from graph import *
-from basic_functions import *
+from src.outline import *
+from src.graph import *
+from src.basic_functions import *
 
 """
 ============================
@@ -33,7 +33,7 @@ def generate_path(points: list, disp_diam, baseline_slope, invert = False, child
 ====== Optimization ======
 ==========================
 """
-def path_list_constructor(coords, disp_diam, init_slope=-10, end_slope=10, num_path=20):
+def path_list_constructor(coords, disp_diam, init_slope=-10, end_slope=10, num_path=2):
     """construct a list of path to iterate through"""
     pathlist = []
     for slope in np.linspace(init_slope, end_slope, num_path):

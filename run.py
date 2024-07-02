@@ -1,4 +1,4 @@
-from optimization import *
+from src.optimization import *
 
 """
 =====================
@@ -12,8 +12,8 @@ from optimization import *
             [-119.3069674, 47.6949743]] """
   
 
-points = csv2coords("coordinates.csv")                      #extract coords from coordinates.csv file
-disp_diam = 50                                            #meters
+points = csv2coords("test_coordinates.csv")                 #extract coords from test_coordinates.csv file
+disp_diam = 50                                              #meters
 
 pathlist = path_list_constructor(points, disp_diam)         #construct a list of path to iterate over
 optimized_path = optimizer(pathlist, shortest_airtime())    #calculates the optimized path

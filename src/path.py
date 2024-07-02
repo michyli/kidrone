@@ -1,6 +1,6 @@
-from basic_functions import *
-from segment import *
-from graph import *
+from src.basic_functions import *
+from src.segment import *
+from src.graph import *
 
 class Path:
     """

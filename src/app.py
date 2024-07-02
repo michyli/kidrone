@@ -2,7 +2,7 @@ import matplotlib
 from flask import Flask, request, jsonify, render_template, send_from_directory, session
 import matplotlib.pyplot as plt
 import os
-from optimization import *
+from src.optimization import *
 import io
 import pandas as pd
 
