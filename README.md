@@ -48,7 +48,6 @@ pip install -r requirements.txt
 cd kidrone
 ```
 4. Generate coordinates from [here](https://www.keene.edu/campus/maps/tool/), and paste them into *coordinates.csv*
-  <br>
 5. Test using the run.py file
 ```
 py run.py
