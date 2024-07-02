@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Path Optimization</title>
+  </head>
+  <body>
+    <h1>Path Optimization Input</h1>
+    <form id="optimize-form" enctype="multipart/form-data">
+      <label for="csvFile">Upload CSV file:</label>
+      <input
+        type="file"
+        id="csvFile"
+        name="csvFile"
+        accept=".csv"
+      /><br /><br />
+      <label for="dispDiam">Display Diameter (meters):</label>
+      <input type="number" id="dispDiam" name="dispDiam" /><br /><br />
+      <button type="button" onclick="submitForm()">Run</button>
+    </form>
+    <div id="output">
+      <!-- Optimized path output will be displayed here -->
+    </div>
+    <div id="plot">
+      <!-- Plot will be displayed here -->
+    </div>
+    <div id="debug">
+      <!-- Debug information will be displayed here -->
+    </div>
+
+    <script>
+      function submitForm() {
+        const form = document.getElementById("optimize-form");
+        const formData = new FormData(form);
+
+        fetch("/optimize", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              document.getElementById("output").innerText = data.error;
+            } else {
+              document.getElementById("output").innerText = data.result;
+              const plotDiv = document.getElementById("plot");
+              plotDiv.innerHTML = ""; // Clear previous plot
+              const plot = document.createElement("img");
+              plot.src = `/static/${data.plot_path}`;
+              plotDiv.appendChild(plot);
+            }
+
+            const debugDiv = document.getElementById("debug");
+            debugDiv.innerHTML = "";
+            data.debug.forEach((line) => {
+              const p = document.createElement("p");
+              p.innerText = line;
+              debugDiv.appendChild(p);
+            });
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    </script>
+  </body>
+</html>
