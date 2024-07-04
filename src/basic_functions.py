@@ -131,16 +131,13 @@ def split_line(line: LineString, interval) -> list[Point]:
     return a list of Point objects
     """
     assert isinstance(line, LineString), "input line should be a LineString object"
-    print(line)
     num_div = line.length / interval
-    print(num_div)
     if num_div % 1 < 0.2 and num_div % 1 > 0:
         pass
     else:
         num_div += 1
     
     distances = np.linspace(0, line.length, int(num_div))
-    print(distances)
     points = [line.interpolate(distance) for distance in distances] + [line.boundary.geoms[-1]]
     if points[-1] == points[-2]:
         points.pop(-1)

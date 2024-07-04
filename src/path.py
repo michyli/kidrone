@@ -130,13 +130,16 @@ class Path:
         covered_area_desired = self.coverage().intersection(poly.polygon).area / 1000**2 #KM^2
         perc = covered_area_desired / poly.area * 100
         print(f"This path covers {round(covered_area_desired,2)} KM^2 within the field of {round(poly.area,2)} KM^2 ({round(perc,2)}%)")
+        return f"This path covers {round(covered_area_desired,2)} KM^2 within the field of {round(poly.area,2)} KM^2 ({round(perc,2)}%)"
 
     def airtime_print(self):
         time_disp = disp_time(self.airtime)
         print(time_disp)
+        return time_disp
             
     def length_print(self):
         print(f"This path is {round(self.pathlength, 2)} KM long.")
+        return f"This path is {round(self.pathlength, 2)} KM long."
         
     
     """
