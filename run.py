@@ -13,9 +13,10 @@ from src.optimization import *
   
 
 points = csv2coords("test_coordinates.csv")                 #extract coords from test_coordinates.csv file
-disp_diam = 50                                              #meters
+disp_diam = 10                                             #meters
 
-pathlist = path_list_constructor(points, disp_diam)         #construct a list of path to iterate over
+pathlist, runtime = path_list_constructor(points, disp_diam)#construct a list of path to iterate over
+print(f"runtime is {runtime}")
 optimized_path = optimizer(pathlist, shortest_airtime())    #calculates the optimized path
 showpath(optimized_path)                                    #show the optimized path
 

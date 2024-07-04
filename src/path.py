@@ -41,7 +41,7 @@ class Path:
         self.segment_list = self.segment_list_setter()
         self.airtime = self.airtime_setter()
         
-    def offset_path(self, wind_dir, height, seed_weight):
+    def path_offset(self, wind_dir, height, seed_weight):
         """Returns an offsetted path based on the wind direction, drone height, and seed weight.
         
         wind_dir:       a tuple containing the x and y components of the wind vector
@@ -124,16 +124,16 @@ class Path:
         ax.set_aspect('equal', adjustable="box")
         ax.legend()
 
-    def airtime_print(self):
-        time_disp = disp_time(self.airtime)
-        print(time_disp)
-    
     def coverage_print(self):
         covered_area = self.coverage().area / 1000**2
         poly = self.parent.offsetparent if self.parent.offsetparent else self.parent
         covered_area_desired = self.coverage().intersection(poly.polygon).area / 1000**2 #KM^2
         perc = covered_area_desired / poly.area * 100
         print(f"This path covers {round(covered_area_desired,2)} KM^2 within the field of {round(poly.area,2)} KM^2 ({round(perc,2)}%)")
+
+    def airtime_print(self):
+        time_disp = disp_time(self.airtime)
+        print(time_disp)
             
     def length_print(self):
         print(f"This path is {round(self.pathlength, 2)} KM long.")

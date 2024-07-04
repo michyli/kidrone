@@ -1,6 +1,7 @@
 from src.outline import *
 from src.graph import *
 from src.basic_functions import *
+import time
 
 """
 ============================
@@ -35,6 +36,8 @@ def generate_path(points: list, disp_diam, baseline_slope, invert = False, child
 """
 def path_list_constructor(coords, disp_diam, init_slope=-10, end_slope=10, num_path=2):
     """construct a list of path to iterate through"""
+    start_time = time.time()
+    
     pathlist = []
     for slope in np.linspace(init_slope, end_slope, num_path):
         path_uninv = generate_path(coords, disp_diam, slope, invert=False)
@@ -43,7 +46,11 @@ def path_list_constructor(coords, disp_diam, init_slope=-10, end_slope=10, num_p
         pathlist.append(path_inv)
     pathlist.append(generate_path(coords, disp_diam, "vertical", invert=False))
     pathlist.append(generate_path(coords, disp_diam, "vertical", invert=True))
-    return pathlist
+    
+    end_time = time.time()
+    runtime = end_time - start_time
+    
+    return pathlist, runtime
 
 def optimizer(pathlist, op_func):
     """returns and visualizes the path with minimal optimizing parameter"""

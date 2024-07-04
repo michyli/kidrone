@@ -8,17 +8,17 @@ from src.path import *
 ===================
 """
 class Outline:
-    def __init__(self, name:str, points, children=[], offsetparent=None):
+    def __init__(self, name:str, points:list, children=[], offsetparent=None):
         """
         points:         list of (x, y) coordinates, in EPSG:3857 (meters)
         children:       a list of Outline Objects
         offsetparent:   an Outline object. If self is a polygon offsetted from another, it shows its parent here.
         """
         #Initialize basic polygon information from given points
-        self.xcord = [i[0] for i in points]
-        self.ycord = [i[1] for i in points]
-        self.xmax, self.xmin = max(self.xcord), min(self.xcord)
-        self.ymax, self.ymin = max(self.ycord), min(self.ycord)
+        self.xcoord = [i[0] for i in points]
+        self.ycoord = [i[1] for i in points]
+        self.xmax, self.xmin = max(self.xcoord), min(self.xcoord)
+        self.ymax, self.ymin = max(self.ycoord), min(self.ycoord)
         self.name = name
         
         #define basic polygon information in shapely objects, necesary for executing Shapely functions
