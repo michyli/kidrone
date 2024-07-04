@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Map</title>
+    <script src="https://js.arcgis.com/4.21/"></script>
+    <style>
+      #viewDiv {
+        height: 100%;
+        width: 100%;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+    <script>
+      require(["esri/Map", "esri/views/MapView"], function (Map, MapView) {
+        var map = new Map({
+          basemap: "streets",
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [2.349014, 48.864716], // Longitude, Latitude of Paris
+          zoom: 12,
+        });
+      });
+    </script>
+  </body>
+</html>

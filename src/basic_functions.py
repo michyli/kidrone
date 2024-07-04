@@ -1,9 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from pyproj import Transformer
-from shapely.geometry import LineString, Point, MultiPoint, Polygon
+from shapely.geometry import LineString, Point, MultiPoint, Polygon, MultiPolygon
 import random
 import csv
+import geopandas as gpd
 
 """
 ======================
@@ -13,6 +14,23 @@ import csv
 Here is a list of general functions used in the rest of the algorithm.
 They are very helpful to manipulate Shapely datatypes and vectors to gear towards a general purpose.
 """
+
+"""
+===============================
+=== Shapely Polygon Related ===
+===============================
+"""
+def extractPolygons(multipolygon):
+    "Takes a shapely multipolygon instance and returns the individual polygons in a list"
+    polygons = []
+    if isinstance(multipolygon, MultiPolygon):
+        for polys in multipolygon.geoms:
+            polygons.append(polys)
+        return polygons
+    else:
+        print("The argument to function 'extractPolygons' is not a multipolygon")
+        return
+        
 
 """
 ======================
@@ -202,13 +220,19 @@ def pt_to_line(point: Point, line: LineString):
     P = u + n*np.dot(x - u, n) #datatype if np.array
     return Point([P[0], P[1]])
 
-def extract_coords(shape: Point|MultiPoint|LineString) -> list[tuple]:
+
+"""
+==============================
+=== Coordinates Extraction ===
+==============================
+"""
+def extract_coords(shape: Point|MultiPoint|LineString|Polygon) -> list[tuple]:
     """Extracts Shapely geometry (Point, MultiPoint, LineString) coordinates into a list of tuples.
     Returns the extracted list of coordinates
     
     shape: a Point, MultiPoint, or LineString object to be flattened
     """
-    assert isinstance(shape, (Point, MultiPoint, LineString)), "input must be a Point, MultiPoint, or LineString object"
+    assert isinstance(shape, (Point, MultiPoint, LineString, Polygon)), "input must be a Point, MultiPoint, LineString, or Polygon object"
     
     if isinstance(shape, Point):
         return [(shape.x, shape.y)]
@@ -216,6 +240,8 @@ def extract_coords(shape: Point|MultiPoint|LineString) -> list[tuple]:
         return [(pt.x, pt.y) for pt in shape.geoms]
     if isinstance(shape, LineString):
         return [(pt[0], pt[1]) for pt in shape.coords]
+    if isinstance(shape, Polygon):
+        return [(x, y) for x, y in zip(shape.exterior.xy[0], shape.exterior.xy[1])]
 
 def csv2coords(csvfile):
     """extract coordinate from a .csv file"""
@@ -224,6 +250,34 @@ def csv2coords(csvfile):
         csv_reader = csv.reader(csvfile)
         coords = [(row[0], row[1]) for row in csv_reader]
     return coords
+
+def shp2coords(shapefile_path):
+    "Takes a path to a shapefile and returns a list of longitude and latitude coordinates, where each element is a polygon's coordinates"
+    "Reads in the coordinate system from the shapefile and converts it to "
+    # Example shapefile path
+    gdf = gpd.read_file(shapefile_path)
+
+    # Print the CRS
+    print("CRS:", gdf.crs)
+    print("\n")
+
+    #Get all the geometries in the geometry column
+    geometries = gdf['geometry']
+    #For each geometry make a list to store it's polygons
+    #Each element in the list is a list of polygons, representing the polygons of a geo
+    geo_poly_list = []
+    for geo in geometries:
+        polygons = extractPolygons(geo)
+        geo_poly_list.append(polygons)
+    #For each polygon extract the coordinates
+    coordinates = []
+    for poly_list in geo_poly_list:
+        for polygon in poly_list:
+            coordinates.append(extract_coords(polygon))
+    
+    transformed_coordinates = [bccs2gcs_batch(coord) for coord in coordinates]
+    #Convert to EPSG 3857 coordinates and return
+    return transformed_coordinates
 
 
 """
@@ -247,6 +301,15 @@ def pcs2gcs(x, y):
     lon, lat = transformer.transform(x,y)
     return lon, lat
 
+def bccs2pcs(x, y):
+    """Converts EPSG:3005 (meters) to EPSG:3857 (meters)
+    """
+    transformer = Transformer.from_crs("EPSG:3005", "EPSG:3857", always_xy=True)
+    x, y = transformer.transform(x, y)
+    if x == np.inf or y == np.inf:
+        raise ValueError("input should be in sequence of (Longtitude, Latitude), it may be currently reversed")
+    return x, y
+
 def gcs2pcs_batch(coords):
     """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
     but input is a whole list of EPSG:4326 coordinates
@@ -258,6 +321,12 @@ def pcs2gcs_batch(coords):
     but input is a whole list of EPSG:3857 coordinates
     """
     return [pcs2gcs(pt[0], pt[1]) for pt in coords]
+
+def bccs2gcs_batch(coords):
+    """Converts EPSG:3005 (meters) to EPSG:3875 (meters)
+    but input is a whole list of EPSG:3005 coordinates
+    """
+    return [bccs2pcs(pt[0], pt[1]) for pt in coords]
 
 
 
