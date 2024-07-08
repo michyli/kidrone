@@ -1,6 +1,7 @@
 from src.basic_functions import *
 from src.segment import *
 from src.graph import *
+import math
 
 class Path:
     """
@@ -48,8 +49,26 @@ class Path:
         height:         constant height the drone aims to travel at (m)
         seed_weight:    weight of the seed (kg)
         """
-        #TODO: need to be completed
-        pass
+        # Constants
+        g = 9.81  # Acceleration due to gravity (m/s^2)
+
+        # Time it takes for the seed to fall from the given height
+        fall_time = math.sqrt((2 * height) / g)
+        
+        # Wind displacement during the fall time
+        wind_displacement_x = wind_dir[0] * fall_time
+        wind_displacement_y = wind_dir[1] * fall_time
+        
+        # Offset the path by the wind displacement
+        offset_x = wind_displacement_x
+        offset_y = wind_displacement_y
+        
+        offset_path = []
+        for line in self.path:
+            offset_coords = [(x + offset_x, y + offset_y) for x, y in line.coords]
+            offset_path.append(LineString(offset_coords))
+
+        return offset_path
     
     """
     ===============
