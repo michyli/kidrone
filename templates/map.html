@@ -2,7 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Map</title>
+    <title>Map Interaction</title>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.21/esri/css/main.css"
+    />
     <script src="https://js.arcgis.com/4.21/"></script>
     <style>
       #viewDiv {
@@ -19,41 +23,6 @@
   </head>
   <body>
     <div id="viewDiv"></div>
-    <script>
-      require(["esri/Map", "esri/views/MapView"], function (Map, MapView) {
-        var map = new Map({
-          basemap: "streets",
-        });
-
-        var view = new MapView({
-          container: "viewDiv",
-          map: map,
-          center: [2.349014, 48.864716], // Longitude, Latitude of Paris
-          zoom: 12,
-        });
-
-        view.on("click", function (event) {
-          var lat = event.mapPoint.latitude;
-          var lon = event.mapPoint.longitude;
-          console.log("Latitude: " + lat + ", Longitude: " + lon);
-
-          // Send coordinates to server
-          fetch("/store-coords", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ latitude: lat, longitude: lon }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log("Success:", data);
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
-        });
-      });
-    </script>
+    <script src="/static/mapInteractions.js"></script>
   </body>
 </html>
