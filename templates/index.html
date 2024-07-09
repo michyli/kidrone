@@ -165,7 +165,7 @@
               const plotDiv = document.getElementById("plot");
               plotDiv.innerHTML = ""; // Clear previous plot
               const plot = document.createElement("img");
-              plot.src = /static/${data.plot_path};
+              plot.src = `/static/${data.plot_path}`;
               plotDiv.appendChild(plot);
 
               drawPathOnMap(data.best_path);
@@ -185,6 +185,7 @@
       }
 
       function drawPathOnMap(pathDetails) {
+        console.log("Drawing path with details:", pathDetails); // Debugging output
         require(["esri/Graphic"], function (Graphic) {
           pathDetails.forEach((segment) => {
             const polyline = {
@@ -194,11 +195,12 @@
                 [segment.end.longitude, segment.end.latitude],
               ],
             };
+            console.log("Polyline details:", polyline); // More detailed output
 
             const simpleLineSymbol = {
               type: "simple-line",
               color: [226, 119, 40], // Orange
-              width: 2,
+              width: 20, // Increased width for better visibility
             };
 
             const polylineGraphic = new Graphic({
