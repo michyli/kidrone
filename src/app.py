@@ -4,10 +4,11 @@ from flask import Flask, request, jsonify, render_template, send_from_directory,
 import matplotlib.pyplot as plt
 import os
 import io
-import pandas as pd
 import csv
 from optimization import construct_best_path, showpath
 from utils import csv2coords  # Use the new utils module
+from basic_functions import *
+import json
 
 app = Flask(__name__, template_folder='../templates',
             static_folder='../static')
@@ -70,7 +71,16 @@ def optimize():
     plt.close()
     debug_info.append(f"Saved plot to {plot_path}")
 
-    return jsonify({'result': 'Optimized path calculated. Check the plot.', 'plot_path': plot_filename, 'runtime': runtime, 'debug': debug_info})
+    # Assuming best_path.to_coordinates() returns coordinates in EPSG:3857
+    projected_coords = best_path.to_coordinates()
+
+    return jsonify({
+        'result': 'Optimized path calculated. Check the plot.',
+        'plot_path': plot_filename,
+        'runtime': runtime,
+        'best_path': projected_coords,
+        'debug': debug_info
+    })
 
 
 @app.route('/static/<path:filename>')

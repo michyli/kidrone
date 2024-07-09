@@ -1,7 +1,10 @@
+# src/path.py
+
 from basic_functions import *
 from segment import *
 from graph import *
 import math
+from shapely.geometry import LineString
 
 
 class Path:
@@ -10,7 +13,7 @@ class Path:
     """
 
     def __init__(self, path: list[LineString], parent, disp_diam, swath_slope, start_velo=0, end_velo=0):
-        """      
+        """
         path:           a list of LineStrings. Usually the output of generate_path() function
         parent:         the polygon object the path belongs to
         swath_slope:    the slope of the swath lines of this path instance
@@ -44,6 +47,34 @@ class Path:
         self.pathlength = self.pathlength_setter()
         self.segment_list = self.segment_list_setter()
         self.airtime = self.airtime_setter()
+
+    def to_coordinates(self):
+        """
+        Transforms projected coordinates to geographic coordinates and returns a detailed list of
+        dictionaries, each representing a line segment with its start and end geographic coordinates.
+        """
+        detailed_coords = []
+        coords_to_transform = []  # List to hold all coordinates for batch transformation
+
+        for line in self.path:
+            # Extract and collect all points for transformation
+            start_point = line.coords[0]
+            end_point = line.coords[-1]
+            coords_to_transform.extend([start_point, end_point])
+
+        # Convert all collected points from EPSG:3857 to EPSG:4326
+        transformed_coords = pcs2gcs_batch(coords_to_transform)
+
+        # Iterate over transformed coordinates in pairs (start, end)
+        for i in range(0, len(transformed_coords), 2):
+            start_geo = transformed_coords[i]
+            end_geo = transformed_coords[i + 1]
+            detailed_coords.append({
+                'start': {'latitude': start_geo[1], 'longitude': start_geo[0]},
+                'end': {'latitude': end_geo[1], 'longitude': end_geo[0]}
+            })
+
+        return detailed_coords
 
     def path_offset(self, wind_dir, height, seed_weight):
         """Returns an offsetted path based on the wind direction, drone height, and seed weight.

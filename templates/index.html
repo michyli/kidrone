@@ -16,11 +16,12 @@
         font-family: Arial, sans-serif;
       }
       #viewDiv {
-        width: 50%;
+        flex: 1;
         height: 100%;
+        min-width: 50%; /* Ensure it takes at least 50% of the width */
       }
       #controlDiv {
-        width: 50%;
+        flex: 1;
         padding: 20px;
         box-sizing: border-box;
         overflow-y: auto;
@@ -36,7 +37,6 @@
         display: block;
         margin: 10px 0 5px;
       }
-      input[type="file"],
       input[type="number"] {
         width: 100%;
         padding: 5px;
@@ -82,8 +82,72 @@
         <!-- Debug information will be displayed here -->
       </div>
     </div>
-    <script src="/static/mapInteractions.js"></script>
     <script>
+      var map, view, graphicsLayer;
+
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/Graphic",
+        "esri/layers/GraphicsLayer",
+      ], function (Map, MapView, Graphic, GraphicsLayer) {
+        map = new Map({
+          basemap: "streets", // Choose the basemap suitable for your needs
+        });
+
+        view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-79.4637, 43.6465], // Longitude, Latitude for High Park, Toronto
+          zoom: 15, // Increased zoom level for a closer look
+        });
+
+        graphicsLayer = new GraphicsLayer();
+        map.add(graphicsLayer);
+
+        view.on("click", function (event) {
+          var lat = event.mapPoint.latitude;
+          var lon = event.mapPoint.longitude;
+
+          var point = {
+            type: "point",
+            longitude: lon,
+            latitude: lat,
+          };
+
+          var simpleMarkerSymbol = {
+            type: "simple-marker",
+            color: [226, 119, 40], // Orange
+            outline: {
+              color: [255, 255, 255], // White
+              width: 1,
+            },
+          };
+
+          var pointGraphic = new Graphic({
+            geometry: point,
+            symbol: simpleMarkerSymbol,
+          });
+
+          graphicsLayer.add(pointGraphic);
+
+          fetch("/store-coords", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ latitude: lat, longitude: lon }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Success:", data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        });
+      });
+
       function submitForm() {
         const form = document.getElementById("optimize-form");
         const formData = new FormData(form);
@@ -101,8 +165,10 @@
               const plotDiv = document.getElementById("plot");
               plotDiv.innerHTML = ""; // Clear previous plot
               const plot = document.createElement("img");
-              plot.src = `/static/${data.plot_path}`;
+              plot.src = /static/${data.plot_path};
               plotDiv.appendChild(plot);
+
+              drawPathOnMap(data.best_path);
             }
 
             const debugDiv = document.getElementById("debug");
@@ -116,6 +182,33 @@
           .catch((error) => {
             console.error("Error:", error);
           });
+      }
+
+      function drawPathOnMap(pathDetails) {
+        require(["esri/Graphic"], function (Graphic) {
+          pathDetails.forEach((segment) => {
+            const polyline = {
+              type: "polyline",
+              paths: [
+                [segment.start.longitude, segment.start.latitude],
+                [segment.end.longitude, segment.end.latitude],
+              ],
+            };
+
+            const simpleLineSymbol = {
+              type: "simple-line",
+              color: [226, 119, 40], // Orange
+              width: 2,
+            };
+
+            const polylineGraphic = new Graphic({
+              geometry: polyline,
+              symbol: simpleLineSymbol,
+            });
+
+            graphicsLayer.add(polylineGraphic);
+          });
+        });
       }
     </script>
   </body>
