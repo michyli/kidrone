@@ -7,211 +7,64 @@
       rel="stylesheet"
       href="https://js.arcgis.com/4.21/esri/css/main.css"
     />
+    <link rel="stylesheet" href="/static/style.css" />
     <script src="https://js.arcgis.com/4.21/"></script>
-    <style>
-      body {
-        display: flex;
-        height: 100vh;
-        margin: 0;
-        font-family: Arial, sans-serif;
-      }
-      #viewDiv {
-        flex: 1;
-        height: 100%;
-        min-width: 50%; /* Ensure it takes at least 50% of the width */
-      }
-      #controlDiv {
-        flex: 1;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-y: auto;
-      }
-      h1 {
-        font-size: 1.5em;
-        margin-bottom: 10px;
-      }
-      form {
-        margin-bottom: 20px;
-      }
-      label {
-        display: block;
-        margin: 10px 0 5px;
-      }
-      input[type="number"] {
-        width: 100%;
-        padding: 5px;
-        box-sizing: border-box;
-      }
-      button {
-        padding: 10px 20px;
-        margin-top: 10px;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #45a049;
-      }
-      #plot img {
-        max-width: 100%;
-        height: auto;
-      }
-      #debug {
-        font-size: 0.9em;
-        color: #555;
-      }
-    </style>
   </head>
   <body>
     <div id="viewDiv"></div>
     <div id="controlDiv">
       <h1>Path Optimization Input</h1>
-      <form id="optimize-form" enctype="multipart/form-data">
+      <form id="optimize-form">
+        <label for="shapelyFile">Upload Shapely File:</label>
+        <input
+          type="file"
+          id="shapelyFile"
+          name="shapelyFile"
+          accept=".shp,.shx,.dbf"
+        /><br /><br />
+        <label for="pathName">[Optional] Path Name:</label>
+        <input
+          type="text"
+          id="pathName"
+          name="pathName"
+          placeholder="Enter path name"
+        /><br /><br />
         <label for="dispDiam">Display Diameter (meters):</label>
         <input type="number" id="dispDiam" name="dispDiam" /><br /><br />
-        <button type="button" onclick="submitForm()">Run</button>
+        <label for="dispVel">Dispersion Velocity (km/h):</label>
+        <input
+          type="number"
+          id="dispVel"
+          name="dispVel"
+          value="100"
+        /><br /><br />
+        <label for="nonDispVel">Non-Dispersion Velocity (km/h):</label>
+        <input
+          type="number"
+          id="nonDispVel"
+          name="nonDispVel"
+          value="200"
+        /><br /><br />
+        <label for="accDist">Acceleration Distance (km/h<sup>2</sup>):</label>
+        <input
+          type="number"
+          id="accDist"
+          name="accDist"
+          value="100"
+        /><br /><br />
+        <label for="flightDir">[Optional] Flight Direction:</label>
+        <input
+          type="text"
+          id="flightDir"
+          name="flightDir"
+          placeholder="Enter direction"
+        /><br /><br />
+        <button type="button" onclick="submitForm()">Gerenate</button>
       </form>
-      <div id="output">
-        <!-- Optimized path output will be displayed here -->
-      </div>
-      <div id="plot">
-        <!-- Plot will be displayed here -->
-      </div>
-      <div id="debug">
-        <!-- Debug information will be displayed here -->
-      </div>
+      <div id="output"></div>
+      <div id="plot"></div>
+      <div id="debug"></div>
     </div>
-    <script>
-      var map, view, graphicsLayer;
-
-      require([
-        "esri/Map",
-        "esri/views/MapView",
-        "esri/Graphic",
-        "esri/layers/GraphicsLayer",
-      ], function (Map, MapView, Graphic, GraphicsLayer) {
-        map = new Map({
-          basemap: "streets", // Choose the basemap suitable for your needs
-        });
-
-        view = new MapView({
-          container: "viewDiv",
-          map: map,
-          center: [-79.4637, 43.6465], // Longitude, Latitude for High Park, Toronto
-          zoom: 15, // Increased zoom level for a closer look
-        });
-
-        graphicsLayer = new GraphicsLayer();
-        map.add(graphicsLayer);
-
-        view.on("click", function (event) {
-          var lat = event.mapPoint.latitude;
-          var lon = event.mapPoint.longitude;
-
-          var point = {
-            type: "point",
-            longitude: lon,
-            latitude: lat,
-          };
-
-          var simpleMarkerSymbol = {
-            type: "simple-marker",
-            color: [226, 119, 40], // Orange
-            outline: {
-              color: [255, 255, 255], // White
-              width: 1,
-            },
-          };
-
-          var pointGraphic = new Graphic({
-            geometry: point,
-            symbol: simpleMarkerSymbol,
-          });
-
-          graphicsLayer.add(pointGraphic);
-
-          fetch("/store-coords", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ latitude: lat, longitude: lon }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log("Success:", data);
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
-        });
-      });
-
-      function submitForm() {
-        const form = document.getElementById("optimize-form");
-        const formData = new FormData(form);
-
-        fetch("/optimize", {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.error) {
-              document.getElementById("output").innerText = data.error;
-            } else {
-              document.getElementById("output").innerText = data.result;
-              const plotDiv = document.getElementById("plot");
-              plotDiv.innerHTML = ""; // Clear previous plot
-              const plot = document.createElement("img");
-              plot.src = `/static/${data.plot_path}`;
-              plotDiv.appendChild(plot);
-
-              drawPathOnMap(data.best_path);
-            }
-
-            const debugDiv = document.getElementById("debug");
-            debugDiv.innerHTML = "";
-            data.debug.forEach((line) => {
-              const p = document.createElement("p");
-              p.innerText = line;
-              debugDiv.appendChild(p);
-            });
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      }
-
-      function drawPathOnMap(pathDetails) {
-        console.log("Drawing path with details:", pathDetails); // Debugging output
-        require(["esri/Graphic"], function (Graphic) {
-          pathDetails.forEach((segment) => {
-            const polyline = {
-              type: "polyline",
-              paths: [
-                [segment.start.longitude, segment.start.latitude],
-                [segment.end.longitude, segment.end.latitude],
-              ],
-            };
-            console.log("Polyline details:", polyline); // More detailed output
-
-            const simpleLineSymbol = {
-              type: "simple-line",
-              color: "#8A2BE2",
-              width: "2",
-            };
-
-            const polylineGraphic = new Graphic({
-              geometry: polyline,
-              symbol: simpleLineSymbol,
-            });
-
-            graphicsLayer.add(polylineGraphic);
-          });
-        });
-      }
-    </script>
+    <script src="/static/mapInteractions.js"></script>
   </body>
 </html>
