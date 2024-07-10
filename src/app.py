@@ -21,6 +21,7 @@ STATIC_DIR = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '../static')
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
 CSV_FILE_PATH = os.path.join(DATA_DIR, 'coordinates.csv')
+PROJECTED_COORDS_CSV_PATH = os.path.join(DATA_DIR, 'projected_coordinates.csv')
 
 # Ensure the data directory exists
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -74,11 +75,30 @@ def optimize():
     # Assuming best_path.to_coordinates() returns coordinates in EPSG:3857
     projected_coords = best_path.to_coordinates()
 
+    # Save projected coordinates to a new CSV file
+    try:
+        with open(PROJECTED_COORDS_CSV_PATH, 'w', newline='') as csvfile:
+            fieldnames = ['start_x', 'start_y', 'end_x', 'end_y']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            writer.writeheader()
+            for segment in projected_coords:
+                writer.writerow({
+                    'start_x': segment['start']['x'],
+                    'start_y': segment['start']['y'],
+                    'end_x': segment['end']['x'],
+                    'end_y': segment['end']['y']
+                })
+            debug_info.append(
+                f"Saved projected coordinates to {PROJECTED_COORDS_CSV_PATH}")
+    except Exception as e:
+        debug_info.append(f"Error saving projected coordinates: {str(e)}")
+
     return jsonify({
         'result': 'Optimized path calculated. Check the plot.',
         'plot_path': plot_filename,
         'runtime': runtime,
-        'best_path': projected_coords,
+        'best_path_coords': projected_coords,
         'debug': debug_info
     })
 
@@ -94,18 +114,18 @@ def store_coords():
         data = request.get_json()
         print(f"Received data: {data}")
 
-        latitude = data['latitude']
-        longitude = data['longitude']
+        x = data['x']
+        y = data['y']
 
         with open(CSV_FILE_PATH, 'a', newline='') as csvfile:
-            fieldnames = ['latitude', 'longitude']
+            fieldnames = ['x', 'y']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
             csvfile.seek(0, 2)
             if csvfile.tell() == 0:  # Check if file is empty and write header if it is
                 writer.writeheader()
 
-            writer.writerow({'latitude': latitude, 'longitude': longitude})
+            writer.writerow({'x': x, 'y': y})
             print(f"Written to CSV: {data}")
 
         return jsonify({'status': 'success'})

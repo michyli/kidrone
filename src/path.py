@@ -54,24 +54,24 @@ class Path:
         dictionaries, each representing a line segment with its start and end geographic coordinates.
         """
         detailed_coords = []
-        coords_to_transform = []  # List to hold all coordinates for batch transformation
+        path_coords = []  # List to hold all coordinates for batch transformation
 
         for line in self.path:
             # Extract and collect all points for transformation
             start_point = line.coords[0]
             end_point = line.coords[-1]
-            coords_to_transform.extend([start_point, end_point])
+            path_coords.extend([start_point, end_point])
 
         # Convert all collected points from EPSG:3857 to EPSG:4326
-        transformed_coords = pcs2gcs_batch(coords_to_transform)
+        # transformed_coords = pcs2gcs_batch(coords_to_transform)
 
         # Iterate over transformed coordinates in pairs (start, end)
-        for i in range(0, len(transformed_coords), 2):
-            start_geo = transformed_coords[i]
-            end_geo = transformed_coords[i + 1]
+        for i in range(0, len(path_coords), 2):
+            start_geo = path_coords[i]
+            end_geo = path_coords[i + 1]
             detailed_coords.append({
-                'start': {'latitude': start_geo[1], 'longitude': start_geo[0]},
-                'end': {'latitude': end_geo[1], 'longitude': end_geo[0]}
+                'start': {'x': start_geo[0], 'y': start_geo[1]},
+                'end': {'x': end_geo[0], 'y': end_geo[1]}
             })
 
         return detailed_coords

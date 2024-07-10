@@ -5,45 +5,50 @@ require([
     "esri/views/MapView",
     "esri/Graphic",
     "esri/layers/GraphicsLayer",
-], function (Map, MapView, Graphic, GraphicsLayer) {
+    "esri/geometry/Point"
+], function (Map, MapView, Graphic, GraphicsLayer, Point) {
     map = new Map({
-        basemap: "streets",
+        basemap: "streets"
     });
+
     view = new MapView({
         container: "viewDiv",
         map: map,
         center: [-79.4637, 43.6465],
         zoom: 15,
     });
+
     graphicsLayer = new GraphicsLayer();
     map.add(graphicsLayer);
+
     view.on("click", function (event) {
-        var lat = event.mapPoint.latitude;
-        var lon = event.mapPoint.longitude;
-        var point = {
-            type: "point",
-            longitude: lon,
-            latitude: lat,
-        };
+        var point = new Point({
+            x: event.mapPoint.x,
+            y: event.mapPoint.y,
+            spatialReference: { wkid: 3857 }
+        });
+
         var simpleMarkerSymbol = {
             type: "simple-marker",
             color: [226, 119, 40],
             outline: {
                 color: [255, 255, 255],
-                width: 1,
-            },
+                width: 1
+            }
         };
+
         var pointGraphic = new Graphic({
             geometry: point,
-            symbol: simpleMarkerSymbol,
+            symbol: simpleMarkerSymbol
         });
         graphicsLayer.add(pointGraphic);
+
         fetch("/store-coords", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify({ latitude: lat, longitude: lon }),
+            body: JSON.stringify({ x: event.mapPoint.x, y: event.mapPoint.y })
         })
         .then((response) => response.json())
         .then((data) => {
@@ -60,7 +65,7 @@ function submitForm() {
     const formData = new FormData(form);
     fetch("/optimize", {
         method: "POST",
-        body: formData,
+        body: formData
     })
     .then((response) => response.json())
     .then((data) => {
@@ -73,7 +78,7 @@ function submitForm() {
             const plot = document.createElement("img");
             plot.src = `/static/${data.plot_path}`;
             plotDiv.appendChild(plot);
-            drawPathOnMap(data.best_path);
+            drawPathOnMap(data.best_path_coords);
         }
         const debugDiv = document.getElementById("debug");
         debugDiv.innerHTML = "";
@@ -95,19 +100,21 @@ function drawPathOnMap(pathDetails) {
             const polyline = {
                 type: "polyline",
                 paths: [
-                    [segment.start.longitude, segment.start.latitude],
-                    [segment.end.longitude, segment.end.latitude],
+                    [segment.start.x, segment.start.y],
+                    [segment.end.x, segment.end.y]
                 ],
+                spatialReference: { wkid: 3857 }
             };
-            console.log("Polyline details:", polyline);
+
             const simpleLineSymbol = {
                 type: "simple-line",
                 color: "#8A2BE2",
-                width: "2",
+                width: "2"
             };
+
             const polylineGraphic = new Graphic({
                 geometry: polyline,
-                symbol: simpleLineSymbol,
+                symbol: simpleLineSymbol
             });
             graphicsLayer.add(polylineGraphic);
         });

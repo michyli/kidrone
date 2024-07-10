@@ -318,25 +318,25 @@ def shp2coords(shapefile_path):
 """
 
 
-def gcs2pcs(lon, lat):
-    """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
-    """
-    transformer = Transformer.from_crs(
-        "EPSG:4326", "EPSG:3857", always_xy=True)
-    x, y = transformer.transform(lon, lat)
-    if x == np.inf or y == np.inf:
-        raise ValueError(
-            "input should be in sequence of (Longtitude, Latitude), it may be currently reversed")
-    return x, y
+# def gcs2pcs(lon, lat):
+#     """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
+#     """
+#     transformer = Transformer.from_crs(
+#         "EPSG:4326", "EPSG:3857", always_xy=True)
+#     x, y = transformer.transform(lon, lat)
+#     if x == np.inf or y == np.inf:
+#         raise ValueError(
+#             "input should be in sequence of (Longtitude, Latitude), it may be currently reversed")
+#     return x, y
 
 
-def pcs2gcs(x, y):
-    """Converts EPSG:3857 (meters) to EPSG:4326 (lat&lon)
-    """
-    transformer = Transformer.from_crs(
-        "EPSG:3857", "EPSG:4326", always_xy=True)
-    lon, lat = transformer.transform(x, y)
-    return lat, lon
+# def pcs2gcs(x, y):
+#     """Converts EPSG:3857 (meters) to EPSG:4326 (lat&lon)
+#     """
+#     transformer = Transformer.from_crs(
+#         "EPSG:3857", "EPSG:4326", always_xy=True)
+#     lon, lat = transformer.transform(x, y)
+#     return lat, lon
 
 
 def bccs2pcs(x, y):
@@ -351,18 +351,18 @@ def bccs2pcs(x, y):
     return x, y
 
 
-def gcs2pcs_batch(coords):
-    """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
-    but input is a whole list of EPSG:4326 coordinates
-    """
-    return [gcs2pcs(pt[0], pt[1]) for pt in coords]
+# def gcs2pcs_batch(coords):
+#     """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
+#     but input is a whole list of EPSG:4326 coordinates
+#     """
+#     return [gcs2pcs(pt[0], pt[1]) for pt in coords]
 
 
-def pcs2gcs_batch(coords):
-    """Converts EPSG:3857 (meters) to EPSG:4326 (lat&lon)
-    but input is a whole list of EPSG:3857 coordinates
-    """
-    return [pcs2gcs(pt[0], pt[1]) for pt in coords]
+# def pcs2gcs_batch(coords):
+#     """Converts EPSG:3857 (meters) to EPSG:4326 (lat&lon)
+#     but input is a whole list of EPSG:3857 coordinates
+#     """
+#     return [pcs2gcs(pt[0], pt[1]) for pt in coords]
 
 
 def bccs2gcs_batch(coords):
