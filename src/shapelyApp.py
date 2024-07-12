@@ -1,52 +1,63 @@
-# src/shapelyApp.py
-from flask import Flask, request, jsonify, render_template
-from .basic_functions import shp2coords
+from flask import Flask, request, render_template, jsonify, send_from_directory
+import json
 import os
 
-app = Flask(__name__, template_folder='../templates',
-            static_folder='../static')
+app = Flask(__name__, template_folder='../templates')
 
-UPLOAD_FOLDER = '../uploads'
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+DEFAULT_POLYGONS = [
+    [
+        [-8847676.939139081, 5411363.349849086],
+        [-8847098.426908756, 5411434.673658196],
+        [-8846565.149872905, 5410819.155903677],
+        [-8846419.759031257, 5409852.645510843],
+        [-8847289.668770544, 5409696.897601154],
+        [-8847833.666771423, 5410383.8231410105]
+    ],
+    [
+        [-8846537.71763863, 5412307.354612987],
+        [-8845743.94634549, 5412557.799715069],
+        [-8845000.812717449, 5412302.735920481],
+        [-8845141.220969604, 5411477.305589623],
+        [-8846032.796575554, 5411680.947940986]
+    ],
+    [
+        [-8845134.61483972, 5410720.42785237],
+        [-8844280.856528161, 5411424.1486377],
+        [-8843871.780332584, 5410885.944996509],
+        [-8844573.317736002, 5410109.920679417]
+    ]
+]
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def generate_polygons(data):
+    # TODO: do your shp2coords magic here
+    return json.dumps(data)
 
 
 @app.route('/')
 def index():
-    return render_template('map.html')
+    return render_template('shapeMap.html')
 
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    if 'shapelyFile' not in request.files:
-        return jsonify({'error': 'No file part'})
+    file = request.files.get('file')
+    if file and file.filename:
+        data = json.load(file)
+    else:
+        data = DEFAULT_POLYGONS
 
-    file = request.files['shapelyFile']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'})
+    polygons = generate_polygons(data)
+    with open(os.path.join(os.path.dirname(__file__), '..', 'polygons.json'), 'w') as f:
+        f.write(polygons)
 
-    if file:
-        # Save the file
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(file_path)
-
-        # Check for required shapefile components
-        base_name = os.path.splitext(file_path)[0]
-        required_extensions = ['.shp', '.shx', '.dbf']
-        missing_files = [
-            ext for ext in required_extensions if not os.path.exists(base_name + ext)]
-
-        if missing_files:
-            return jsonify({'error': f'Missing shapefile components: {", ".join(missing_files)}'})
-
-        try:
-            coords = shp2coords(file_path)
-            return jsonify({'coords': coords})
-        except Exception as e:
-            return jsonify({'error': str(e)})
+    return jsonify(success=True)
 
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5001)  # Changed port to 5001
+@app.route('/polygons.json')
+def get_polygons():
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..'), 'polygons.json')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
