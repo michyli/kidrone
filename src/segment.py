@@ -1,4 +1,4 @@
-from basic_functions import *
+from .basic_functions import *
 
 
 class Segment:

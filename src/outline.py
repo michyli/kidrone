@@ -1,8 +1,8 @@
 # src/outline.py
 
 from shapely.geometry import LineString, Point, LinearRing, MultiPoint, Polygon
-from basic_functions import *
-from path import *
+from .basic_functions import *
+from .path import *
 
 """
 ===================

@@ -1,8 +1,8 @@
 # src/path.py
 
-from basic_functions import *
-from segment import *
-from graph import *
+from .basic_functions import *
+from .segment import *
+from .graph import *
 import math
 from shapely.geometry import LineString
 

@@ -5,21 +5,21 @@ import matplotlib.pyplot as plt
 import os
 import io
 import csv
-from optimization import construct_best_path, showpath
-from utils import csv2coords  # Use the new utils module
-from basic_functions import *
+from src.optimization import construct_best_path, showpath
+from src.utils import csv2coords  # Use the new utils module
+from src.basic_functions import *
 import json
 
-app = Flask(__name__, template_folder='../templates',
-            static_folder='../static')
+app = Flask(__name__, template_folder='templates',
+            static_folder='static')
 app.secret_key = 'supersecretkey'  # Required for session management
 
 # Use Agg backend for Matplotlib
 matplotlib.use('Agg')
 
 STATIC_DIR = os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), '../static')
-DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
+    os.path.abspath(__file__)), 'static')
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 CSV_FILE_PATH = os.path.join(DATA_DIR, 'coordinates.csv')
 PROJECTED_COORDS_CSV_PATH = os.path.join(DATA_DIR, 'projected_coordinates.csv')
 

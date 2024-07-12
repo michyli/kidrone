@@ -1,6 +1,6 @@
 # src/shapelyApp.py
 from flask import Flask, request, jsonify, render_template
-from basic_functions import shp2coords
+from .basic_functions import shp2coords
 import os
 
 app = Flask(__name__, template_folder='../templates',

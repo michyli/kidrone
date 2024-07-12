@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-from basic_functions import *
+from .basic_functions import *
 
 """
 An aggregation of all graphing functions
