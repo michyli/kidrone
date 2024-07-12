@@ -189,8 +189,16 @@ class Path:
     def coverage_print(self):
         covered_area = self.coverage().area / 1000**2
         poly = self.parent.offsetparent if self.parent.offsetparent else self.parent
-        covered_area_desired = self.coverage().intersection(
-            poly.polygon).area / 1000**2  # KM^2
+        desired_coverage = poly.polygon.area
+        if poly.children:
+            #gives total area of children
+            excluded_area = sum([child.polygon.area for child in poly.children.values()])
+        #gives the actual coverage excluding any area that are mapped out
+        desired_coverage -= excluded_area
+        
+        percent_covered = self.coverage().area / desired_coverage / 1000**2     #KM^2
+        desired_area_coverage = self.coverage().intersection(poly.polygon).area
+        covered_area_desired = self.coverage().intersection(poly.polygon).area / 1000**2  # KM^2
         perc = covered_area_desired / poly.area * 100
         print(
             f"This path covers {round(covered_area_desired,2)} KM^2 within the field of {round(poly.area,2)} KM^2 ({round(perc,2)}%)")
@@ -205,12 +213,13 @@ class Path:
         print(f"This path is {round(self.pathlength, 2)} KM long.")
         return f"This path is {round(self.pathlength, 2)} KM long."
 
+
+
     """
     ========================
     === Attribute Setter ===
     ========================    
     """
-
     def disp_map_setter(self) -> list[bool]:
         """Determines the max velocity of each corresponding Segment within the Path within the Polygon.
         Note that lines that connects the swath are not dispersing lines.
@@ -232,8 +241,10 @@ class Path:
                 map.append(False)
             elif self.parent.children:
                 # If the line is inside of any internal polygons (e.g. lakes), then the line isn't a dispersing line
-                if any([c.buffer(1e-8).contains(line) for c in self.parent.children]):
+                if any([c.polygon.buffer(1e-8).contains(line) for c in self.parent.children.values()]):
                     map.append(False)
+                else:
+                    map.append(True)
             else:
                 map.append(True)
         return map

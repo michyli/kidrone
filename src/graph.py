@@ -14,7 +14,7 @@ def showpoly(ax, polygons, label=None, color=None):
     polygon:    an Outline objects to be graphed
     """
     if polygons.children:
-        for child in polygons.children:
+        for child in polygons.children.values():
             showpoly(ax, child, color="darkcyan")
 
     xx, yy = polygons.polygon.exterior.xy
@@ -28,15 +28,14 @@ def showpath(path):
     """
     fig1 = plt.figure(figsize=(16, 8))
     fig1.suptitle("Full Coverage Drone Flight Path", fontsize=16)
-    fig1.subplots_adjust(bottom=0.3)
     ax1 = fig1.add_subplot(1, 3, 1)
     ax2 = fig1.add_subplot(1, 3, 2, projection='3d')
     ax3 = fig1.add_subplot(1, 3, 3)
 
-    path.path_disp(ax1)  # plot path
-    fig1.text(0.1, 0.15, path.airtime_print())  # print airtime
-    fig1.text(0.1, 0.10, path.coverage_print())  # print coverage
-    fig1.text(0.1, 0.05, path.length_print())  # print path length
+    path.path_disp(ax1)     # plot path
+    path.airtime_print()    # print airtime
+    path.coverage_print()   # print coverage
+    path.length_print()  # print path length
 
     heights = arbit_list(len(path.path), 10, 30)
     velocity = [seg.curr_velo for seg in path.segment_list]

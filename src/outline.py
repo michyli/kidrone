@@ -34,18 +34,8 @@ class Outline:
         self.area = self.polygon.area / 1000**2  # KM^2
 
         self.offsetparent = offsetparent
-
-        self.children = {}
-        # Populate children in a hashmap
-        if children:
-            for c in children:
-                self.children[c.name] = c
-        # Check if children are contained in
-        for c in self.children:
-            if not c.polygon.within(self.polygon):
-                raise AssertionError(
-                    "The children are not fully contained in the overall polygon.")
-
+        self.children = self.children_setter(children)
+        
     def poly_offset(self, offset):
         """Returns an offsetted polygon as an Outline object.
 
@@ -55,7 +45,7 @@ class Outline:
         newpoly = self.polygon.buffer(-offset, quad_segs=3)
         x, y = newpoly.exterior.xy
         coord_set = [(x[i], y[i]) for i in range(len(x))]
-        return Outline('offset', coord_set, offsetparent=self)
+        return Outline('offset', coord_set, children=list(self.children.values()), offsetparent=self)
 
     def extrapolate_line(self, point: Point, slope):
         """Construct a line from a point and a slope, then extend a line to the maximum boundary of the polygon.
@@ -99,8 +89,9 @@ class Outline:
 
         intersection_list = [self.ring.intersection(line)]
         if self.children:
-            intersection_list += [enc.ring.intersection(line)
-                                  for enc in self.children]
+            newlist = [excluded.ring.intersection(line) for excluded in self.children.values()]
+            intersection_list += [excluded.ring.intersection(line) for excluded in self.children.values()]
+        
         intersection_points = []
         for shp in intersection_list:
             intersection_points.extend(extract_coords(shp))
@@ -245,6 +236,18 @@ class Outline:
     === Children Management ===
     ===========================
     """
+
+    def children_setter(self, children):
+        # Populate children in a hashmap
+        children_dict = {}
+        if children:
+            for c in children:
+                children_dict[c.name] = c
+        # Check if children are contained in
+        for c in children_dict.values():
+            if not c.polygon.within(self.polygon):
+                raise AssertionError("The children are not fully contained in the overall polygon.")
+        return children_dict
 
     def show_children(self):
         """Output points of children"""

@@ -312,31 +312,29 @@ def shp2coords(shapefile_path):
 
 
 """
-==================================
-=== Coordinates Transformation ===
-==================================
+===============================
+=== Coordinates Conversions ===
+===============================
 """
+def gcs2pcs(lon, lat):
+    """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
+    """
+    transformer = Transformer.from_crs(
+        "EPSG:4326", "EPSG:3857", always_xy=True)
+    x, y = transformer.transform(lon, lat)
+    if x == np.inf or y == np.inf:
+        raise ValueError(
+            "input should be in sequence of (Longtitude, Latitude), it may be currently reversed")
+    return x, y
 
 
-# def gcs2pcs(lon, lat):
-#     """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
-#     """
-#     transformer = Transformer.from_crs(
-#         "EPSG:4326", "EPSG:3857", always_xy=True)
-#     x, y = transformer.transform(lon, lat)
-#     if x == np.inf or y == np.inf:
-#         raise ValueError(
-#             "input should be in sequence of (Longtitude, Latitude), it may be currently reversed")
-#     return x, y
-
-
-# def pcs2gcs(x, y):
-#     """Converts EPSG:3857 (meters) to EPSG:4326 (lat&lon)
-#     """
-#     transformer = Transformer.from_crs(
-#         "EPSG:3857", "EPSG:4326", always_xy=True)
-#     lon, lat = transformer.transform(x, y)
-#     return lat, lon
+def pcs2gcs(x, y):
+    """Converts EPSG:3857 (meters) to EPSG:4326 (lon&lat)
+    """
+    transformer = Transformer.from_crs(
+        "EPSG:3857", "EPSG:4326", always_xy=True)
+    lon, lat = transformer.transform(x, y)
+    return lon, lat
 
 
 def bccs2pcs(x, y):
@@ -351,25 +349,25 @@ def bccs2pcs(x, y):
     return x, y
 
 
-# def gcs2pcs_batch(coords):
-#     """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
-#     but input is a whole list of EPSG:4326 coordinates
-#     """
-#     return [gcs2pcs(pt[0], pt[1]) for pt in coords]
+def gcs2pcs_batch(coords):
+    """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
+    but input is a whole list of EPSG:4326 coordinates
+    """
+    return [list(gcs2pcs(pt[0], pt[1])) for pt in coords]
 
 
-# def pcs2gcs_batch(coords):
-#     """Converts EPSG:3857 (meters) to EPSG:4326 (lat&lon)
-#     but input is a whole list of EPSG:3857 coordinates
-#     """
-#     return [pcs2gcs(pt[0], pt[1]) for pt in coords]
+def pcs2gcs_batch(coords):
+    """Converts EPSG:3857 (meters) to EPSG:4326 (lon&lat)
+    but input is a whole list of EPSG:3857 coordinates
+    """
+    return [list(pcs2gcs(pt[0], pt[1])) for pt in coords]
 
 
 def bccs2gcs_batch(coords):
     """Converts EPSG:3005 (meters) to EPSG:3875 (meters)
     but input is a whole list of EPSG:3005 coordinates
     """
-    return [bccs2pcs(pt[0], pt[1]) for pt in coords]
+    return [list(bccs2pcs(pt[0], pt[1])) for pt in coords]
 
 
 """
@@ -377,15 +375,12 @@ def bccs2gcs_batch(coords):
 === Others ===
 ==============
 """
-
-
 def arbit_list(num, min, max):
     """
     Function used for generating test data for show3DPath
-
     Generate a list of tuples representing heights for each line segment.
 
-    num_lines: The number of LineString objects.
+    num_lines:  The number of LineString objects.
     min_height: The minimum height value.
     max_height: The maximum height value.
     """
