@@ -2,67 +2,69 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Path Optimization</title>
+    <title>Map and Path Optimization</title>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.21/esri/css/main.css"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="https://js.arcgis.com/4.21/"></script>
   </head>
   <body>
-    <h1>Path Optimization Input</h1>
-    <form id="optimize-form" enctype="multipart/form-data">
-      <label for="csvFile">Upload CSV file:</label>
-      <input
-        type="file"
-        id="csvFile"
-        name="csvFile"
-        accept=".csv"
-      /><br /><br />
-      <label for="dispDiam">Display Diameter (meters):</label>
-      <input type="number" id="dispDiam" name="dispDiam" /><br /><br />
-      <button type="button" onclick="submitForm()">Run</button>
-    </form>
-    <div id="output">
-      <!-- Optimized path output will be displayed here -->
+    <div id="viewDiv"></div>
+    <div id="controlDiv">
+      <h1>Path Optimization Input</h1>
+      <form id="optimize-form">
+        <label for="shapelyFile">Upload Shapely File:</label>
+        <input
+          type="file"
+          id="shapelyFile"
+          name="shapelyFile"
+          accept=".shp,.shx,.dbf"
+        /><br /><br />
+        <label for="pathName">[Optional] Path Name:</label>
+        <input
+          type="text"
+          id="pathName"
+          name="pathName"
+          placeholder="Enter path name"
+        /><br /><br />
+        <label for="dispDiam">Display Diameter (meters):</label>
+        <input type="number" id="dispDiam" name="dispDiam" /><br /><br />
+        <label for="dispVel">Dispersion Velocity (km/h):</label>
+        <input
+          type="number"
+          id="dispVel"
+          name="dispVel"
+          value="100"
+        /><br /><br />
+        <label for="nonDispVel">Non-Dispersion Velocity (km/h):</label>
+        <input
+          type="number"
+          id="nonDispVel"
+          name="nonDispVel"
+          value="200"
+        /><br /><br />
+        <label for="accDist">Acceleration Distance (km/h<sup>2</sup>):</label>
+        <input
+          type="number"
+          id="accDist"
+          name="accDist"
+          value="100"
+        /><br /><br />
+        <label for="flightDir">[Optional] Flight Direction:</label>
+        <input
+          type="text"
+          id="flightDir"
+          name="flightDir"
+          placeholder="Enter direction"
+        /><br /><br />
+        <button type="button" onclick="submitForm()">Gerenate</button>
+      </form>
+      <div id="output"></div>
+      <div id="plot"></div>
+      <div id="debug"></div>
     </div>
-    <div id="plot">
-      <!-- Plot will be displayed here -->
-    </div>
-    <div id="debug">
-      <!-- Debug information will be displayed here -->
-    </div>
-
-    <script>
-      function submitForm() {
-        const form = document.getElementById("optimize-form");
-        const formData = new FormData(form);
-
-        fetch("/optimize", {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.error) {
-              document.getElementById("output").innerText = data.error;
-            } else {
-              document.getElementById("output").innerText = data.result;
-              const plotDiv = document.getElementById("plot");
-              plotDiv.innerHTML = ""; // Clear previous plot
-              const plot = document.createElement("img");
-              plot.src = `/static/${data.plot_path}`;
-              plotDiv.appendChild(plot);
-            }
-
-            const debugDiv = document.getElementById("debug");
-            debugDiv.innerHTML = "";
-            data.debug.forEach((line) => {
-              const p = document.createElement("p");
-              p.innerText = line;
-              debugDiv.appendChild(p);
-            });
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      }
-    </script>
+    <script src="/static/mapInteractions.js"></script>
   </body>
 </html>

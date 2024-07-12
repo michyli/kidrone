@@ -10,18 +10,15 @@ from src.optimization import *
             [-119.3014756, 47.349989],
             [-118.9774616, 47.52462],
             [-119.3069674, 47.6949743]] """
-  
-shapefile_path = r"C:\Users\edwar\OneDrive\Desktop\Kidrone\2023 Canfor Projects\CBK0035 PU1\Site Shapefiles - Fall\CBK0035_PU1.shp"
-points = csv2coords("test_coordinates.csv")                 #extract coords from test_coordinates.csv file
-points = shp2coords(shapefile_path)[0]
 
-disp_diam = 50                                              #meters
+shapefile_path = r"2023 Canfor Projects\CBK0035 PU1\Site Shapefiles - Fall\CBK0035_PU1.shp"
+# extract coords from test_coordinates.csv file
+points = csv2coords("test_coordinates.csv")
+# points = shp2coords(shapefile_path)[0]
 
-pathlist, runtime = path_list_constructor(points, disp_diam)#construct a list of path to iterate over
-print(f"runtime is {runtime}")
-optimized_path = optimizer(pathlist, shortest_airtime())    #calculates the optimized path
-showpath(optimized_path)                                    #show the optimized path
+disp_diam = 50  # meters
 
-
-
-
+best_path, runtime = construct_best_path(
+    points, disp_diam)  # calculates the optimized path
+# print(f"runtime is {runtime}")
+showpath(best_path)  # show the optimized path

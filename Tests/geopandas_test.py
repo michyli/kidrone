@@ -33,12 +33,4 @@ for poly_list in geo_poly_list:
     for polygon in poly_list:
         coordinates.append(extract_coords(polygon))
 
-print(len(shp2coords(shapefile_path)))
-
-
-
-      
-
-
-
-
+# print(len(shp2coords(shapefile_path)))
