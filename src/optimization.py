@@ -23,8 +23,8 @@ def generate_path(points: list, disp_diam, baseline_slope, invert=False, childre
     invert:         True to show inverted path with same swath
     """
     # coords = gcs2pcs_batch(points)
-    # if children:
-    #     children = [Outline(child) for child in children]
+    if children:
+        children = [Outline(child) for child in children]
 
     outline = Outline('outline', points, children=children)
     offset_outline = outline.poly_offset(disp_diam / 2)

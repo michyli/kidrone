@@ -78,7 +78,11 @@ function submitForm() {
             const plot = document.createElement("img");
             plot.src = `/static/${data.plot_path}`;
             plotDiv.appendChild(plot);
-            drawPathOnMap(data.best_path_coords);
+            if (data.best_path_coords) {
+                drawPathOnMap(data.best_path_coords);
+            } else {
+                console.error("No best path coordinates returned.");
+            }
         }
         const debugDiv = document.getElementById("debug");
         debugDiv.innerHTML = "";
