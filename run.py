@@ -13,9 +13,9 @@ from src.optimization import *
   
 shapefile_path = r"2023 Canfor Projects\CBK0035 PU1\Site Shapefiles - Fall\CBK0035_PU1.shp"
 points = csv2coords("test_coordinates.csv")                 #extract coords from test_coordinates.csv file
-points = shp2coords(shapefile_path)[1]
+points = shp2coords(shapefile_path)[0]
 
-disp_diam = 10                                              #meters
+disp_diam = 50                                              #meters
 
 pathlist, runtime = path_list_constructor(points, disp_diam)#construct a list of path to iterate over
 #print(f"runtime is {runtime}") 
