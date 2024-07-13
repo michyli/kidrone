@@ -133,7 +133,7 @@ class Path:
     ===============
     """
 
-    def path_disp(self, ax):
+    def path_display(self, ax):
         """Plots the complete path
         full_path:  a Path object. the .path attribute extracts the list of LineString that makes the Path object
         ax:         The axes to plot on
@@ -209,7 +209,7 @@ class Path:
         ax.legend()
 
     def coverage_print(self):
-        return f"{round(self.seeding_coverage_efficiency,2)}% of desired field is seeded, {round(self.spilled_area,3)} KM^2 of area is being covered extra to the desired field. "
+        return f"{round(self.seeding_coverage_efficiency,2)}% of desired field is seeded, {round(self.spilled_area,3)} KM^2 of area is being covered extra to the desired field ({round(self.spilled_area/self._coverage_compute()[2]*100,2)}%). "
 
     def airtime_print(self):
         time_disp = disp_time(self.airtime)

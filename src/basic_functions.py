@@ -7,8 +7,6 @@ import random
 import csv
 import requests
 import urllib
-import sys
-import time
 
 """
 ======================
@@ -403,7 +401,7 @@ def get_elevation(coordinates):
     elevation=[]
     
     num_pts = len(coordinates)
-    print(f"Note: Accessing elevation data take time on public API. Estimated time {num_pts/2//60} mins {int(num_pts/2%60)} secs")
+    print(f"Note: Accessing elevation data takes time on public API. Estimated time {int(num_pts/2//60)} mins {int(num_pts/2%60)} secs")
     for coord in print_progress(coordinates):       
         # define rest query params
         params = {

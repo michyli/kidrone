@@ -6,7 +6,7 @@ import time
 ====== Testing ======
 =====================
 """
-
+print()
 #extract coords from test_coordinates.csv file
 points = csv2coords("test_coordinates.csv")
 #Define an example of exclusion area
@@ -23,14 +23,14 @@ disp_diam = 50 #meters
 shapefile_path = r"2023 Canfor Projects\CBK0035 PU1\Site Shapefiles - Fall\CBK0035_PU1.shp"
 #points = shp2coords(shapefile_path)[0]
 
-#75:15:10 weighting between airtime:seeding_percentage:spilling
-optimal_func = airtime_coverage_weighted(75, 15, 10)
-pathlist, pathlistruntime = construct_pathlist(points, disp_diam, exclude1, num_path=1)  # calculates the optimized path
-#datatable is a DataFrame with all considered paths and their scores. Note that all numbers are min-max normalized
+
+optimal_func = airtime_coverage_weighted(75, 15, 10)                                    #75:15:10 weighting between airtime:seeding_percentage:spilling
+pathlist, pathlistruntime = construct_pathlist(points, disp_diam, exclude1, num_path=10) #calculates the optimized path
 datatable, best_path = find_best_path(pathlist, optimal_func)
 
-print(datatable)
-showpath(best_path)
-show3Dpath(best_path, "dense")
+#print(datatable)                       #Prints the pandas DataFrame for all paths ran (all data values are max-min normalized)
+showpath(best_path)                     #Display the highest-scored path
+show3Dpath(best_path, "coarse")          #Plot in 3D with respect to elevation #*(This is where it takes the longest)
+                                        #Change "dense" to "coarse" to run faster with less accuracy in height
 
 print(f"Pathlist construction runtime: {round(pathlistruntime, 3)}sec")
