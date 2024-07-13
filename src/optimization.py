@@ -43,8 +43,11 @@ def find_best_path(pathdf, optimizer:tuple):
         """col is a DataFrame column"""
         #Use Max-min normalization
         col = (col - col.min()) / (col.max() - col.min())
-    for column in [pathdf['Airtime'], pathdf['Seeding_Efficiency'], pathdf['Spill_Area']]:
-        minmax_norm(column)
+        return col
+    
+    pathdf['Airtime'] = minmax_norm(pathdf['Airtime'])
+    pathdf['Seeding_Efficiency'] = minmax_norm(pathdf['Seeding_Efficiency'])
+    pathdf['Spill_Area'] = minmax_norm(pathdf['Spill_Area'])
     optimizer(pathdf)
     return pathdf, pathdf.loc[pathdf['Composite_Score'] == pathdf['Composite_Score'].max()]['Path'].values[0]
 
@@ -62,6 +65,6 @@ def airtime_coverage_weighted(airtime_weight, seeding_weight, spill_weight):
     seeding_weight /= 100
     spill_weight /= 100
     def func_constructor(pathdf):
-        pathdf['Composite_Score'] = pathdf.Airtime * airtime_weight + pathdf.Seeding_Efficiency * seeding_weight - pathdf.Spill_Area * spill_weight
+        pathdf['Composite_Score'] = 100 * (pathdf.Airtime * airtime_weight + pathdf.Seeding_Efficiency * seeding_weight - pathdf.Spill_Area * spill_weight)
     return func_constructor
     
