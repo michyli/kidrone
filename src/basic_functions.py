@@ -2,9 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pyproj import Transformer
 from shapely.geometry import LineString, Point, MultiPoint, Polygon, MultiPolygon
+import geopandas as gpd
 import random
 import csv
-import geopandas as gpd
+import requests
+import urllib
 
 """
 ======================
@@ -41,16 +43,19 @@ def extractPolygons(multipolygon):
 """
 
 
-def normalizeVec(x, y):
+def normalizeVec(x, y, z=0):
     """Normalize a vector (x, y)"""
-
     if x == 0:
         assert y != 0, "Zero vector cannot be normalized"
     if y == 0:
         assert x != 0, "Zero vector cannot be normalized"
 
-    norm = 1 / np.sqrt(x ** 2 + y ** 2)
-    return x * norm, y * norm
+    if z:
+        norm = 1 / np.sqrt(x ** 2 + y ** 2 + z ** 2)
+        return x * norm, y * norm, z*norm
+    else:
+        norm = 1 / np.sqrt(x ** 2 + y ** 2)
+        return x * norm, y * norm
 
 
 """
@@ -97,9 +102,16 @@ def line_angle(line1: LineString, line2: LineString):
             line2.coords[1][1] - line2.coords[0][1])
     vec1n = normalizeVec(vec1[0], vec1[1])
     vec2n = normalizeVec(vec2[0], vec2[1])
-
-    angle = np.rad2deg(np.arccos(np.dot(vec1n, vec2n)))
-    # Range of arccos() is (0, pi) or (0, 180)
+    
+    #Account for python rounding error, else you get "RuntimeWarning: invalid value encountered in arccos"
+    dot = np.dot(vec1n, vec2n)
+    if dot > 1 and dot < 1+1e-8:
+        dot = 1
+    elif dot < -1 and dot > -1-1e-8:
+        dot = -1
+    
+    angle = np.rad2deg(np.arccos(dot))
+    #Range of arccos() is (0, pi) or (0, 180)
     return angle
 
 
@@ -375,6 +387,30 @@ def bccs2gcs_batch(coords):
 === Others ===
 ==============
 """
+def get_height(lon, lat):
+    """uSes the usgs api to obtain elevation data
+    lon: a list of longtitude
+    lat: a list of latitude
+    """
+    url = r'https://epqs.nationalmap.gov/v1/json?'
+    elevation=[]
+    for lat, lon in zip(lat, lon):        
+        # define rest query params
+        params = {
+            'output': 'json',
+            'x': lon,
+            'y': lat,
+            'units': 'Meters'
+        }
+        # format query string and return query value
+        result = requests.get((url + urllib.parse.urlencode(params)))
+        #elevations.append(result.json()['USGS_Elevation_Point_Query_Service']['Elevation_Query']['Elevation'])
+        #new 2023:
+        elevation.append(result.json()['value'])
+    return elevation
+    
+    
+
 def arbit_list(num, min, max):
     """
     Function used for generating test data for show3DPath

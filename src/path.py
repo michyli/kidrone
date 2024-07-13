@@ -44,9 +44,12 @@ class Path:
         self.turn_dist = 0.1
 
         self.disp_map = self.disp_map_setter()
-        self.pathlength = self.pathlength_setter()
-        self.segment_list = self.segment_list_setter()
-        self.airtime = self.airtime_setter()
+        self.pathlength = self.pathlength_setter()                      #
+        self.segment_list = self.segment_list_setter()                  #list(Segment)
+        
+        self.airtime = self.airtime_setter()                            #hours
+        self.seeding_coverage_efficiency = self.coverage_setter()[0]    #%
+        self.spilled_area = self.coverage_setter()[1]                   #KM^2
 
     def to_coordinates(self):
         """
@@ -187,38 +190,21 @@ class Path:
         ax.legend()
 
     def coverage_print(self):
-        covered_area = self.coverage().area / 1000**2
-        poly = self.parent.offsetparent if self.parent.offsetparent else self.parent
-        desired_coverage = poly.polygon.area
-        if poly.children:
-            #gives total area of children
-            excluded_area = sum([child.polygon.area for child in poly.children.values()])
-        #gives the actual coverage excluding any area that are mapped out
-        desired_coverage -= excluded_area
-        
-        percent_covered = self.coverage().area / desired_coverage / 1000**2     #KM^2
-        desired_area_coverage = self.coverage().intersection(poly.polygon).area
-        covered_area_desired = self.coverage().intersection(poly.polygon).area / 1000**2  # KM^2
-        perc = covered_area_desired / poly.area * 100
-        print(
-            f"This path covers {round(covered_area_desired,2)} KM^2 within the field of {round(poly.area,2)} KM^2 ({round(perc,2)}%)")
-        return f"This path covers {round(covered_area_desired,2)} KM^2 within the field of {round(poly.area,2)} KM^2 ({round(perc,2)}%)"
+        return f"{round(self.seeding_coverage_efficiency,2)}% of desired field is seeded, {round(self.spilled_area,3)} KM^2 of area is being covered extra to the desired field. "
 
     def airtime_print(self):
         time_disp = disp_time(self.airtime)
-        print(time_disp)
         return time_disp
 
     def length_print(self):
-        print(f"This path is {round(self.pathlength, 2)} KM long.")
-        return f"This path is {round(self.pathlength, 2)} KM long."
+        return f"This path is {round(self.pathlength, 3)} KM long."
 
 
 
     """
-    ========================
-    === Attribute Setter ===
-    ========================    
+    =========================
+    === Attribute Setters ===
+    =========================    
     """
     def disp_map_setter(self) -> list[bool]:
         """Determines the max velocity of each corresponding Segment within the Path within the Polygon.
@@ -287,3 +273,35 @@ class Path:
         # compute total path time from all segment instances
         tot_hour = sum([seg.time for seg in self.segment_list])
         return tot_hour
+    
+    def coverage_setter(self):
+        #Define border of Field
+        outer_poly = self.parent.offsetparent if self.parent.offsetparent else self.parent
+        
+        #Total drone coverage
+        self_coverage = self.coverage()
+        total_drone_covered_area = self_coverage.area / 1000**2 #KM^2
+        
+        #Total internal exclusion area (KM^2) and Total internal exclusion area covered by drone
+        if outer_poly.children:
+            excluded_area = sum([child.polygon.area for child in outer_poly.children.values()]) / 1000**2
+            drone_covered_excluded_area = sum([self_coverage.intersection(child.polygon).area for child in self.parent.children.values()]) / 1000**2
+        else:
+            excluded_area = 0
+            drone_covered_excluded_area = 0
+        
+        #Total field area desired to be covered
+        desired_coverage = outer_poly.polygon.area
+        desired_coverage = desired_coverage / 1000**2 - excluded_area #KM^2
+        
+        #Total seed dispersed area by drone 
+        covered_field_area = self_coverage.intersection(outer_poly.polygon).area / 1000**2
+        seed_disp_area = (covered_field_area - drone_covered_excluded_area) #KM^2
+        
+        #Total 'spilled-over' area not within the desired field
+        spilled_area = total_drone_covered_area - seed_disp_area #KM^2
+        
+        #Percent drone-dispersed area over desired covered area
+        seeding_coverage_efficiency = seed_disp_area / desired_coverage * 100 #%
+        
+        return seeding_coverage_efficiency, spilled_area #%, KM^2

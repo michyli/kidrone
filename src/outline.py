@@ -238,14 +238,15 @@ class Outline:
     """
 
     def children_setter(self, children):
-        # Populate children in a hashmap
+        """Populate children in a hashmap"""
+        #children defaults to []
         children_dict = {}
         if children:
             for c in children:
                 children_dict[c.name] = c
-        # Check if children are contained in
+        # Check if children are contained in the field
         for c in children_dict.values():
-            if not c.polygon.within(self.polygon):
+            if not c.polygon.within(self.polygon.buffer(1e-8)):
                 raise AssertionError("The children are not fully contained in the overall polygon.")
         return children_dict
 

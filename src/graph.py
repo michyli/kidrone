@@ -32,10 +32,10 @@ def showpath(path):
     ax2 = fig1.add_subplot(1, 3, 2, projection='3d')
     ax3 = fig1.add_subplot(1, 3, 3)
 
-    path.path_disp(ax1)     # plot path
-    path.airtime_print()    # print airtime
-    path.coverage_print()   # print coverage
-    path.length_print()  # print path length
+    path.path_disp(ax1)             # plot path
+    print(path.airtime_print())     # print airtime
+    print(path.coverage_print())    # print coverage
+    print(path.length_print())      # print path length
 
     heights = arbit_list(len(path.path), 10, 30)
     velocity = [seg.curr_velo for seg in path.segment_list]
