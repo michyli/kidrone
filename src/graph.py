@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from matplotlib import animation
+from matplotlib.animation import PillowWriter
 from .basic_functions import *
 
 """
@@ -66,7 +68,7 @@ def showprojection(ax, full_path):
         ax.plot(x1, y1, 0, color="teal", linestyle=":")
 
 
-def show3Dpath(full_path, plottype="coarse"):
+def show3Dpath(full_path, plottype="coarse", gif=False):
     """
     Plots the complete 3D path.
 
@@ -130,5 +132,22 @@ def show3Dpath(full_path, plottype="coarse"):
     ax.set_zlabel('Elevation (m)')
     ax.set_box_aspect((2, 2, 1.5))
     
-    ax.legend()
-    plt.show()
+    if gif:
+        #Make a .gif animation file of the 3D plot
+        def init():
+            ax.view_init(elev=30., azim=0)
+            return [fig]
+        def animate(i):
+            ax.view_init(elev=30., azim=i)
+            return [fig]
+
+        # Animate
+        anim = animation.FuncAnimation(fig, animate, init_func=init,
+                                    frames=360, interval=10, blit=True)
+        # Save
+        #anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+        writer = PillowWriter(fps=30)
+        anim.save('basic_animation.gif', writer=writer)
+    else:
+        ax.legend()
+        plt.show()
