@@ -29,7 +29,7 @@ pathlist, pathlistruntime = construct_pathlist(points, disp_diam, exclude1, num_
 datatable, best_path = find_best_path(pathlist, optimal_func)
 
 #print(datatable)                       #Prints the pandas DataFrame for all paths ran (all data values are max-min normalized)
-showpath(best_path)                     #Display the highest-scored path
+#showpath(best_path)                     #Display the highest-scored path
 show3Dpath(best_path, "coarse")          #Plot in 3D with respect to elevation #*(This is where it takes the longest)
                                         #Change "dense" to "coarse" to run faster with less accuracy in height
 

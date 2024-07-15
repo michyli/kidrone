@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template, jsonify, send_from_directory
+import geopandas as gpd
 import json
 import os
+import tempfile
 
 app = Flask(__name__, template_folder='../templates')
 
@@ -41,11 +43,25 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    file = request.files.get('file')
-    if file and file.filename:
-        data = json.load(file)
-    else:
-        data = DEFAULT_POLYGONS
+    if 'files' not in request.files:
+        return jsonify(success=False, error="No files part")
+
+    files = request.files.getlist('files')
+    if not files or len(files) < 3:
+        return jsonify(success=False, error="At least three shapefile components (.shp, .shx, .dbf) are required")
+
+    temp_dir = tempfile.mkdtemp()
+
+    for file in files:
+        file.save(os.path.join(temp_dir, file.filename))
+
+    shp_path = [os.path.join(temp_dir, f.filename) for f in files if f.filename.endswith('.shp')][0]
+
+    try:
+        gdf = gpd.read_file(shp_path)
+        data = json.loads(gdf.to_json())
+    except Exception as e:
+        return jsonify(success=False, error=str(e))
 
     polygons = generate_polygons(data)
     with open(os.path.join(os.path.dirname(__file__), '..', 'polygons.json'), 'w') as f:

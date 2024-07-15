@@ -6,7 +6,7 @@ import geopandas as gpd
 import random
 import csv
 import requests
-import urllib
+import urllib.parse
 
 """
 ======================
