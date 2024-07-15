@@ -2,9 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pyproj import Transformer
 from shapely.geometry import LineString, Point, MultiPoint, Polygon, MultiPolygon
+import geopandas as gpd
 import random
 import csv
-import geopandas as gpd
+import requests
+import urllib
 
 """
 ======================
@@ -41,16 +43,19 @@ def extractPolygons(multipolygon):
 """
 
 
-def normalizeVec(x, y):
+def normalizeVec(x, y, z=0):
     """Normalize a vector (x, y)"""
-
     if x == 0:
         assert y != 0, "Zero vector cannot be normalized"
     if y == 0:
         assert x != 0, "Zero vector cannot be normalized"
 
-    norm = 1 / np.sqrt(x ** 2 + y ** 2)
-    return x * norm, y * norm
+    if z:
+        norm = 1 / np.sqrt(x ** 2 + y ** 2 + z ** 2)
+        return x * norm, y * norm, z*norm
+    else:
+        norm = 1 / np.sqrt(x ** 2 + y ** 2)
+        return x * norm, y * norm
 
 
 """
@@ -64,8 +69,7 @@ def line_slope(line: LineString):
     """Returns the slope of a LineString based on the boundary of the LineString"""
     assert isinstance(line, LineString), "input should be a LineString object"
     if (line.boundary.geoms[1].x - line.boundary.geoms[0].x) != 0:
-        slope = (line.boundary.geoms[1].y - line.boundary.geoms[0].y) / \
-            (line.boundary.geoms[1].x - line.boundary.geoms[0].x)
+        slope = (line.boundary.geoms[1].y - line.boundary.geoms[0].y) / (line.boundary.geoms[1].x - line.boundary.geoms[0].x)
     else:
         slope = "vertical"
     return slope
@@ -97,9 +101,16 @@ def line_angle(line1: LineString, line2: LineString):
             line2.coords[1][1] - line2.coords[0][1])
     vec1n = normalizeVec(vec1[0], vec1[1])
     vec2n = normalizeVec(vec2[0], vec2[1])
-
-    angle = np.rad2deg(np.arccos(np.dot(vec1n, vec2n)))
-    # Range of arccos() is (0, pi) or (0, 180)
+    
+    #Account for python rounding error, else you get "RuntimeWarning: invalid value encountered in arccos"
+    dot = np.dot(vec1n, vec2n)
+    if dot > 1 and dot < 1+1e-8:
+        dot = 1
+    elif dot < -1 and dot > -1-1e-8:
+        dot = -1
+    
+    angle = np.rad2deg(np.arccos(dot))
+    #Range of arccos() is (0, pi) or (0, 180)
     return angle
 
 
@@ -156,8 +167,7 @@ def split_line(line: LineString, interval) -> list[Point]:
         num_div += 1
 
     distances = np.linspace(0, line.length, int(num_div))
-    points = [line.interpolate(distance)
-              for distance in distances] + [line.boundary.geoms[-1]]
+    points = [line.interpolate(distance) for distance in distances] + [line.boundary.geoms[-1]]
     if points[-1] == points[-2]:
         points.pop(-1)
     return points
@@ -172,6 +182,14 @@ def reverse_line(line: LineString):
     line_list = np.array(line.coords)
     return LineString(line_list[::-1])
 
+def create_line(points: list[Point]) -> list[LineString]:
+    """Create a list of 2-point LineString from a list of waypoints
+    """
+    linelist = []
+    for i in range(len(points)-1):
+        linelist.append(LineString([points[i], points[i+1]]))
+    return linelist
+    
 
 def break_line(line: LineString) -> list[LineString]:
     """Break a multi-point LineString into a list of multiple 2-point LineStrings
@@ -312,31 +330,29 @@ def shp2coords(shapefile_path):
 
 
 """
-==================================
-=== Coordinates Transformation ===
-==================================
+===============================
+=== Coordinates Conversions ===
+===============================
 """
+def gcs2pcs(lon, lat):
+    """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
+    """
+    transformer = Transformer.from_crs(
+        "EPSG:4326", "EPSG:3857", always_xy=True)
+    x, y = transformer.transform(lon, lat)
+    if x == np.inf or y == np.inf:
+        raise ValueError(
+            "input should be in sequence of (Longtitude, Latitude), it may be currently reversed")
+    return x, y
 
 
-# def gcs2pcs(lon, lat):
-#     """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
-#     """
-#     transformer = Transformer.from_crs(
-#         "EPSG:4326", "EPSG:3857", always_xy=True)
-#     x, y = transformer.transform(lon, lat)
-#     if x == np.inf or y == np.inf:
-#         raise ValueError(
-#             "input should be in sequence of (Longtitude, Latitude), it may be currently reversed")
-#     return x, y
-
-
-# def pcs2gcs(x, y):
-#     """Converts EPSG:3857 (meters) to EPSG:4326 (lat&lon)
-#     """
-#     transformer = Transformer.from_crs(
-#         "EPSG:3857", "EPSG:4326", always_xy=True)
-#     lon, lat = transformer.transform(x, y)
-#     return lat, lon
+def pcs2gcs(x, y):
+    """Converts EPSG:3857 (meters) to EPSG:4326 (lon&lat)
+    """
+    transformer = Transformer.from_crs(
+        "EPSG:3857", "EPSG:4326", always_xy=True)
+    lon, lat = transformer.transform(x, y)
+    return lon, lat
 
 
 def bccs2pcs(x, y):
@@ -351,25 +367,25 @@ def bccs2pcs(x, y):
     return x, y
 
 
-# def gcs2pcs_batch(coords):
-#     """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
-#     but input is a whole list of EPSG:4326 coordinates
-#     """
-#     return [gcs2pcs(pt[0], pt[1]) for pt in coords]
+def gcs2pcs_batch(coords):
+    """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
+    but input is a whole list of EPSG:4326 coordinates
+    """
+    return [list(gcs2pcs(pt[0], pt[1])) for pt in coords]
 
 
-# def pcs2gcs_batch(coords):
-#     """Converts EPSG:3857 (meters) to EPSG:4326 (lat&lon)
-#     but input is a whole list of EPSG:3857 coordinates
-#     """
-#     return [pcs2gcs(pt[0], pt[1]) for pt in coords]
+def pcs2gcs_batch(coords):
+    """Converts EPSG:3857 (meters) to EPSG:4326 (lon&lat)
+    but input is a whole list of EPSG:3857 coordinates
+    """
+    return [list(pcs2gcs(pt[0], pt[1])) for pt in coords]
 
 
 def bccs2gcs_batch(coords):
     """Converts EPSG:3005 (meters) to EPSG:3875 (meters)
     but input is a whole list of EPSG:3005 coordinates
     """
-    return [bccs2pcs(pt[0], pt[1]) for pt in coords]
+    return [list(bccs2pcs(pt[0], pt[1])) for pt in coords]
 
 
 """
@@ -377,15 +393,36 @@ def bccs2gcs_batch(coords):
 === Others ===
 ==============
 """
-
+def get_elevation(coordinates):
+    """Uses the usgs api to obtain elevation data
+    coordinate: tuple of (longtitude, latitude)
+    """
+    url = r'https://epqs.nationalmap.gov/v1/json?'
+    elevation=[]
+    
+    num_pts = len(coordinates)
+    print(f"Note: Accessing elevation data takes time on public API. Estimated time {int(num_pts/2//60)} mins {int(num_pts/2%60)} secs")
+    for coord in print_progress(coordinates):       
+        # define rest query params
+        params = {
+            'output': 'json',
+            'x': coord[0],
+            'y': coord[1],
+            'units': 'Meters'
+        }
+        # format query string and return query value
+        result = requests.get((url + urllib.parse.urlencode(params)))
+        #elevations.append(result.json()['USGS_Elevation_Point_Query_Service']['Elevation_Query']['Elevation'])
+        #new 2023:
+        elevation.append(result.json()['value'])
+    return elevation
 
 def arbit_list(num, min, max):
     """
     Function used for generating test data for show3DPath
-
     Generate a list of tuples representing heights for each line segment.
 
-    num_lines: The number of LineString objects.
+    num_lines:  The number of LineString objects.
     min_height: The minimum height value.
     max_height: The maximum height value.
     """
@@ -393,7 +430,39 @@ def arbit_list(num, min, max):
     values = [(heights[i], heights[i+1]) for i in range(len(heights)-1)]
     return values
 
-
 def disp_time(hour):
     """Convert inputed hours to the format of day:hour:minute"""
     return f"This path is projected to take {int(hour//24)} days, {int(hour%24//1)} hours, and {round(hour%1*60, 1)} minutes"
+
+def print_progress(iterable, prefix = ' Progress:', suffix = 'Complete', decimals = 1, length = 50, fill = '█', printEnd = "\r"):
+    """
+    @params:
+        iterable    - Required  : iterable object (Iterable)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+        
+    example usage:
+    >>> for item in progressBar(items):
+    >>>     # Do stuff...
+    >>>     time.sleep(0.1)
+    where 'items' is the list to be iterated through
+    """
+    total = len(iterable)
+    # Progress Bar Printing Function
+    def printProgressBar (iteration):
+        percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+        filledLength = int(length * iteration // total)
+        bar = fill * filledLength + '-' * (length - filledLength)
+        print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # Initial Call
+    printProgressBar(0)
+    # Update Progress Bar
+    for i, item in enumerate(iterable):
+        yield item
+        printProgressBar(i + 1)
+    # Print New Line on Complete
+    print()

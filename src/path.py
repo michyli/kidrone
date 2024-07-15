@@ -5,6 +5,7 @@ from .segment import *
 from .graph import *
 import math
 from shapely.geometry import LineString
+from functools import cached_property
 
 
 class Path:
@@ -20,7 +21,7 @@ class Path:
         start_velo:     starting velocity of this path, static (0) by default
         end_velo:     ending velocity of this path, static (0) by default
         """
-        self.path = path
+        self.path = path                    #2D Path
         self.parent = parent
         self.disp_diam = disp_diam
         self.swath_slope = swath_slope
@@ -42,11 +43,6 @@ class Path:
         self.nondisp_velo = 200  # KM/h
         # KM, minimum distance for drone to accelerate or decelerate to disp_velo
         self.turn_dist = 0.1
-
-        self.disp_map = self.disp_map_setter()
-        self.pathlength = self.pathlength_setter()
-        self.segment_list = self.segment_list_setter()
-        self.airtime = self.airtime_setter()
 
     def to_coordinates(self):
         """
@@ -105,13 +101,39 @@ class Path:
 
         return offset_path
 
+    def _coverage_compute(self):
+        #Define border of Field
+        outer_poly = self.parent.offsetparent if self.parent.offsetparent else self.parent
+        
+        #Total drone coverage
+        self_coverage = self.coverage()
+        total_drone_covered_area = self_coverage.area / 1000**2 #KM^2
+        
+        #Total internal exclusion area (KM^2) and Total internal exclusion area covered by drone
+        if outer_poly.children:
+            excluded_area = sum([child.polygon.area for child in outer_poly.children.values()]) / 1000**2
+            drone_covered_excluded_area = sum([self_coverage.intersection(child.polygon).area for child in self.parent.children.values()]) / 1000**2
+        else:
+            excluded_area = 0
+            drone_covered_excluded_area = 0
+        
+        #Total field area desired to be covered
+        desired_coverage = outer_poly.polygon.area
+        desired_coverage = desired_coverage / 1000**2 - excluded_area #KM^2
+        
+        #Total seed dispersed area by drone 
+        covered_field_area = self_coverage.intersection(outer_poly.polygon).area / 1000**2
+        seed_disp_area = (covered_field_area - drone_covered_excluded_area) #KM^2
+        
+        return seed_disp_area, total_drone_covered_area, desired_coverage
+    
     """
     ===============
     === Display ===
     ===============
     """
 
-    def path_disp(self, ax):
+    def path_display(self, ax):
         """Plots the complete path
         full_path:  a Path object. the .path attribute extracts the list of LineString that makes the Path object
         ax:         The axes to plot on
@@ -187,31 +209,61 @@ class Path:
         ax.legend()
 
     def coverage_print(self):
-        covered_area = self.coverage().area / 1000**2
-        poly = self.parent.offsetparent if self.parent.offsetparent else self.parent
-        covered_area_desired = self.coverage().intersection(
-            poly.polygon).area / 1000**2  # KM^2
-        perc = covered_area_desired / poly.area * 100
-        print(
-            f"This path covers {round(covered_area_desired,2)} KM^2 within the field of {round(poly.area,2)} KM^2 ({round(perc,2)}%)")
-        return f"This path covers {round(covered_area_desired,2)} KM^2 within the field of {round(poly.area,2)} KM^2 ({round(perc,2)}%)"
+        return f"{round(self.seeding_coverage_efficiency,2)}% of desired field is seeded, {round(self.spilled_area,3)} KM^2 of area is being covered extra to the desired field ({round(self.spilled_area/self._coverage_compute()[2]*100,2)}%). "
 
     def airtime_print(self):
         time_disp = disp_time(self.airtime)
-        print(time_disp)
         return time_disp
 
     def length_print(self):
-        print(f"This path is {round(self.pathlength, 2)} KM long.")
-        return f"This path is {round(self.pathlength, 2)} KM long."
+        return f"This path is {round(self.pathlength, 3)} KM long."
+
+
 
     """
-    ========================
-    === Attribute Setter ===
-    ========================    
+    =========================
+    === Attribute Setters ===
+    =========================    
     """
-
-    def disp_map_setter(self) -> list[bool]:
+    @cached_property
+    def coords(self):
+        #Generate coordinates from path
+        coordinates = []
+        for lines in self.path:
+            coordinates.append(lines.boundary.geoms[0])
+        coordinates.append(self.path[-1].boundary.geoms[1])
+        return coordinates
+    
+    @cached_property
+    def compressed_waypoints(self):
+        waypoints = []
+        for line in self.path:
+            num_div = line.length // 100 + 1
+            distances = np.linspace(0, line.length, int(num_div))
+            waypoints.append([line.interpolate(distance) for distance in distances] + [line.boundary.geoms[-1]])
+        return waypoints
+    
+    @cached_property
+    def waypoints(self):
+        uncompressed = []
+        for subpath in self.compressed_waypoints:
+            uncompressed.extend(subpath)
+        return uncompressed
+    
+    @cached_property
+    def waypoints_path(self):
+        return create_line(self.waypoints)
+    
+    @cached_property
+    def waypoints_disp_map(self) -> list[bool]:
+        map = []
+        for index, bool in enumerate(self.disp_map):
+            for i in range(len(self.compressed_waypoints[index])):
+                map.append(bool)
+        return map
+    
+    @cached_property
+    def disp_map(self) -> list[bool]:
         """Determines the max velocity of each corresponding Segment within the Path within the Polygon.
         Note that lines that connects the swath are not dispersing lines.
         """
@@ -232,19 +284,23 @@ class Path:
                 map.append(False)
             elif self.parent.children:
                 # If the line is inside of any internal polygons (e.g. lakes), then the line isn't a dispersing line
-                if any([c.buffer(1e-8).contains(line) for c in self.parent.children]):
+                if any([c.polygon.buffer(1e-8).contains(line) for c in self.parent.children.values()]):
                     map.append(False)
+                else:
+                    map.append(True)
             else:
                 map.append(True)
         return map
-
-    def pathlength_setter(self):
+    
+    @cached_property
+    def pathlength(self):
         """Returns the length of path in KM
         Note that the point coordinates in self.path are in unit of longtitude and latitude.
         """
         return sum([line.length for line in self.path]) / 1000
 
-    def segment_list_setter(self) -> list[Segment]:
+    @cached_property
+    def segment_list(self) -> list[Segment]:
         """Returns the projected airtime when executing the given path"""
         def velo_mapper(index):
             """Returns the velocity of the segment depending on whether 
@@ -272,7 +328,36 @@ class Path:
 
         return airtime_list
 
-    def airtime_setter(self):
+    @cached_property
+    def airtime(self):
         # compute total path time from all segment instances
         tot_hour = sum([seg.time for seg in self.segment_list])
         return tot_hour
+    
+    @cached_property
+    def seeding_coverage_efficiency(self):
+        #Percent drone-dispersed area over desired covered area
+        return self._coverage_compute()[0] / self._coverage_compute()[2] * 100 #%
+        
+    @cached_property
+    def spilled_area(self):
+        #Total 'spilled-over' area not within the desired field
+        return self._coverage_compute()[1] - self._coverage_compute()[0] #KM^2
+    
+    @cached_property
+    def critical_elevations(self):
+        """returns a list of elevation corresponding to the critical point coordinates"""
+        points_tup = [(pts.x, pts.y) for pts in self.coords]
+        converted_points = pcs2gcs_batch(points_tup)
+        elevation = get_elevation(converted_points)        
+        self.critical_elevations = elevation
+        return elevation
+    
+    @cached_property
+    def waypoint_elevations(self):
+        """returns a list of elevation corresponding to the waypoint coordinates"""
+        points_tup = [(pts.x, pts.y) for pts in self.waypoints]
+        converted_points = pcs2gcs_batch(points_tup)
+        elevation = get_elevation(converted_points)        
+        self.waypoints_elevations = elevation
+        return elevation
