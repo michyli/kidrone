@@ -5,8 +5,8 @@ from shapely.geometry import LineString, Point, MultiPoint, Polygon, MultiPolygo
 import geopandas as gpd
 import random
 import csv
-import requests
 import urllib.parse
+import requests
 
 """
 ======================
@@ -397,24 +397,24 @@ def get_elevation(coordinates):
     """Uses the usgs api to obtain elevation data
     coordinate: tuple of (longtitude, latitude)
     """
+    #public API url
     url = r'https://epqs.nationalmap.gov/v1/json?'
     elevation=[]
     
     num_pts = len(coordinates)
     print(f"Note: Accessing elevation data takes time on public API. Estimated time {int(num_pts/2//60)} mins {int(num_pts/2%60)} secs")
     for coord in print_progress(coordinates):       
-        # define rest query params
+        #define url parameters for API request
         params = {
             'output': 'json',
             'x': coord[0],
             'y': coord[1],
             'units': 'Meters'
         }
-        # format query string and return query value
-        result = requests.get((url + urllib.parse.urlencode(params)))
-        #elevations.append(result.json()['USGS_Elevation_Point_Query_Service']['Elevation_Query']['Elevation'])
-        #new 2023:
-        elevation.append(result.json()['value'])
+        #Get .json file from epqs public API
+        json_result = requests.get((url + urllib.parse.urlencode(params))).json()
+        #Parse the .json file format and extract the 'value', which is the elevation data
+        elevation.append(json_result['value'])
     return elevation
 
 def arbit_list(num, min, max):
