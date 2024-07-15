@@ -35,7 +35,7 @@ def showpath(path):
 
     path.path_disp(ax1)  # plot path
     fig1.text(0.1, 0.15, path.airtime_print())  # print airtime
-    fig1.text(0.1, 0.10, path.coverage_print())  # print coverage
+    #fig1.text(0.1, 0.10, path.coverage_print())  # print coverage
     fig1.text(0.1, 0.05, path.length_print())  # print path length
 
     heights = arbit_list(len(path.path), 10, 30)
