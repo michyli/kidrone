@@ -24,15 +24,18 @@ They are very helpful to manipulate Shapely datatypes and vectors to gear toward
 """
 
 
-def extractPolygons(multipolygon):
-    "Takes a shapely multipolygon instance and returns the individual polygons in a list"
+def extractPolygons(geometry):
+    "Takes a shapely geometry instance and returns the individual polygons in a list"
     polygons = []
-    if isinstance(multipolygon, MultiPolygon):
-        for polys in multipolygon.geoms:
+    if isinstance(geometry, MultiPolygon):
+        for polys in geometry.geoms:
             polygons.append(polys)
         return polygons
+    elif isinstance(geometry, Polygon):
+        polygons.append(geometry)
+        return polygons
     else:
-        print("The argument to function 'extractPolygons' is not a multipolygon")
+        print("The argument to function 'extractPolygons' is not a multipolygon or polygon")
         return
 
 
@@ -306,27 +309,37 @@ def shp2coords(shapefile_path):
     # Example shapefile path
     gdf = gpd.read_file(shapefile_path)
 
-    # Print the CRS
-    print("CRS:", gdf.crs)
-    print("\n")
+    # Check if 'geometry' column exists and is not empty
+    if 'geometry' in gdf.columns and not gdf.empty:
+        # Print the CRS
+        print("CRS:", gdf.crs)
+        print("\n")
 
-    # Get all the geometries in the geometry column
-    geometries = gdf['geometry']
-    # For each geometry make a list to store it's polygons
-    # Each element in the list is a list of polygons, representing the polygons of a geo
-    geo_poly_list = []
-    for geo in geometries:
-        polygons = extractPolygons(geo)
-        geo_poly_list.append(polygons)
-    # For each polygon extract the coordinates
-    coordinates = []
-    for poly_list in geo_poly_list:
-        for polygon in poly_list:
-            coordinates.append(extract_coords(polygon))
+        print(gdf)
+        print("\n")
+        # Get all the geometries in the geometry column
+        geometries = gdf['geometry']
+        # For each geometry make a list to store it's polygons
+        # Each element in the list is a list of polygons, representing the polygons of a geo
+        geo_poly_list = []
+        for geo in geometries:
+            polygons = extractPolygons(geo)
+            geo_poly_list.append(polygons)
+        # For each polygon extract the coordinates
+        coordinates = []
+        for poly_list in geo_poly_list:
+            for polygon in poly_list:
+                coordinates.append(extract_coords(polygon))
+        print("before transforming")
+        # Convert to EPSG 3857 coordinates and return
+        #transformed_coordinates = [bccs2gcs_batch(coord) for coord in coordinates]
+        transformed_coordinates = [bccs2gcs_batch(coordinates[0])]
+        return transformed_coordinates
+    else:
+        print("Shapefile does not contain geometry information or is empty.")
+        return
 
-    transformed_coordinates = [bccs2gcs_batch(coord) for coord in coordinates]
-    # Convert to EPSG 3857 coordinates and return
-    return transformed_coordinates
+    
 
 
 """
@@ -385,6 +398,7 @@ def bccs2gcs_batch(coords):
     """Converts EPSG:3005 (meters) to EPSG:3875 (meters)
     but input is a whole list of EPSG:3005 coordinates
     """
+    print("Starting batch conversion")
     return [list(bccs2pcs(pt[0], pt[1])) for pt in coords]
 
 

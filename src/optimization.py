@@ -21,6 +21,7 @@ def construct_pathlist(coords, disp_diam, children=None, poly_offset=None, init_
         poly_offset = disp_diam / 2
     
     outline = Outline('BasePoly', coords, children)
+    print(outline)
     offset_outline = outline.poly_offset(poly_offset)
     best_path = None
     min_airtime = float('inf')

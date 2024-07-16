@@ -106,40 +106,41 @@
               });
 
               graphicsLayer.add(pointGraphic);
+
+              // Zoom to the extent of the polygon
+              view.goTo(polygonGraphic.geometry.extent);
             });
           });
         }
+        document.getElementById("upload-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            var form = event.target;
+            var formData = new FormData(form);
 
-        document.getElementById("upload-form").addEventListener("submit", function (event) {
-          event.preventDefault();
-          var fileInput = document.getElementById("file-input");
-          const formData = new FormData();
-          for (const file of fileInput.files) {
-            formData.append("files", file);
-          }
-
-          fetch("/upload", {
-            method: "POST",
-            body: formData,
-          })
-            .then((response) => response.json())
-            .then((result) => {
-              if (result.success) {
-                fetch("/polygons.json")
-                  .then((response) => response.json())
-                  .then((polygons) => {
-                    console.log("Polygons loaded:", polygons); // Log the loaded polygons
-                    addPolygonsAndPoints(polygons);
-                  })
-                  .catch((error) => {
-                    console.error("Error loading polygons:", error);
-                  });
-              } else {
-                alert("File upload failed.");
-              }
+            fetch("/upload", {
+                method: "POST",
+                body: formData
             })
-            .catch((error) => {
-              console.error("Error uploading file:", error);
+            .then(response => response.json())
+            .then(result => {
+                var resultDiv = document.getElementById("result");
+                if (result.success) {
+                  fetch("/polygons.json")
+                    .then((response) => response.json())
+                    .then((polygons) => {
+                      console.log("Polygons loaded:", polygons); // Log the loaded polygons
+                      addPolygonsAndPoints(polygons);
+                    })
+                    .catch((error) => {
+                      console.error("Error loading polygons:", error);
+                    });
+                } else {
+                    resultDiv.textContent = "File upload failed: " + result.error;
+                    resultDiv.style.display = "block";
+                }
+            })
+            .catch(error => {
+                console.error("Error uploading file:", error);
             });
         });
       });

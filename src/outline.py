@@ -45,6 +45,7 @@ class Outline:
         newpoly = self.polygon.buffer(-offset, quad_segs=3)
         x, y = newpoly.exterior.xy
         coord_set = [(x[i], y[i]) for i in range(len(x))]
+        print(coord_set)
         return Outline('offset', coord_set, children=list(self.children.values()), offsetparent=self)
 
     def extrapolate_line(self, point: Point, slope):

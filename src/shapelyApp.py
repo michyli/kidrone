@@ -3,6 +3,7 @@ import geopandas as gpd
 import json
 import os
 import tempfile
+from basic_functions import *
 
 app = Flask(__name__, template_folder='../templates')
 
@@ -30,10 +31,14 @@ DEFAULT_POLYGONS = [
     ]
 ]
 
+polygon_test = [[[-9441731.665965, 7061903.319368], [-9683654.239392, 6369344.692947], [-9155321.499885, 6430494.315575]]]
 
 def generate_polygons(data):
-    # TODO: do your shp2coords magic here
-    return json.dumps(data)
+    #TODO: The polygon doesn't generate if it's not a list of lists like this: [[coordinate list], [coordinate list]]
+    polyList = shp2coords(data)
+    print(polyList)
+    return json.dumps(polyList)
+
 
 
 @app.route('/')
@@ -52,22 +57,27 @@ def upload_file():
 
     temp_dir = tempfile.mkdtemp()
 
-    for file in files:
-        file.save(os.path.join(temp_dir, file.filename))
-
-    shp_path = [os.path.join(temp_dir, f.filename) for f in files if f.filename.endswith('.shp')][0]
-
     try:
-        gdf = gpd.read_file(shp_path)
-        data = json.loads(gdf.to_json())
+        for file in files:
+            file_path = os.path.join(temp_dir, file.filename)
+            # Ensure the directory exists
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            file.save(file_path)
+
+        shp_path = [os.path.join(temp_dir, f.filename) for f in files if f.filename.endswith('.shp')][0]
+
+        try:
+            polygons = generate_polygons(shp_path)
+
+        except Exception as e:
+            return jsonify(success=False, error=f"Error reading shapefile: {str(e)}")
+
+        with open(os.path.join(os.path.dirname(__file__), '..', 'polygons.json'), 'w') as f:
+            f.write(polygons)
+        return jsonify(success=True)
+    
     except Exception as e:
-        return jsonify(success=False, error=str(e))
-
-    polygons = generate_polygons(data)
-    with open(os.path.join(os.path.dirname(__file__), '..', 'polygons.json'), 'w') as f:
-        f.write(polygons)
-
-    return jsonify(success=True)
+        return jsonify(success=False, error=f"Unexpected error: {str(e)}")
 
 
 @app.route('/polygons.json')
