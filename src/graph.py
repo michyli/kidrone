@@ -6,7 +6,11 @@ from matplotlib.animation import PillowWriter
 from .basic_functions import *
 
 """
-An aggregation of all graphing functions
+==========================
+=== Graphing Utilities ===
+==========================
+
+Aggregation of all graphing related functions
 """
 
 def showpoly(ax, polygons, label=None, color=None):

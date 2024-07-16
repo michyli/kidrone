@@ -7,6 +7,19 @@ import math
 from shapely.geometry import LineString
 from functools import cached_property
 
+"""
+==================
+=== Path Class ===
+==================
+
+Description of the Path class, its attributes, and methods.
+
+#TL:DR
+Path instance has information about the default parameters of the drone (velocity & acceleration)
+Path instance has the information of the path as a list of lines, which can be broken down into denser waypoints.
+A Path instance breaks the each LineString it contains into a series of Segment instances
+Path instance has information about its parent Outline instance
+"""
 
 class Path:
     """
@@ -43,6 +56,8 @@ class Path:
         self.nondisp_velo = 200  # KM/h
         # KM, minimum distance for drone to accelerate or decelerate to disp_velo
         self.turn_dist = 0.1
+        
+        #*If the attribute you are looking for isn't in __init__, look for it at the bottom in @cached_properties
 
     def to_coordinates(self):
         """
@@ -227,7 +242,7 @@ class Path:
     """
     @cached_property
     def coords(self):
-        #Generate coordinates from path
+        """Generate coordinates from path"""
         coordinates = []
         for lines in self.path:
             coordinates.append(lines.boundary.geoms[0])
@@ -236,6 +251,7 @@ class Path:
     
     @cached_property
     def compressed_waypoints(self):
+        """Returns a list of list of coordinates, representing each straight line being decomposed into waypoints closer together."""
         waypoints = []
         for line in self.path:
             num_div = line.length // 100 + 1
@@ -245,6 +261,7 @@ class Path:
     
     @cached_property
     def waypoints(self):
+        """Returns a list of coordinates. Essentially un-nesting all lists inside compressed_waypoints"""
         uncompressed = []
         for subpath in self.compressed_waypoints:
             uncompressed.extend(subpath)
@@ -252,10 +269,12 @@ class Path:
     
     @cached_property
     def waypoints_path(self):
+        """Constructs a list of LineStrings based on the un-nested waypoints."""
         return create_line(self.waypoints)
     
     @cached_property
     def waypoints_disp_map(self) -> list[bool]:
+        """Constructs a dispersion map of the waypoints, giving information of the velocity at each waypoint."""
         map = []
         for index, bool in enumerate(self.disp_map):
             for i in range(len(self.compressed_waypoints[index])):
