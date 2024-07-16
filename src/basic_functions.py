@@ -24,19 +24,20 @@ They are very helpful to manipulate Shapely datatypes and vectors to gear toward
 """
 
 
-def extractPolygons(geometry):
+def extractGeoTypes(geometry):
     "Takes a shapely geometry instance and returns the individual polygons in a list"
     polygons = []
+    # points = []
     if isinstance(geometry, MultiPolygon):
         for polys in geometry.geoms:
             polygons.append(polys)
-        return polygons
     elif isinstance(geometry, Polygon):
         polygons.append(geometry)
-        return polygons
+    # elif isinstance(geometry, Point):
+    #     points.append(geometry)
     else:
         print("The argument to function 'extractPolygons' is not a multipolygon or polygon")
-        return
+    return polygons #, points
 
 
 """
@@ -323,7 +324,7 @@ def shp2coords(shapefile_path):
         # Each element in the list is a list of polygons, representing the polygons of a geo
         geo_poly_list = []
         for geo in geometries:
-            polygons = extractPolygons(geo)
+            polygons = extractGeoTypes(geo)
             geo_poly_list.append(polygons)
         # For each polygon extract the coordinates
         coordinates = []
@@ -332,8 +333,7 @@ def shp2coords(shapefile_path):
                 coordinates.append(extract_coords(polygon))
         print("before transforming")
         # Convert to EPSG 3857 coordinates and return
-        #transformed_coordinates = [bccs2gcs_batch(coord) for coord in coordinates]
-        transformed_coordinates = [bccs2gcs_batch(coordinates[0])]
+        transformed_coordinates = [bccs2gcs_batch(coord) for coord in coordinates]
         return transformed_coordinates
     else:
         print("Shapefile does not contain geometry information or is empty.")

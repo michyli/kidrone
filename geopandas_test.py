@@ -2,7 +2,7 @@ import geopandas as gpd
 from src.basic_functions import *
 
 # Example shapefile path
-shapefile_path = r"C:\Users\edwar\OneDrive\Desktop\Kidrone\2023 Canfor Projects\CBK0035 PU1\KiDrone Seeding_CBK0035-pu1_GHTE.shp"
+shapefile_path = r"C:\Users\edwar\Downloads\Shapefile With Points\KiDrone Seeding_CBK0035-pu1_Secondary Data.shp"
 # # Read shapefile into a GeoDataFrame
 # gdf = gpd.read_file(shapefile_path)
 
