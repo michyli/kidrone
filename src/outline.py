@@ -5,11 +5,17 @@ from .basic_functions import *
 from .path import *
 
 """
-===================
-====== Class ======
-===================
-"""
+=====================
+=== Outline Class ===
+=====================
 
+Description of the Outline class, its attributes, and methods.
+
+#TL:DR
+Outline instance has all the information about the polygon it describes.
+An Outline instance can store other Outline instances as its children if they are all fully contained within it.
+Outline instance generates a Path instance with the 'swath_gen()' function.
+"""
 
 class Outline:
     def __init__(self, name: str, points: list, children=[], offsetparent=None):
@@ -36,6 +42,8 @@ class Outline:
         self.offsetparent = offsetparent
         self.children = self.children_setter(children)
         
+        #*If the attribute you are looking for isn't in __init__, look for it at the bottom in @cached_properties
+        
     def poly_offset(self, offset):
         """Returns an offsetted polygon as an Outline object.
 
@@ -45,8 +53,10 @@ class Outline:
         newpoly = self.polygon.buffer(-offset, quad_segs=3)
         x, y = newpoly.exterior.xy
         coord_set = [(x[i], y[i]) for i in range(len(x))]
-        print(coord_set)
-        return Outline('offset', coord_set, children=list(self.children.values()), offsetparent=self)
+        if not coord_set:
+            raise ValueError("Unable to offset the existing polygon. Either try not adding an offset when constructing Path, or double check if the Outline is big enough (minimum width at any point is at least dispersion diameter)")
+        inherit_children = list(self.children.values()) if self.children else None
+        return Outline('offset', coord_set, children=inherit_children, offsetparent=self)
 
     def extrapolate_line(self, point: Point, slope):
         """Construct a line from a point and a slope, then extend a line to the maximum boundary of the polygon.

@@ -9,13 +9,14 @@ import urllib.parse
 import requests
 
 """
-======================
-=== Basic Functions===
-======================
+=======================
+=== Basic Functions ===
+=======================
 
 Here is a list of general functions used in the rest of the algorithm.
 They are very helpful to manipulate Shapely datatypes and vectors to gear towards a general purpose.
 """
+
 
 """
 ===============================

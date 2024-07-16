@@ -1,5 +1,18 @@
 from .basic_functions import *
+from functools import cached_property
 
+"""
+=====================
+=== Segment Class ===
+=====================
+
+Description of the Segment class, its attributes, and methods.
+
+#TL:DR
+Segment instance has the information of the LineString it describes, as well as the information of the LineString that comes before and after it.
+Segment instance calculates the time it takes to cover its full length based velocity at all points and the parameters defined in its parent Path instance.
+Segment instance has information about its parent Path instance.
+"""
 
 class Segment:
     """
@@ -26,20 +39,16 @@ class Segment:
         self.next_velo = next_velo
         self.prev_angle = prev_angle
         self.next_angle = next_angle
-        self.start_velo = self.start_velo_setter()
-        self.end_velo = self.end_velo_setter()
 
         self.length = line.length / 1000  # KM
-
-        self.time = self.time_setter()  # hours
 
     """
     ========================
     === Attribute Setter ===
     ========================    
     """
-
-    def start_velo_setter(self):
+    @cached_property
+    def start_velo(self):
         # determine starting velocity of the initial acc/deeleration
         if self.prev_angle:
             init_velo = (self.prev_velo + self.curr_velo) / \
@@ -48,7 +57,8 @@ class Segment:
             init_velo = self.prev_velo
         return init_velo
 
-    def end_velo_setter(self):
+    @cached_property
+    def end_velo(self):
         # determine ending velocity of the initial acc/deeleration
         if self.next_angle:
             end_velo = (self.curr_velo + self.next_velo) / \
@@ -57,8 +67,9 @@ class Segment:
             end_velo = self.next_velo
         return end_velo
 
-    def time_setter(self):
-        """Gives the time it takes to cover this path, with acceleration / deceleration taken into consideration """
+    @cached_property
+    def time(self):
+        """Gives the time (in hours) it takes to cover this path, with acceleration / deceleration taken into consideration """
         # double check if all velocities are assigned
         if any(i is None for i in [self.prev_velo, self.curr_velo, self.next_velo]):
             raise ValueError(
