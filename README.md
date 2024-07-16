@@ -18,14 +18,19 @@ This is an algorithm that generates the optimal flight path for a drone over a t
 ## Requirements
 
 For running the code:
+* [Python (>v3.9)](https://www.python.org/downloads/)
 
 * [Matplotlib](https://matplotlib.org/)
 
 * [NumPy](https://numpy.org/)
 
+* [pandas](https://pandas.pydata.org/)
+
 * [Shapely](https://pypi.org/project/shapely/)
 
 * [pyproj](https://pyproj4.github.io/pyproj/stable/index.html)
+
+* [Flask](https://flask.palletsprojects.com/en/3.0.x/)
 
 For development:
 

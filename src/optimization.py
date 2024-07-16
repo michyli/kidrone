@@ -6,10 +6,13 @@ import time
 import pandas as pd
 
 """
-==========================
-====== Optimization ======
-==========================
+=====================
+=== Optimizations ===
+=====================
+
+An aggregation of functions to find optimal Path instance given relevant weighting parameters.
 """
+
 def construct_pathlist(coords, disp_diam, children=None, poly_offset=None, init_slope=-10, end_slope=10, num_path=10):
     #Start Runtime Calc
     start_time = time.time()

@@ -5,11 +5,17 @@ from .basic_functions import *
 from .path import *
 
 """
-===================
-====== Class ======
-===================
-"""
+=====================
+=== Outline Class ===
+=====================
 
+Description of the Outline class, its attributes, and methods.
+
+#TL:DR
+Outline instance has all the information about the polygon it describes.
+An Outline instance can store other Outline instances as its children if they are all fully contained within it.
+Outline instance generates a Path instance with the 'swath_gen()' function.
+"""
 
 class Outline:
     def __init__(self, name: str, points: list, children=[], offsetparent=None):
@@ -35,6 +41,8 @@ class Outline:
 
         self.offsetparent = offsetparent
         self.children = self.children_setter(children)
+        
+        #*If the attribute you are looking for isn't in __init__, look for it at the bottom in @cached_properties
         
     def poly_offset(self, offset):
         """Returns an offsetted polygon as an Outline object.
