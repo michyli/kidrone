@@ -1,6 +1,10 @@
 from flask import Flask, request, render_template, jsonify, send_from_directory
+import geopandas as gpd
 import json
 import os
+import tempfile
+from .basic_functions import *
+from .optimization import *
 
 app = Flask(__name__, template_folder='../templates')
 
@@ -28,10 +32,14 @@ DEFAULT_POLYGONS = [
     ]
 ]
 
+polygon_test = [[[-9441731.665965, 7061903.319368], [-9683654.239392, 6369344.692947], [-9155321.499885, 6430494.315575]]]
 
 def generate_polygons(data):
-    # TODO: do your shp2coords magic here
-    return json.dumps(data)
+    #TODO: The polygon doesn't generate if it's not a list of lists like this: [[coordinate list], [coordinate list]]
+    polyList = shp2coords(data)
+    print(polyList)
+    return json.dumps(polyList), polyList
+
 
 
 @app.route('/')
@@ -41,17 +49,54 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    file = request.files.get('file')
-    if file and file.filename:
-        data = json.load(file)
-    else:
-        data = DEFAULT_POLYGONS
+    if 'files' not in request.files:
+        return jsonify(success=False, error="No files part")
 
-    polygons = generate_polygons(data)
-    with open(os.path.join(os.path.dirname(__file__), '..', 'polygons.json'), 'w') as f:
-        f.write(polygons)
+    files = request.files.getlist('files')
+    if not files or len(files) < 3:
+        return jsonify(success=False, error="At least three shapefile components (.shp, .shx, .dbf) are required")
 
-    return jsonify(success=True)
+    temp_dir = tempfile.mkdtemp()
+
+    try:
+        #Upload the files into temp directory and store path to .shp file
+        for file in files:
+            file_path = os.path.join(temp_dir, file.filename)
+            # Ensure the directory exists
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            file.save(file_path)
+
+        shp_path = [os.path.join(temp_dir, f.filename) for f in files if f.filename.endswith('.shp')][0]
+
+        #Try extracting the polygons as a list and a string, write to json file
+        try:
+            polygonString, polygonList = generate_polygons(shp_path)
+
+        except Exception as e:
+            return jsonify(success=False, error=f"Error reading shapefile: {str(e)}")
+
+        with open(os.path.join(os.path.dirname(__file__), '..', 'polygons.json'), 'w') as f:
+            f.write(polygonString)
+        
+        # #Try running the pathing algorithm for each polygon
+        # try:
+        #     bestPathList = []
+        #     for polygon in polygonList:
+        #         optimal_func = airtime_coverage_weighted(75, 15, 10)                                    #75:15:10 weighting between airtime:seeding_percentage:spilling
+        #         pathlist, pathlistruntime = construct_pathlist(polygon, 10, children=None, num_path=10) #displacement diameter 2nd argument rn
+        #         datatable, best_path = find_best_path(pathlist, optimal_func)
+        #         bestPathList.append(best_path)
+        # except Exception as e:
+        #     return jsonify(success=False, error=f"Error running pathing algorithm: {str(e)}")
+        
+        # print(bestPathList)
+        # with open(os.path.join(os.path.dirname(__file__), '..', 'bestpaths.json'), 'w') as f:
+        #     f.write(bestPathList)
+        
+        return jsonify(success=True)
+    
+    except Exception as e:
+        return jsonify(success=False, error=f"Unexpected error: {str(e)}")
 
 
 @app.route('/polygons.json')
