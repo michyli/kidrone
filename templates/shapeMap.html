@@ -30,8 +30,11 @@
   </head>
   <body>
     <div id="controls">
-      <input type="file" id="fileInput" />
-      <button id="uploadBtn">Upload and Display</button>
+      <form id="upload-form" method="post" enctype="multipart/form-data">
+        <input type="file" id="file-input" name="files" multiple webkitdirectory directory />
+        <button type="submit">Upload and Display</button>
+      </form>
+      <div id="result"></div>
     </div>
     <div id="viewDiv"></div>
     <script>
@@ -62,6 +65,8 @@
         map.add(graphicsLayer);
 
         function addPolygonsAndPoints(polygons) {
+          var combinedExtent = null;
+
           polygons.forEach(function (polygonCoordinates) {
             // Create a polygon geometry
             var polygon = new Polygon({
@@ -103,26 +108,32 @@
               });
 
               graphicsLayer.add(pointGraphic);
+
+              // Update the combined extent
+              if (combinedExtent) {
+                combinedExtent = combinedExtent.union(polygonGraphic.geometry.extent);
+              } else {
+                combinedExtent = polygonGraphic.geometry.extent.clone();
+              }  
             });
           });
+          // Zoom to the combined extent of all polygons
+          if (combinedExtent) {
+                view.goTo(combinedExtent);
+              }
         }
-
-        document
-          .getElementById("uploadBtn")
-          .addEventListener("click", function () {
-            var fileInput = document.getElementById("fileInput");
-            const formData = new FormData();
-            if (fileInput.files.length > 0) {
-              const file = fileInput.files[0];
-              formData.append("file", file);
-            }
+        document.getElementById("upload-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            var form = event.target;
+            var formData = new FormData(form);
 
             fetch("/upload", {
-              method: "POST",
-              body: formData,
+                method: "POST",
+                body: formData
             })
-              .then((response) => response.json())
-              .then((result) => {
+            .then(response => response.json())
+            .then(result => {
+                var resultDiv = document.getElementById("result");
                 if (result.success) {
                   fetch("/polygons.json")
                     .then((response) => response.json())
@@ -134,13 +145,14 @@
                       console.error("Error loading polygons:", error);
                     });
                 } else {
-                  alert("File upload failed.");
+                    resultDiv.textContent = "File upload failed: " + result.error;
+                    resultDiv.style.display = "block";
                 }
-              })
-              .catch((error) => {
+            })
+            .catch(error => {
                 console.error("Error uploading file:", error);
-              });
-          });
+            });
+        });
       });
     </script>
   </body>
