@@ -20,20 +20,18 @@ exclude1 = Outline('child1', gcs2pcs_batch(exclude1))
 
 disp_diam = 50  # meters
 
-shapefile_path = r"2023 Canfor Projects\CBK0035 PU1\Site Shapefiles - Fall\CBK0035_PU1.shp"
-# points = shp2coords(shapefile_path)[0]
+shapefile_path = r"C:\Users\edwar\Downloads\Shapefile With Bars\KiDrone Seeding_CBK0035-pu1_GHTE.shp"
+points = shp2coords(shapefile_path)[0]
+print(points)
 
 
-# 75:15:10 weighting between airtime:seeding_percentage:spilling
-optimal_func = airtime_coverage_weighted(75, 15, 10)
-pathlist, pathlistruntime = construct_pathlist(
-    points, disp_diam, children=None, num_path=10)  # calculates the optimized path
+optimal_func = airtime_coverage_weighted(75, 15, 10)                                    #75:15:10 weighting between airtime:seeding_percentage:spilling
+pathlist, pathlistruntime = construct_pathlist(points, disp_diam, children=None, poly_offset=0, num_path=10) #calculates the optimized path
 datatable, best_path = find_best_path(pathlist, optimal_func)
 
-# print(datatable)                       #Prints the pandas DataFrame for all paths ran (all data values are max-min normalized)
-# showpath(best_path)                     #Display the highest-scored path
-# Plot in 3D with respect to elevation #*(This is where it takes the longest)
-show3Dpath(best_path, "coarse", gif=True)
-# Change "dense" to "coarse" to run faster with less accuracy in height
+#print(datatable)                       #Prints the pandas DataFrame for all paths ran (all data values are max-min normalized)
+#showpath(best_path)                     #Display the highest-scored path
+show3Dpath(best_path, "coarse", gif=True)          #Plot in 3D with respect to elevation #*(This is where it takes the longest)
+                                        #Change "dense" to "coarse" to run faster with less accuracy in height
 
 print(f"Pathlist construction runtime: {round(pathlistruntime, 3)}sec")
