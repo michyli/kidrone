@@ -3,7 +3,8 @@ import geopandas as gpd
 import json
 import os
 import tempfile
-from basic_functions import *
+from .basic_functions import *
+from .optimization import *
 
 app = Flask(__name__, template_folder='../templates')
 
@@ -37,7 +38,7 @@ def generate_polygons(data):
     #TODO: The polygon doesn't generate if it's not a list of lists like this: [[coordinate list], [coordinate list]]
     polyList = shp2coords(data)
     print(polyList)
-    return json.dumps(polyList)
+    return json.dumps(polyList), polyList
 
 
 
@@ -58,6 +59,7 @@ def upload_file():
     temp_dir = tempfile.mkdtemp()
 
     try:
+        #Upload the files into temp directory and store path to .shp file
         for file in files:
             file_path = os.path.join(temp_dir, file.filename)
             # Ensure the directory exists
@@ -66,14 +68,31 @@ def upload_file():
 
         shp_path = [os.path.join(temp_dir, f.filename) for f in files if f.filename.endswith('.shp')][0]
 
+        #Try extracting the polygons as a list and a string, write to json file
         try:
-            polygons = generate_polygons(shp_path)
+            polygonString, polygonList = generate_polygons(shp_path)
 
         except Exception as e:
             return jsonify(success=False, error=f"Error reading shapefile: {str(e)}")
 
         with open(os.path.join(os.path.dirname(__file__), '..', 'polygons.json'), 'w') as f:
-            f.write(polygons)
+            f.write(polygonString)
+        
+        # #Try running the pathing algorithm for each polygon
+        # try:
+        #     bestPathList = []
+        #     for polygon in polygonList:
+        #         optimal_func = airtime_coverage_weighted(75, 15, 10)                                    #75:15:10 weighting between airtime:seeding_percentage:spilling
+        #         pathlist, pathlistruntime = construct_pathlist(polygon, 10, children=None, num_path=10) #displacement diameter 2nd argument rn
+        #         datatable, best_path = find_best_path(pathlist, optimal_func)
+        #         bestPathList.append(best_path)
+        # except Exception as e:
+        #     return jsonify(success=False, error=f"Error running pathing algorithm: {str(e)}")
+        
+        # print(bestPathList)
+        # with open(os.path.join(os.path.dirname(__file__), '..', 'bestpaths.json'), 'w') as f:
+        #     f.write(bestPathList)
+        
         return jsonify(success=True)
     
     except Exception as e:

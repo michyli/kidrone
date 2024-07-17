@@ -65,6 +65,8 @@
         map.add(graphicsLayer);
 
         function addPolygonsAndPoints(polygons) {
+          var combinedExtent = null;
+
           polygons.forEach(function (polygonCoordinates) {
             // Create a polygon geometry
             var polygon = new Polygon({
@@ -107,10 +109,18 @@
 
               graphicsLayer.add(pointGraphic);
 
-              // Zoom to the extent of the polygon
-              view.goTo(polygonGraphic.geometry.extent);
+              // Update the combined extent
+              if (combinedExtent) {
+                combinedExtent = combinedExtent.union(polygonGraphic.geometry.extent);
+              } else {
+                combinedExtent = polygonGraphic.geometry.extent.clone();
+              }  
             });
           });
+          // Zoom to the combined extent of all polygons
+          if (combinedExtent) {
+                view.goTo(combinedExtent);
+              }
         }
         document.getElementById("upload-form").addEventListener("submit", function(event) {
             event.preventDefault();
