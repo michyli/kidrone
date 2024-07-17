@@ -7,6 +7,7 @@ import random
 import csv
 import urllib.parse
 import requests
+import time
 
 """
 =======================
@@ -332,9 +333,11 @@ def shp2coords(shapefile_path):
         for poly_list in geo_poly_list:
             for polygon in poly_list:
                 coordinates.append(extract_coords(polygon))
-        print("before transforming")
         # Convert to EPSG 3857 coordinates and return
+        startTime = time.time()
         transformed_coordinates = [bccs2gcs_batch(coord) for coord in coordinates]
+        endTime = time.time()
+        print(endTime - startTime)
         return transformed_coordinates
     else:
         print("Shapefile does not contain geometry information or is empty.")
@@ -369,7 +372,7 @@ def pcs2gcs(x, y):
     return lon, lat
 
 
-def bccs2pcs(x, y):
+def bccs2gcs(x, y):
     """Converts EPSG:3005 (meters) to EPSG:3857 (meters)
     """
     transformer = Transformer.from_crs(
@@ -385,22 +388,24 @@ def gcs2pcs_batch(coords):
     """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
     but input is a whole list of EPSG:4326 coordinates
     """
-    return [list(gcs2pcs(pt[0], pt[1])) for pt in coords]
+    print()
+    return [list(gcs2pcs(pt[0], pt[1])) for pt in print_progress(coords, prefix="gcs2pcs Conversion: ")]
 
 
 def pcs2gcs_batch(coords):
     """Converts EPSG:3857 (meters) to EPSG:4326 (lon&lat)
     but input is a whole list of EPSG:3857 coordinates
     """
-    return [list(pcs2gcs(pt[0], pt[1])) for pt in coords]
+    print()
+    return [list(pcs2gcs(pt[0], pt[1])) for pt in print_progress(coords, prefix="pcs2gcs Conversion: ")]
 
 
 def bccs2gcs_batch(coords):
     """Converts EPSG:3005 (meters) to EPSG:3875 (meters)
     but input is a whole list of EPSG:3005 coordinates
     """
-    print("Starting batch conversion")
-    return [list(bccs2pcs(pt[0], pt[1])) for pt in coords]
+    print()
+    return [list(bccs2gcs(pt[0], pt[1])) for pt in print_progress(coords, prefix="bccs2gcs Conversion: ")]
 
 
 """
