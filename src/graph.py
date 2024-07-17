@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from scipy.interpolate import griddata
 from matplotlib import animation
 from matplotlib.animation import PillowWriter
 from .basic_functions import *
@@ -72,7 +75,7 @@ def showprojection(ax, full_path):
         ax.plot(x1, y1, 0, color="teal", linestyle=":")
 
 
-def show3Dpath(full_path, plottype="coarse", gif=False):
+def show3Dpath(full_path, height_offset=0, plottype="coarse", gif=False):
     """
     Plots the complete 3D path.
 
@@ -98,32 +101,61 @@ def show3Dpath(full_path, plottype="coarse", gif=False):
     
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(1, 1, 1, projection='3d')
+    
+    # Plot interpolation of terrain surface
+    X = []
+    Y = []
+    for lines in reference_line[:-1]:
+        X.append(lines.coords[0][0])
+        Y.append(lines.coords[0][1])
+    X.append(reference_line[-1].coords[0][0])
+    Y.append(reference_line[-1].coords[0][1])
+    Z = elevation
+    
+    Xmin, Xmax = min(X), max(X)
+    Ymin, Ymax = min(Y), max(Y)
+    
+    X = np.array(X)
+    Y = np.array(Y)
+    Z = np.array(Z)[:-1]
+    
+    xi = np.linspace(Xmin,Xmax,100)
+    yi = np.linspace(Ymin,Ymax,100)
+    zi = griddata((X, Y), Z, (xi[None,:], yi[:,None]), method='cubic')
+    xig, yig = np.meshgrid(xi, yi)
+    ax.plot_surface(xig, yig, zi, linewidth=0, cmap='terrain', antialiased=True, zorder=0)
+    
     # Plot each LineString with its start and end points at the correct height
     for index, lines in enumerate(reference_line):
         
         start, end = lines.coords[0], lines.coords[1]
         xx, yy = [start[0], end[0]], [start[1], end[1]]
-        zz = [elevation[index], elevation[index+1]]
+        
+        terrain_height_start, terrain_height_end = float(elevation[index]), float(elevation[index+1])
+        drone_height_start, drone_height_end = float(elevation[index])+height_offset, float(elevation[index+1])+height_offset
+        
+        zz = [drone_height_start, drone_height_end]
         if dispersion_map[index]:
             if label_helper_disp:
                 ax.plot(xx, yy, zz, color='g', linestyle='-',
-                        marker=None, linewidth=2.5)
+                        marker=None, linewidth=2.5, zorder=10)
             else:
                 ax.plot(xx, yy, zz, color='g', linestyle='-',
-                        marker=None, linewidth=2.5, label='dispersing')
+                        marker=None, linewidth=2.5, label='dispersing', zorder=10)
                 label_helper_disp = True
         else:
             if label_helper_nondisp:
                 ax.plot(xx, yy, zz, color='b', linestyle='-',
-                        marker=None, linewidth=2.5)
+                        marker=None, linewidth=2.5, zorder=10)
             else:
                 ax.plot(xx, yy, zz, color='b', linestyle='-',
-                        marker=None, linewidth=2.5, label='non-dispersing')
+                        marker=None, linewidth=2.5, label='non-dispersing', zorder=10)
                 label_helper_nondisp = True
+                
             ax.plot([start[0], start[0]], [start[1], start[1]], [
-                0, elevation[index]], 'r-.', linewidth=1, alpha=0.25)
+                terrain_height_start, drone_height_start], 'r-.', linewidth=1, alpha=0.25, zorder=5)
             ax.plot([end[0], end[0]], [end[1], end[1]], [
-                0, elevation[index+1]], 'r-.', linewidth=1, alpha=0.25)
+                terrain_height_end, drone_height_end], 'r-.', linewidth=1, alpha=0.25, zorder=5)
 
     showprojection(ax, full_path)
 

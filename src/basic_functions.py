@@ -422,6 +422,7 @@ def get_elevation(coordinates):
     elevation=[]
     
     num_pts = len(coordinates)
+    print()
     print(f"Note: Accessing elevation data takes time on public API. Estimated time {int(num_pts/2//60)} mins {int(num_pts/2%60)} secs")
     for coord in print_progress(coordinates):       
         #define url parameters for API request
@@ -437,7 +438,7 @@ def get_elevation(coordinates):
         try:
             elevation.append(json_result['value'])
         except KeyError:
-            raise ConnectionError("Unable to access more than a quarter of the elevation data. Please check your internet connection and try running the code again.")
+            raise ConnectionError("Unable to access some of the elevation data. Please check your internet connection and try running the code again.")
                 
     return elevation
 
