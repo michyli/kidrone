@@ -134,9 +134,17 @@ def show3Dpath(full_path, plottype="coarse", gif=False):
     ax.yaxis.set_major_locator(ticker.NullLocator())
     ax.zaxis.set_major_locator(plt.MaxNLocator(4))
     ax.set_zlabel('Elevation (m)')
-    fig.set_facecolor("#F2F7CA")
-    ax.set_facecolor("#F2F7CA")
     ax.set_box_aspect((2, 2, 1.5))
+    
+    #Set background color of plot to bg_color
+    """
+    bg_color = "#F2F7CA"
+    fig.set_facecolor(bg_color)
+    ax.set_facecolor(bg_color)
+    ax.xaxis.set_pane_color(bg_color)
+    ax.yaxis.set_pane_color(bg_color)
+    ax.zaxis.set_pane_color(bg_color)
+    """
     
     if gif:
         #Make a .gif animation file of the 3D plot
@@ -148,7 +156,7 @@ def show3Dpath(full_path, plottype="coarse", gif=False):
             return [fig]
 
         # Animate
-        print("Generating .gif file in the directory. This will take around 10 seconds.")
+        print("Generating .gif file in the directory...")
         anim = animation.FuncAnimation(fig, animate, init_func=init,
                                     frames=360, interval=10, blit=True)
         # Save
