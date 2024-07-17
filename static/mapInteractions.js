@@ -15,7 +15,7 @@ require([
     var view = new MapView({
         container: "viewDiv",
         map: map,
-        center: [ -115.749, 49.396],
+        center: [-79.4637, 43.6465],
         zoom: 15,
         spatialReference: { wkid: 3857 },
     });
@@ -132,7 +132,7 @@ require([
     .then(result => {
         var resultDiv = document.getElementById("result");
         if (result.success) {
-          fetch("/polygons.json")
+            fetch("/data/polygons.json") 
             .then((response) => response.json())
             .then((polygons) => {
               console.log("Polygons loaded:", polygons); // Log the loaded polygons
