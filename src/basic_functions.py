@@ -434,7 +434,11 @@ def get_elevation(coordinates):
         #Get .json file from epqs public API
         json_result = requests.get((url + urllib.parse.urlencode(params))).json()
         #Parse the .json file format and extract the 'value', which is the elevation data
-        elevation.append(json_result['value'])
+        try:
+            elevation.append(json_result['value'])
+        except KeyError:
+            raise ConnectionError("Unable to access more than a quarter of the elevation data. Please check your internet connection and try running the code again.")
+                
     return elevation
 
 def arbit_list(num, min, max):
