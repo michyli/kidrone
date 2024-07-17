@@ -134,6 +134,8 @@ def show3Dpath(full_path, plottype="coarse", gif=False):
     ax.yaxis.set_major_locator(ticker.NullLocator())
     ax.zaxis.set_major_locator(plt.MaxNLocator(4))
     ax.set_zlabel('Elevation (m)')
+    fig.set_facecolor("#F2F7CA")
+    ax.set_facecolor("#F2F7CA")
     ax.set_box_aspect((2, 2, 1.5))
     
     if gif:
