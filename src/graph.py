@@ -146,6 +146,7 @@ def show3Dpath(full_path, plottype="coarse", gif=False):
             return [fig]
 
         # Animate
+        print("Generating .gif file in the directory. This will take around 10 seconds.")
         anim = animation.FuncAnimation(fig, animate, init_func=init,
                                     frames=360, interval=10, blit=True)
         # Save
