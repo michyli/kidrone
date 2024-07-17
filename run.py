@@ -27,7 +27,7 @@ shapefile_path = r"2023 Canfor Projects\CBK0035 PU1\Site Shapefiles - Fall\CBK00
 # 75:15:10 weighting between airtime:seeding_percentage:spilling
 optimal_func = airtime_coverage_weighted(75, 15, 10)
 pathlist, pathlistruntime = construct_pathlist(
-    points, disp_diam, exclude1, num_path=10)  # calculates the optimized path
+    points, disp_diam, children=None, num_path=10)  # calculates the optimized path
 datatable, best_path = find_best_path(pathlist, optimal_func)
 
 # print(datatable)                       #Prints the pandas DataFrame for all paths ran (all data values are max-min normalized)

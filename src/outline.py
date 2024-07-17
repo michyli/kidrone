@@ -53,7 +53,10 @@ class Outline:
         newpoly = self.polygon.buffer(-offset, quad_segs=3)
         x, y = newpoly.exterior.xy
         coord_set = [(x[i], y[i]) for i in range(len(x))]
-        return Outline('offset', coord_set, children=list(self.children.values()), offsetparent=self)
+        if not coord_set:
+            raise ValueError("Unable to offset the existing polygon. Either try not adding an offset when constructing Path, or double check if the Outline is big enough (minimum width at any point is at least dispersion diameter)")
+        inherit_children = list(self.children.values()) if self.children else None
+        return Outline('offset', coord_set, children=inherit_children, offsetparent=self)
 
     def extrapolate_line(self, point: Point, slope):
         """Construct a line from a point and a slope, then extend a line to the maximum boundary of the polygon.
