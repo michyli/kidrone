@@ -5,9 +5,9 @@
     <title>Display Polygons and Points</title>
     <link
       rel="stylesheet"
-      href="https://js.arcgis.com/4.24/esri/themes/light/main.css"
+      href="https://js.arcgis.com/4.30/esri/themes/light/main.css"
     />
-    <script src="https://js.arcgis.com/4.24/"></script>
+    <script src="https://js.arcgis.com/4.30/"></script>
     <style>
       html,
       body,
@@ -31,10 +31,17 @@
   <body>
     <div id="controls">
       <form id="upload-form" method="post" enctype="multipart/form-data">
-        <input type="file" id="file-input" name="files" multiple webkitdirectory directory />
+        <input
+          type="file"
+          id="file-input"
+          name="files"
+          multiple
+          webkitdirectory
+          directory
+        />
         <button type="submit">Upload and Display</button>
       </form>
-      <div id="result"></div>
+      <!-- <div id="result"></div> -->
     </div>
     <div id="viewDiv"></div>
     <script>
@@ -111,28 +118,32 @@
 
               // Update the combined extent
               if (combinedExtent) {
-                combinedExtent = combinedExtent.union(polygonGraphic.geometry.extent);
+                combinedExtent = combinedExtent.union(
+                  polygonGraphic.geometry.extent
+                );
               } else {
                 combinedExtent = polygonGraphic.geometry.extent.clone();
-              }  
+              }
             });
           });
           // Zoom to the combined extent of all polygons
           if (combinedExtent) {
-                view.goTo(combinedExtent);
-              }
+            view.goTo(combinedExtent);
+          }
         }
-        document.getElementById("upload-form").addEventListener("submit", function(event) {
+        document
+          .getElementById("upload-form")
+          .addEventListener("submit", function (event) {
             event.preventDefault();
             var form = event.target;
             var formData = new FormData(form);
 
             fetch("/upload", {
-                method: "POST",
-                body: formData
+              method: "POST",
+              body: formData,
             })
-            .then(response => response.json())
-            .then(result => {
+              .then((response) => response.json())
+              .then((result) => {
                 var resultDiv = document.getElementById("result");
                 if (result.success) {
                   fetch("/polygons.json")
@@ -145,14 +156,14 @@
                       console.error("Error loading polygons:", error);
                     });
                 } else {
-                    resultDiv.textContent = "File upload failed: " + result.error;
-                    resultDiv.style.display = "block";
+                  resultDiv.textContent = "File upload failed: " + result.error;
+                  resultDiv.style.display = "block";
                 }
-            })
-            .catch(error => {
+              })
+              .catch((error) => {
                 console.error("Error uploading file:", error);
-            });
-        });
+              });
+          });
       });
     </script>
   </body>

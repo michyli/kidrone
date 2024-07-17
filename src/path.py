@@ -21,6 +21,7 @@ A Path instance breaks the each LineString it contains into a series of Segment 
 Path instance has information about its parent Outline instance
 """
 
+
 class Path:
     """
     Path class processes the path object and extracts information about the path.
@@ -34,7 +35,7 @@ class Path:
         start_velo:     starting velocity of this path, static (0) by default
         end_velo:     ending velocity of this path, static (0) by default
         """
-        self.path = path                    #2D Path
+        self.path = path  # 2D Path
         self.parent = parent
         self.disp_diam = disp_diam
         self.swath_slope = swath_slope
@@ -56,8 +57,8 @@ class Path:
         self.nondisp_velo = 200  # KM/h
         # KM, minimum distance for drone to accelerate or decelerate to disp_velo
         self.turn_dist = 0.1
-        
-        #*If the attribute you are looking for isn't in __init__, look for it at the bottom in @cached_properties
+
+        # *If the attribute you are looking for isn't in __init__, look for it at the bottom in @cached_properties
 
     def to_coordinates(self):
         """
@@ -117,31 +118,35 @@ class Path:
         return offset_path
 
     def _coverage_compute(self):
-        #Define border of Field
+        # Define border of Field
         outer_poly = self.parent.offsetparent if self.parent.offsetparent else self.parent
-        
-        #Total drone coverage
+
+        # Total drone coverage
         self_coverage = self.coverage()
-        total_drone_covered_area = self_coverage.area / 1000**2 #KM^2
-        
-        #Total internal exclusion area (KM^2) and Total internal exclusion area covered by drone
+        total_drone_covered_area = self_coverage.area / 1000**2  # KM^2
+
+        # Total internal exclusion area (KM^2) and Total internal exclusion area covered by drone
         if outer_poly.children:
-            excluded_area = sum([child.polygon.area for child in outer_poly.children.values()]) / 1000**2
-            drone_covered_excluded_area = sum([self_coverage.intersection(child.polygon).area for child in self.parent.children.values()]) / 1000**2
+            excluded_area = sum(
+                [child.polygon.area for child in outer_poly.children.values()]) / 1000**2
+            drone_covered_excluded_area = sum([self_coverage.intersection(
+                child.polygon).area for child in self.parent.children.values()]) / 1000**2
         else:
             excluded_area = 0
             drone_covered_excluded_area = 0
-        
-        #Total field area desired to be covered
+
+        # Total field area desired to be covered
         desired_coverage = outer_poly.polygon.area
-        desired_coverage = desired_coverage / 1000**2 - excluded_area #KM^2
-        
-        #Total seed dispersed area by drone 
-        covered_field_area = self_coverage.intersection(outer_poly.polygon).area / 1000**2
-        seed_disp_area = (covered_field_area - drone_covered_excluded_area) #KM^2
-        
+        desired_coverage = desired_coverage / 1000**2 - excluded_area  # KM^2
+
+        # Total seed dispersed area by drone
+        covered_field_area = self_coverage.intersection(
+            outer_poly.polygon).area / 1000**2
+        seed_disp_area = (covered_field_area -
+                          drone_covered_excluded_area)  # KM^2
+
         return seed_disp_area, total_drone_covered_area, desired_coverage
-    
+
     """
     ===============
     === Display ===
@@ -233,8 +238,6 @@ class Path:
     def length_print(self):
         return f"This path is {round(self.pathlength, 3)} KM long."
 
-
-
     """
     =========================
     === Attribute Setters ===
@@ -248,7 +251,7 @@ class Path:
             coordinates.append(lines.boundary.geoms[0])
         coordinates.append(self.path[-1].boundary.geoms[1])
         return coordinates
-    
+
     @cached_property
     def compressed_waypoints(self):
         """Returns a list of list of coordinates, representing each straight line being decomposed into waypoints closer together."""
@@ -256,9 +259,10 @@ class Path:
         for line in self.path:
             num_div = line.length // 100 + 1
             distances = np.linspace(0, line.length, int(num_div))
-            waypoints.append([line.interpolate(distance) for distance in distances] + [line.boundary.geoms[-1]])
+            waypoints.append([line.interpolate(distance)
+                             for distance in distances] + [line.boundary.geoms[-1]])
         return waypoints
-    
+
     @cached_property
     def waypoints(self):
         """Returns a list of coordinates. Essentially un-nesting all lists inside compressed_waypoints"""
@@ -266,12 +270,12 @@ class Path:
         for subpath in self.compressed_waypoints:
             uncompressed.extend(subpath)
         return uncompressed
-    
+
     @cached_property
     def waypoints_path(self):
         """Constructs a list of LineStrings based on the un-nested waypoints."""
         return create_line(self.waypoints)
-    
+
     @cached_property
     def waypoints_disp_map(self) -> list[bool]:
         """Constructs a dispersion map of the waypoints, giving information of the velocity at each waypoint."""
@@ -280,7 +284,7 @@ class Path:
             for i in range(len(self.compressed_waypoints[index])):
                 map.append(bool)
         return map
-    
+
     @cached_property
     def disp_map(self) -> list[bool]:
         """Determines the max velocity of each corresponding Segment within the Path within the Polygon.
@@ -310,7 +314,7 @@ class Path:
             else:
                 map.append(True)
         return map
-    
+
     @cached_property
     def pathlength(self):
         """Returns the length of path in KM
@@ -352,31 +356,33 @@ class Path:
         # compute total path time from all segment instances
         tot_hour = sum([seg.time for seg in self.segment_list])
         return tot_hour
-    
+
     @cached_property
     def seeding_coverage_efficiency(self):
-        #Percent drone-dispersed area over desired covered area
-        return self._coverage_compute()[0] / self._coverage_compute()[2] * 100 #%
-        
+        # Percent drone-dispersed area over desired covered area
+        # %
+        return self._coverage_compute()[0] / self._coverage_compute()[2] * 100
+
     @cached_property
     def spilled_area(self):
-        #Total 'spilled-over' area not within the desired field
-        return self._coverage_compute()[1] - self._coverage_compute()[0] #KM^2
-    
+        # Total 'spilled-over' area not within the desired field
+        # KM^2
+        return self._coverage_compute()[1] - self._coverage_compute()[0]
+
     @cached_property
     def critical_elevations(self):
         """returns a list of elevation corresponding to the critical point coordinates"""
         points_tup = [(pts.x, pts.y) for pts in self.coords]
         converted_points = pcs2gcs_batch(points_tup)
-        elevation = get_elevation(converted_points)        
+        elevation = get_elevation(converted_points)
         self.critical_elevations = elevation
         return elevation
-    
+
     @cached_property
     def waypoint_elevations(self):
         """returns a list of elevation corresponding to the waypoint coordinates"""
         points_tup = [(pts.x, pts.y) for pts in self.waypoints]
         converted_points = pcs2gcs_batch(points_tup)
-        elevation = get_elevation(converted_points)        
+        elevation = get_elevation(converted_points)
         self.waypoints_elevations = elevation
         return elevation
