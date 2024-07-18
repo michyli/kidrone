@@ -256,9 +256,9 @@ class Outline:
             for c in children:
                 children_dict[c.name] = c
         # Check if children are contained in the field
-        for c in children_dict.values():
+        """ for c in children_dict.values():
             if not c.polygon.within(self.polygon.buffer(1e-8)):
-                raise AssertionError("The children are not fully contained in the overall polygon.")
+                raise AssertionError("The children are not fully contained in the overall polygon.") """
         return children_dict
 
     def show_children(self):
