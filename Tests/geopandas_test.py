@@ -3,6 +3,7 @@ import sys
 import os
 from src.basic_functions import *
 from src.optimization import *
+from shapely.geometry import LineString
 
 # Add the src directory to the system path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
@@ -34,6 +35,7 @@ shapefile_path = r"C:\Users\edwar\OneDrive\Desktop\Kidrone\2023 Canfor Projects\
 #     for polygon in poly_list:
 #         coordinates.append(extract_coords(polygon))
 
+
 extractedCoords = shp2coords(shapefile_path)
 print(extractedCoords)
 
@@ -42,10 +44,16 @@ for polygon in extractedCoords:
     optimal_func = airtime_coverage_weighted(75, 15, 10)                                    #75:15:10 weighting between airtime:seeding_percentage:spilling
     pathlist, pathlistruntime = construct_pathlist(polygon, 20, children=None, poly_offset=0, num_path=10) #calculates the optimized path
     datatable, best_path = find_best_path(pathlist, optimal_func)
-    print("this is the best path")
-    print()
-    print(best_path)
-    bestPathList.append(best_path)
+    showpath(best_path)
+    bestPathList.append(best_path.path)
 
 print(bestPathList)
 
+#Test extraction
+
+gdf = gpd.GeoDataFrame(geometry=bestPathList[0])
+gdf.set_crs(epsg=3857, inplace=True)
+
+output_directory = r"shp_output"
+output_file = os.path.join(output_directory, "best_path.shp")
+gdf.to_file(output_file)
