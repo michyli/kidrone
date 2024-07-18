@@ -1,3 +1,8 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+
 import geopandas as gpd
 from src.basic_functions import *
 
