@@ -26,7 +26,7 @@
         <button type="submit">Upload and Display</button>
       </form>
       <div id="result"></div>
-      
+      <form id="optimize-form" onsubmit="submitForm(); return false;">
         <label for="pathName">[Optional] Path Name:</label>
         <input
           type="text"
@@ -64,7 +64,7 @@
           name="flightDir"
           placeholder="Enter direction"
         /><br /><br />
-        <button type="button" onclick="submitForm()">Gerenate</button>
+        <button type="submit">Generate</button>
       </form>
       <div id="output"></div>
       <div id="plot"></div>
