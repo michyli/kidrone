@@ -156,28 +156,28 @@ require([
     function drawPathOnMap(pathDetails) {
         console.log("Drawing path with details:", pathDetails);
         require(["esri/Graphic"], function (Graphic) {
-            pathDetails.forEach((segment) => {
-                const polyline = {
-                    type: "polyline",
-                    paths: [
-                        [segment.start.x, segment.start.y],
-                        [segment.end.x, segment.end.y]
-                    ],
-                    spatialReference: { wkid: 3857 }
-                };
-
-                const simpleLineSymbol = {
-                    type: "simple-line",
-                    color: "#8A2BE2",
-                    width: "2"
-                };
-
-                const polylineGraphic = new Graphic({
-                    geometry: polyline,
-                    symbol: simpleLineSymbol
+            pathDetails.forEach((polygon) => {
+                polygon.forEach((segment) => {
+                    const polyline = {
+                        type: "polyline",
+                        paths: segment,
+                        spatialReference: { wkid: 3857 }
+                    };
+    
+                    const simpleLineSymbol = {
+                        type: "simple-line",
+                        color: "#8A2BE2",
+                        width: "2"
+                    };
+    
+                    const polylineGraphic = new Graphic({
+                        geometry: polyline,
+                        symbol: simpleLineSymbol
+                    });
+                    graphicsLayer.add(polylineGraphic);
                 });
-                graphicsLayer.add(polylineGraphic);
             });
         });
     }
+    
 });

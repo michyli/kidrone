@@ -1,4 +1,4 @@
-// /static/testShapely.js
+/* // /static/testShapely.js
 
 require([
     "esri/Map",
@@ -80,4 +80,4 @@ require([
       }
     });
   });
-  
+   */
