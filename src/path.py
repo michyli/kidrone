@@ -254,12 +254,9 @@ class Path:
         """Returns a list of list of coordinates, representing each straight line being decomposed into waypoints closer together."""
         waypoints = []
         for line in self.path:
-            num_div = line.length // 100 + 1
+            num_div = line.length // 100 + 2
             distances = np.linspace(0, line.length, int(num_div))
-            waypoints.append([line.interpolate(distance) for distance in distances])
-        for i in waypoints[:-1]:
-            i.pop(-1) #delete repeated points at where two lines meet
-        
+            waypoints.append([line.interpolate(distance) for distance in distances])        
         return waypoints
     
     @cached_property
@@ -270,8 +267,9 @@ class Path:
     def waypoints(self) -> list[Point]:
         """Returns a list of coordinates. Essentially un-nesting all lists inside _compressed_waypoints"""
         uncompressed = []
-        for subpath in self._compressed_waypoints:
-            uncompressed.extend(subpath)
+        for subpath in self._compressed_waypoints[:-1]:
+            uncompressed.extend(subpath[:-1])
+        uncompressed.extend(self._compressed_waypoints[-1])
         return uncompressed
     
     @cached_property
@@ -373,14 +371,12 @@ class Path:
     def critical_elevations(self) -> list[float]:
         """returns a list of elevation corresponding to the critical point coordinates"""
         points_tup = [(pts.x, pts.y) for pts in self.coords]
-        converted_points = pcs2gcs_batch(points_tup)
-        elevation = get_elevation(converted_points)        
+        elevation = get_elevation(points_tup)        
         return elevation
     
     @cached_property
     def waypoint_elevations(self) -> list[float]:
         """returns a list of elevation corresponding to the waypoint coordinates"""
         points_tup = [(pts.x, pts.y) for pts in self.waypoints]
-        converted_points = pcs2gcs_batch(points_tup)
-        elevation = get_elevation(converted_points)        
+        elevation = get_elevation(points_tup)        
         return elevation
