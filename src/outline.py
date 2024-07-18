@@ -51,6 +51,7 @@ class Outline:
         * Positive = inward offset, negative = outward offset
         """
         newpoly = self.polygon.buffer(-offset, quad_segs=3)
+        assert isinstance(newpoly, Polygon), "Offseting polygon has caused discontinuity in the field area. Try setting poly-offset parameter in construct_pathlist parameter"
         x, y = newpoly.exterior.xy
         coord_set = [(x[i], y[i]) for i in range(len(x))]
         if not coord_set:
