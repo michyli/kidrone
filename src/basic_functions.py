@@ -384,28 +384,28 @@ def bccs2gcs(x, y):
     return x, y
 
 
-def gcs2pcs_batch(coords):
+def gcs2pcs_batch(coords, prefix="gcs2pcs Conversion: "):
     """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
     but input is a whole list of EPSG:4326 coordinates
     """
     print()
-    return [list(gcs2pcs(pt[0], pt[1])) for pt in print_progress(coords, prefix="gcs2pcs Conversion: ")]
+    return [list(gcs2pcs(pt[0], pt[1])) for pt in print_progress(coords, prefix=prefix)]
 
 
-def pcs2gcs_batch(coords):
+def pcs2gcs_batch(coords, prefix="pcs2gcs Conversion: "):
     """Converts EPSG:3857 (meters) to EPSG:4326 (lon&lat)
     but input is a whole list of EPSG:3857 coordinates
     """
     print()
-    return [list(pcs2gcs(pt[0], pt[1])) for pt in print_progress(coords, prefix="pcs2gcs Conversion: ")]
+    return [list(pcs2gcs(pt[0], pt[1])) for pt in print_progress(coords, prefix=prefix)]
 
 
-def bccs2gcs_batch(coords):
+def bccs2gcs_batch(coords, prefix="bccs2gcs Conversion: "):
     """Converts EPSG:3005 (meters) to EPSG:3875 (meters)
     but input is a whole list of EPSG:3005 coordinates
     """
     print()
-    return [list(bccs2gcs(pt[0], pt[1])) for pt in print_progress(coords, prefix="bccs2gcs Conversion: ")]
+    return [list(bccs2gcs(pt[0], pt[1])) for pt in print_progress(coords, prefix=prefix)]
 
 
 """
@@ -436,7 +436,7 @@ def get_elevation(coordinates):
         json_result = requests.get((url + urllib.parse.urlencode(params))).json()
         #Parse the .json file format and extract the 'value', which is the elevation data
         try:
-            elevation.append(json_result['value'])
+            elevation.append(float(json_result['value']) * 0.3048)
         except KeyError:
             raise ConnectionError("Unable to access some of the elevation data. Please check your internet connection and try running the code again.")
                 

@@ -73,6 +73,11 @@ def showprojection(ax, full_path):
     else:
         x1, y1 = full_path.parent.polygon.exterior.xy
         ax.plot(x1, y1, 0, color="teal", linestyle=":")
+    
+    if full_path.parent.children:
+        for poly in full_path.parent.children.values():
+            x1, y1 = poly.polygon.exterior.xy
+            ax.plot(x1, y1, 0, color="firebrick", linestyle=":", alpha=0.4)
 
 
 def show3Dpath(full_path, height_offset=0, plottype="coarse", gif=False):
@@ -87,10 +92,12 @@ def show3Dpath(full_path, height_offset=0, plottype="coarse", gif=False):
     
     if plottype == 'coarse':
         reference_line = full_path.path
+        reference_coords = full_path.coords
         dispersion_map = full_path.disp_map
         elevation = full_path.critical_elevations
     elif plottype == 'dense':
         reference_line = full_path.waypoints_path
+        reference_coords = full_path.waypoints
         dispersion_map = full_path.waypoints_disp_map
         elevation = full_path.waypoint_elevations
     else:
@@ -103,21 +110,12 @@ def show3Dpath(full_path, height_offset=0, plottype="coarse", gif=False):
     ax = fig.add_subplot(1, 1, 1, projection='3d')
     
     # Plot interpolation of terrain surface
-    X = []
-    Y = []
-    for lines in reference_line[:-1]:
-        X.append(lines.coords[0][0])
-        Y.append(lines.coords[0][1])
-    X.append(reference_line[-1].coords[0][0])
-    Y.append(reference_line[-1].coords[0][1])
-    Z = elevation
+    X = np.array([point.x for point in reference_coords])
+    Y = np.array([point.y for point in reference_coords])
+    Z = np.array(elevation)
     
-    Xmin, Xmax = min(X), max(X)
-    Ymin, Ymax = min(Y), max(Y)
-    
-    X = np.array(X)
-    Y = np.array(Y)
-    Z = np.array(Z)[:-1]
+    Xmin, Ymin = X.min(axis=0), Y.min(axis=0)
+    Xmax, Ymax = X.max(axis=0), Y.max(axis=0)
     
     xi = np.linspace(Xmin,Xmax,100)
     yi = np.linspace(Ymin,Ymax,100)
@@ -128,13 +126,19 @@ def show3Dpath(full_path, height_offset=0, plottype="coarse", gif=False):
     # Plot each LineString with its start and end points at the correct height
     for index, lines in enumerate(reference_line):
         
-        start, end = lines.coords[0], lines.coords[1]
-        xx, yy = [start[0], end[0]], [start[1], end[1]]
+        start, end = lines.coords[0], lines.coords[1]       # Starting and Ending point of the line
+        xx, yy = [start[0], end[0]], [start[1], end[1]]     # x and y coordinates of the starting and ending points
+
+        #Define heights of terrain and drone
+        terrain_height_start, terrain_height_end = elevation[index], elevation[index+1]
+        drone_height_start, drone_height_end = terrain_height_start+height_offset, terrain_height_end+height_offset
         
-        terrain_height_start, terrain_height_end = float(elevation[index]), float(elevation[index+1])
-        drone_height_start, drone_height_end = float(elevation[index])+height_offset, float(elevation[index+1])+height_offset
+        zz = [drone_height_start, drone_height_end]         # z coordinates of the starting and ending points
         
-        zz = [drone_height_start, drone_height_end]
+        #Helper variable so label is created only once
+        label_helper_disp = False
+        label_helper_nondisp = False
+        
         if dispersion_map[index]:
             if label_helper_disp:
                 ax.plot(xx, yy, zz, color='g', linestyle='-',
@@ -152,6 +156,7 @@ def show3Dpath(full_path, height_offset=0, plottype="coarse", gif=False):
                         marker=None, linewidth=2.5, label='non-dispersing', zorder=10)
                 label_helper_nondisp = True
                 
+            #Plot the stem
             ax.plot([start[0], start[0]], [start[1], start[1]], [
                 terrain_height_start, drone_height_start], 'r-.', linewidth=1, alpha=0.25, zorder=5)
             ax.plot([end[0], end[0]], [end[1], end[1]], [
@@ -169,14 +174,14 @@ def show3Dpath(full_path, height_offset=0, plottype="coarse", gif=False):
     ax.set_box_aspect((2, 2, 1.5))
     
     #Set background color of plot to bg_color
-    """
+    
     bg_color = "#F2F7CA"
     fig.set_facecolor(bg_color)
     ax.set_facecolor(bg_color)
     ax.xaxis.set_pane_color(bg_color)
     ax.yaxis.set_pane_color(bg_color)
     ax.zaxis.set_pane_color(bg_color)
-    """
+   
     
     if gif:
         #Make a .gif animation file of the 3D plot

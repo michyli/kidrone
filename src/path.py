@@ -241,7 +241,7 @@ class Path:
     =========================    
     """
     @cached_property
-    def coords(self):
+    def coords(self) -> list[Point]:
         """Generate coordinates from path"""
         coordinates = []
         for lines in self.path:
@@ -250,25 +250,32 @@ class Path:
         return coordinates
     
     @cached_property
-    def compressed_waypoints(self):
+    def _compressed_waypoints(self) -> list[list[Point]]:
         """Returns a list of list of coordinates, representing each straight line being decomposed into waypoints closer together."""
         waypoints = []
         for line in self.path:
             num_div = line.length // 100 + 1
             distances = np.linspace(0, line.length, int(num_div))
-            waypoints.append([line.interpolate(distance) for distance in distances] + [line.boundary.geoms[-1]])
+            waypoints.append([line.interpolate(distance) for distance in distances])
+        for i in waypoints[:-1]:
+            i.pop(-1) #delete repeated points at where two lines meet
+        
         return waypoints
     
     @cached_property
-    def waypoints(self):
-        """Returns a list of coordinates. Essentially un-nesting all lists inside compressed_waypoints"""
+    def _compressed_waypoints_path(self) -> list[list[LineString]]:
+        return [create_line(ptlist) for ptlist in self._compressed_waypoints]
+    
+    @cached_property
+    def waypoints(self) -> list[Point]:
+        """Returns a list of coordinates. Essentially un-nesting all lists inside _compressed_waypoints"""
         uncompressed = []
-        for subpath in self.compressed_waypoints:
+        for subpath in self._compressed_waypoints:
             uncompressed.extend(subpath)
         return uncompressed
     
     @cached_property
-    def waypoints_path(self):
+    def waypoints_path(self) -> list[LineString]:
         """Constructs a list of LineStrings based on the un-nested waypoints."""
         return create_line(self.waypoints)
     
@@ -277,8 +284,7 @@ class Path:
         """Constructs a dispersion map of the waypoints, giving information of the velocity at each waypoint."""
         map = []
         for index, bool in enumerate(self.disp_map):
-            for i in range(len(self.compressed_waypoints[index])):
-                map.append(bool)
+            map.extend([bool] * len(self._compressed_waypoints_path[index]))
         return map
     
     @cached_property
@@ -312,7 +318,7 @@ class Path:
         return map
     
     @cached_property
-    def pathlength(self):
+    def pathlength(self) -> float:
         """Returns the length of path in KM
         Note that the point coordinates in self.path are in unit of longtitude and latitude.
         """
@@ -348,7 +354,7 @@ class Path:
         return airtime_list
 
     @cached_property
-    def airtime(self):
+    def airtime(self) -> float:
         # compute total path time from all segment instances
         tot_hour = sum([seg.time for seg in self.segment_list])
         return tot_hour
@@ -364,19 +370,17 @@ class Path:
         return self._coverage_compute()[1] - self._coverage_compute()[0] #KM^2
     
     @cached_property
-    def critical_elevations(self):
+    def critical_elevations(self) -> list[float]:
         """returns a list of elevation corresponding to the critical point coordinates"""
         points_tup = [(pts.x, pts.y) for pts in self.coords]
         converted_points = pcs2gcs_batch(points_tup)
         elevation = get_elevation(converted_points)        
-        self.critical_elevations = elevation
         return elevation
     
     @cached_property
-    def waypoint_elevations(self):
+    def waypoint_elevations(self) -> list[float]:
         """returns a list of elevation corresponding to the waypoint coordinates"""
         points_tup = [(pts.x, pts.y) for pts in self.waypoints]
         converted_points = pcs2gcs_batch(points_tup)
         elevation = get_elevation(converted_points)        
-        self.waypoints_elevations = elevation
         return elevation
