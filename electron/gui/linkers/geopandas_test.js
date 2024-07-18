@@ -8,7 +8,6 @@ function run_python_test() {
     console.log(path.join(__dirname, '../engine/geopandas_test.py'))
 
     PythonShell.run(path.join(__dirname, '../engine/geopandas_test.py'), null, function (err, results) {
-        console.log('THING IS RUNNING?')
         if (err) {
             console.error('Error:', err);
             document.getElementById('detect').value = 'Error running Python script';

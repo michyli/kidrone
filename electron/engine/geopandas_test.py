@@ -1,10 +1,18 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+# import sys
+# import os
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+# dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+print("test???")
+import logging
+# import geopandas as gpd
+# from src.basic_functions import *
 
-import geopandas as gpd
-from src.basic_functions import *
+# Configure logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Example usage of logging in your script
+logging.info('Starting geopandas_test.py script')
 
 # Example shapefile path
 shapefile_path = r"C:\Users\edwar\OneDrive\Desktop\Kidrone\2023 Canfor Projects\CBK0035 PU1\Site Shapefiles - Fall\CBK0035_PU1.shp"
@@ -33,6 +41,7 @@ shapefile_path = r"C:\Users\edwar\OneDrive\Desktop\Kidrone\2023 Canfor Projects\
 #     for polygon in poly_list:
 #         coordinates.append(extract_coords(polygon))
 
-print("These are the coordinates form the shapefile")
-print()
-print(shp2coords(shapefile_path))
+
+# print("These are the coordinates form the shapefile")
+# print()
+# print(shp2coords(shapefile_path))
