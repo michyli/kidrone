@@ -135,9 +135,8 @@ Crops part of the LineString that exceeds the boundary of the polygon. Also crop
 A `LineString` object that intersects the polygon
 
 ***method* swath_gen(self, interval, slope, invert=False, _F_single_point=False, _R_single_point=False)**
-Generates evenly spaced swatch lines based on a baseline. The baseline is a line that passes through the centroid with the input slope. Returns a complete path, which is a list of 
+Generates evenly spaced swatch lines based on a baseline. The baseline is a line that passes through the centroid with the input slope. Returns a complete path, which is a list of `LineString`s
 > **Parameters:**
-`LineString`s
 * **interval** *`float`*
 Dispersion diameter of the drone
 * **slope** *`float`*
