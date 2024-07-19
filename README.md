@@ -408,7 +408,6 @@ Checks the continuity of a path composed of `LineString` segments.
 > **Returns:**
 * **is_continuous:** *bool*
   * `True` if the path is continuous, `False` otherwise.
-``` &#8203;:citation[oaicite:0]{index=0}&#8203;
 
 
 ### graph
