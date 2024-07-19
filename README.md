@@ -169,17 +169,89 @@ Removes a child from the polygon's list of children
 * **child** *`Outline`*
 An `Outline` object to be removed from this instance of an `Outline`
 
-#### Path
+### Path
+***class* Path(path, parent, disp_diam, swath_slope, start_velo=0, end_velo=0)**
+A `Path` instance processes the path object and extracts information about the path.
 
-#### Segment
+> **Parameters:**
+* **path:** *list of `LineString`s*
+  - A list of `LineString`s. Usually the output of the `generate_path()` function.
+* **parent:** *`Outline` instance*
+  - The polygon object the path belongs to.
+* **disp_diam:** *float*
+  - Dispersion diameter of the drone.
+* **swath_slope:** *float*
+  - The slope of the swath lines of this `Path` instance.
+* **start_velo:** *float*
+  - Starting velocity of this path, static (0) by default.
+* **end_velo:** *float*
+  - Ending velocity of this path, static (0) by default.
 
-#### basic_functions
+> **Attributes:**
+* **path:** *list of `LineString`s*
+  - The 2D path represented as a list of `LineString`s.
+* **parent:** *`Outline`*
+  - The parent `Outline` instance the path belongs to.
+* **disp_diam:** *float*
+  - Dispersion diameter of the drone.
+* **swath_slope:** *float*
+  - The slope of the swath lines.
+* **start_velo:** *float*
+  - Starting velocity of the path in KM/h.
+* **end_velo:** *float*
+  - Ending velocity of the path in KM/h.
 
-#### graph
+***method* generate_waypoints(self, interval)**
+Generates waypoints along the path at specified intervals.
 
-#### optimization
+> **Parameters:**
+* **interval:** *float*
+  - Distance between waypoints in meters.
 
-#### run & .csv
+***method* calculate_duration(self)**
+Calculates the duration required to traverse the path based on drone velocities.
+
+***method* optimize_path(self)**
+Optimizes the path for the shortest duration considering drone's acceleration and deceleration capabilities.
+
+***method* get_segments(self)**
+Breaks the path into smaller segments for detailed analysis.
+
+> **Attributes:**
+* **segments:** *list of `Segment`*
+  - A list of `Segment` instances that make up the path.
+
+***method* display_path(self, show=True)**
+Displays the path on a map.
+
+> **Parameters:**
+* **show:** *bool*
+  - Determines whether to display the path immediately. Defaults to `True`.
+
+***method* save_path(self, filename)**
+Saves the path to a file.
+
+> **Parameters:**
+* **filename:** *string*
+  - Name of the file to save the path.
+
+***method* load_path(self, filename)**
+Loads a path from a file.
+
+> **Parameters:**
+* **filename:** *string*
+  - Name of the file to load the path from.
+
+
+### Segment
+
+### basic_functions
+
+### graph
+
+### optimization
+
+### run & .csv
 * 
 
 
