@@ -20,7 +20,7 @@ def construct_pathlist(coords, disp_diam, children=None, poly_offset=None, init_
     if isinstance(children, Outline):
         children = [children]
     
-    if not poly_offset:
+    if poly_offset is None:
         poly_offset = disp_diam / 2
     
     outline = Outline('BasePoly', coords, children)
