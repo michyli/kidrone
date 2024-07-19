@@ -456,34 +456,34 @@ def disp_time(hour):
     return f"This path is projected to take {int(hour//24)} days, {int(hour%24//1)} hours, and {round(hour%1*60, 1)} minutes"
 
 def print_progress(iterable, prefix = ' Progress:', suffix = 'Complete', decimals = 1, length = 50, fill = '█', printEnd = "\r"):
-    """
-    @params:
-        iterable    - Required  : iterable object (Iterable)
-        prefix      - Optional  : prefix string (Str)
-        suffix      - Optional  : suffix string (Str)
-        decimals    - Optional  : positive number of decimals in percent complete (Int)
-        length      - Optional  : character length of bar (Int)
-        fill        - Optional  : bar fill character (Str)
-        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    # """
+    # @params:
+    #     iterable    - Required  : iterable object (Iterable)
+    #     prefix      - Optional  : prefix string (Str)
+    #     suffix      - Optional  : suffix string (Str)
+    #     decimals    - Optional  : positive number of decimals in percent complete (Int)
+    #     length      - Optional  : character length of bar (Int)
+    #     fill        - Optional  : bar fill character (Str)
+    #     printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
         
-    example usage:
-    >>> for item in progressBar(items):
-    >>>     # Do stuff...
-    >>>     time.sleep(0.1)
-    where 'items' is the list to be iterated through
-    """
-    total = len(iterable)
-    # Progress Bar Printing Function
-    def printProgressBar (iteration):
-        percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-        filledLength = int(length * iteration // total)
-        bar = fill * filledLength + '-' * (length - filledLength)
-        print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
-    # Initial Call
-    printProgressBar(0)
+    # example usage:
+    # >>> for item in progressBar(items):
+    # >>>     # Do stuff...
+    # >>>     time.sleep(0.1)
+    # where 'items' is the list to be iterated through
+    # """
+    # total = len(iterable)
+    # # Progress Bar Printing Function
+    # def printProgressBar (iteration):
+    #     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    #     filledLength = int(length * iteration // total)
+    #     bar = fill * filledLength + '-' * (length - filledLength)
+    #     print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # # Initial Call
+    # printProgressBar(0)
     # Update Progress Bar
     for i, item in enumerate(iterable):
         yield item
-        printProgressBar(i + 1)
+        """ printProgressBar(i + 1) """
     # Print New Line on Complete
     print()
