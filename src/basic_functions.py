@@ -296,15 +296,13 @@ def extract_coords(shape: Point | MultiPoint | LineString | Polygon) -> list[tup
     if isinstance(shape, Polygon):
         return [(x, y) for x, y in zip(shape.exterior.xy[0], shape.exterior.xy[1])]
 
-
 def csv2coords(csvfile):
     """extract coordinate from a .csv file"""
     with open(csvfile, 'r') as csvfile:
         next(csvfile)
         csv_reader = csv.reader(csvfile)
-        coords = [(row[0], row[1]) for row in csv_reader]
+        coords = [(float(row[0]), float(row[1])) for row in csv_reader]
     return coords
-
 
 def shp2coords(shapefile_path):
     "Takes a path to a shapefile and returns a list of longitude and latitude coordinates, where each element is a polygon's coordinates"
@@ -343,9 +341,6 @@ def shp2coords(shapefile_path):
         print("Shapefile does not contain geometry information or is empty.")
         return
 
-    
-
-
 """
 ===============================
 === Coordinates Conversions ===
@@ -354,6 +349,7 @@ def shp2coords(shapefile_path):
 def gcs2pcs(lon, lat):
     """Converts EPSG:4326 (lon&lat) to EPSG:3857 (meters)
     """
+    assert lat >= -90 and lat <= 90, "Latitude not in range. Input is lon, lat, you may have reversed them."
     transformer = Transformer.from_crs(
         "EPSG:4326", "EPSG:3857", always_xy=True)
     x, y = transformer.transform(lon, lat)
@@ -433,13 +429,12 @@ def get_elevation(coordinates):
             'wkid': 102100,
             'units': 'Meters'
         }
-        #Get .json file from epqs public API
         json_result = requests.get((url + urllib.parse.urlencode(params))).json()
         #Parse the .json file format and extract the 'value', which is the elevation data
         try:
             elevation.append(float(json_result['value']))
         except KeyError:
-            raise ConnectionError("Unable to access some of the elevation data. Please check your internet connection and try running the code again.")
+            raise ConnectionError("The API doesn't have elevation data at this point. Please check the validity of the coordinate input.")
                 
     return elevation
 

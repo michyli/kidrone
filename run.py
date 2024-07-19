@@ -14,7 +14,6 @@ exclude1 = Outline('child1', gcs2pcs_batch(csv2coords("exclusion1.csv"), "gcs2pc
 exclude2 = Outline('child2', gcs2pcs_batch(csv2coords("exclusion2.csv"), "gcs2pcs Exclusion2: "))
 
 disp_diam = 40  # meters
-
 optimal_func = airtime_coverage_weighted(75, 15, 10)                                    #75:15:10 weighting between airtime:seeding_percentage:spilling
 pathlist, pathlistruntime = construct_pathlist(points, disp_diam, children=[exclude1], 
                                                 poly_offset=0, num_path=10)             #calculates the optimized path

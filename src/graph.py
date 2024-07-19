@@ -87,6 +87,10 @@ def show3Dpath(full_path, height_offset=0, plottype="coarse", gif=False):
     full_path: a Path object. The .path attribute extracts the list of LineString that makes the Path object.
     plottype: 'dense' or 'coarse'
     """
+    disp_color = "forestgreen"
+    nondisp_color = "darkgoldenrod"
+    stem_color = "lightcoral"
+    
     print()
     print("Generating 3D Plot of the Path. Ctrl-C to abort.")   
     
@@ -141,26 +145,26 @@ def show3Dpath(full_path, height_offset=0, plottype="coarse", gif=False):
         
         if dispersion_map[index]:
             if label_helper_disp:
-                ax.plot(xx, yy, zz, color='g', linestyle='-',
+                ax.plot(xx, yy, zz, color=disp_color, linestyle='-',
                         marker=None, linewidth=2.5, zorder=10)
             else:
-                ax.plot(xx, yy, zz, color='g', linestyle='-',
+                ax.plot(xx, yy, zz, color=disp_color, linestyle='-',
                         marker=None, linewidth=2.5, label='dispersing', zorder=10)
                 label_helper_disp = True
         else:
             if label_helper_nondisp:
-                ax.plot(xx, yy, zz, color='b', linestyle='-',
+                ax.plot(xx, yy, zz, color=nondisp_color, linestyle='-',
                         marker=None, linewidth=2.5, zorder=10)
             else:
-                ax.plot(xx, yy, zz, color='b', linestyle='-',
+                ax.plot(xx, yy, zz, color=nondisp_color, linestyle='-',
                         marker=None, linewidth=2.5, label='non-dispersing', zorder=10)
                 label_helper_nondisp = True
                 
             #Plot the stem
             ax.plot([start[0], start[0]], [start[1], start[1]], [
-                terrain_height_start, drone_height_start], 'r-.', linewidth=1, alpha=0.25, zorder=5)
+                terrain_height_start, drone_height_start], color=stem_color, linestyle='-.', linewidth=1, alpha=0.25, zorder=5)
             ax.plot([end[0], end[0]], [end[1], end[1]], [
-                terrain_height_end, drone_height_end], 'r-.', linewidth=1, alpha=0.25, zorder=5)
+                terrain_height_end, drone_height_end], color=stem_color, linestyle='-.', linewidth=1, alpha=0.25, zorder=5)
 
     showprojection(ax, full_path)
 
