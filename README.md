@@ -291,7 +291,7 @@ Loads segment information from a file.
   * Name of the file to load the segment information from.
 
 
-### Basic Functions
+### basic_functions
 A collection of general-purpose functions used throughout the algorithm to manipulate Shapely datatypes and vectors. These functions are essential for various operations related to polygons, vectors, and line segments.
 
 > **Functions:**
