@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="linkers/geopandas_test.js"></script>
+  <script src="linkers/script_linker_test.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Drone Animation</title>
@@ -76,6 +76,19 @@
     button:hover {
       background-color: #45a049; /* Darker background color on hover */
     }
+
+    .output_box {
+      width: 500px;
+      height: 200px;
+      border: 1px solid #000;
+      position: absolute;
+      top: 50px; /* Change this to adjust the vertical position */
+      left: 100px; /* Change this to adjust the horizontal position */
+      padding: 10px;
+      background-color: #f0f0f0;
+      overflow-y: auto; /* Enables vertical scrolling */
+      word-wrap: break-word; /* Ensures long words wrap to the next line */
+    }
   </style>
 </head>
 <body>
@@ -91,6 +104,10 @@
     <h1>Run Python Script</h1>
     <input id="detect" type="text" placeholder="Status" />
     <button class="btn btn-success" onclick="run_python_test()">Run</button>
+  </div>
+
+  <div class="python output">
+    <div id="output" class="output_box">Script Output</div>
   </div>
 
  

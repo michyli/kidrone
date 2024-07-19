@@ -1,5 +1,6 @@
 Install node.js
 (The next step resulted in the node_modules folder being created, idk if you'll need to do if it's already there?)
-Go to electron directory and run "npm install", then run "npm install python-shell"
-(This creates two node_modules folders for somre reason, just combine their contents and delete the extra)
+Go to electron directory, if doesn't work then gui directory and run "npm install", then run "npm install python-shell" 
+(this should be installed alr)
+There should only be one node_modules folder, one package.json, and one package-lock.json. Let me know if there are two -_-
 Run "npm start" to start the app
