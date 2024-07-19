@@ -82,7 +82,7 @@ py run.py
 * `optimization.py`
 * `run.py` & `test_coordinates.csv`
 
-#### Outline
+### Outline
 ***class* Outline(name, points, children=[])**
 An `Outline` instance contains all the necessary information about the polygon constructed from the given points. It also contains all the methods required to generate a flight path to fully cover it. Using `swath_gen` method, a `Path` instance will be returned.
 > **Parameters:**
