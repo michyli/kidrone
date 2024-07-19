@@ -122,12 +122,53 @@ A distance in meters indicating how much to inwardly-offset the polygon.
 ***method* extrapolate_line(self, point, slope)**
 Creates and extends a line to the minimum bounding box of the polygon based on the given point and the slope
 > **Parameters:**
-* **point:** *`Point`*
-* 
+* **point:** *`Point`*:
+A `Point` object that anchors the line
 * **slope:** *`int`*
 A number in meter indicating how much to inwardly-offset the polygon.
 *Use negative number for outward offset*
 
+***method* span_line(self, line)**
+Crops part of the LineString that exceeds the boundary of the polygon. Also crops a line to segments if it intersects with any children polygons of the self polygon. Returns the new cropped `LineString`
+> **Parameters:**
+* **line** *`LineString`*
+A `LineString` object that intersects the polygon
+
+***method* swath_gen(self, interval, slope, invert=False, _F_single_point=False, _R_single_point=False)**
+Generates evenly spaced swatch lines based on a baseline. The baseline is a line that passes through the centroid with the input slope. Returns a complete path, which is a list of 
+> **Parameters:**
+`LineString`s
+* **interval** *`float`*
+Dispersion diameter of the drone
+* **slope** *`float`*
+The slope of the baseline (wind direction) in respect to the horizontal line
+* **invert** *`boolean`*
+Determines whether the path generated goes in the default direction (False) or inverted direction (True)
+* **_F_single_point** *`boolean`*
+Determines whether there is a single-point intersection between the swath line and the polygon at the front of the path
+* **_R_single_point** *`boolean`*
+Determines whether there is a single-point intersection between the swath line and the polygon at the rear of the path
+
+***method* children_setter(self, children)**
+Populates children polygons of Outline instances in a hashmap. The children of an Outline are always completely contained within its borders
+> **Parameters:**
+* **children** *`Outline`*
+A list of children `Outline` instances to be set
+
+***method* show_children(self)**
+Output the name of every single children contained within an Outline instance
+
+***method* add_child(self, child)**
+Adds a child to the polygon's list of children
+> **Parameters:**
+* **child** *`Outline`*
+An `Outline` object to be added as a child
+
+***method* remove_child(self, child)**
+Removes a child from the polygon's list of children
+> **Parameters:**
+* **child** *`Outline`*
+An `Outline` object to be removed from this instance of an `Outline`
 
 #### Path
 
