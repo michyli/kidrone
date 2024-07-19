@@ -410,7 +410,7 @@ Checks the continuity of a path composed of `LineString` segments.
   * `True` if the path is continuous, `False` otherwise.
 
 
-###graph
+### graph
 A collection of functions used for graphing and visualizing various elements such as polygons and paths. These utilities help in plotting and animating drone flight paths and related geometries.
 
 > **Functions:**
@@ -504,7 +504,6 @@ Plots a 2D contour plot.
   * The Z values of the contour plot.
 * **title:** *str, optional*
   * Title of the plot. Defaults to "2D Contour Plot".
-``` &#8203;:citation[oaicite:0]{index=0}&#8203;
 
 ### optimization
 
