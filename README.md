@@ -187,20 +187,6 @@ A `Path` instance contains all necessary information about the flight path and i
 * **end_velo:** *float*
   * Ending velocity of this path, static (0) by default.
 
-> **Attributes:**
-* **path:** *list of `LineString`s*
-  * The 2D path represented as a list of `LineString`s.
-* **parent:** *`Outline`*
-  * The parent `Outline` instance the path belongs to.
-* **disp_diam:** *float*
-  * Dispersion diameter of the drone.
-* **swath_slope:** *float*
-  * The slope of the swath lines.
-* **start_velo:** *float*
-  * Starting velocity of the path in KM/h.
-* **end_velo:** *float*
-  * Ending velocity of the path in KM/h.
-
 ***method* generate_waypoints(self, interval)**
 Generates waypoints along the path at specified intervals.
 
@@ -242,9 +228,68 @@ Loads a path from a file.
 * **filename:** *string*
   * Name of the file to load the path from.
 
-
-
 ### Segment
+***class* Segment(line, parent, prev_velo=None, curr_velo=None, next_velo=None, prev_angle=None, next_angle=None)**
+The `Segment` class represents a singular line segment of a `Path` instance. It stores information about the segment's coordinates and the velocities at which the drone will travel at various points along the segment. The class also calculates the time required to traverse the segment, considering acceleration and deceleration curves at the start and end of the segment. It provides methods for managing and analyzing the segment's attributes and its relationship with the parent Path instance. 
+
+> **Parameters:**
+* **line:** *`LineString`*
+  * A `LineString` object that contains the coordinates of the segment.
+* **parent:** *`Path` instance*
+  * The parent `Path` object the segment belongs to.
+* **prev_velo:** *float, optional*
+  * The velocity of the previous segment in the path.
+* **curr_velo:** *float, optional*
+  * The velocity of the current segment in the path.
+* **next_velo:** *float, optional*
+  * The velocity of the next segment in the path.
+* **prev_angle:** *float, optional*
+  * The angle of the previous segment in the path.
+* **next_angle:** *float, optional*
+  * The angle of the next segment in the path.
+
+> **Attributes:**
+* **line:** *`LineString`*
+  * The `LineString` object representing the segment's coordinates.
+* **parent:** *`Path`*
+  * The parent `Path` instance the segment belongs to.
+* **prev_velo:** *float*
+  * The velocity of the previous segment in the path.
+* **curr_velo:** *float*
+  * The velocity of the current segment in the path.
+* **next_velo:** *float*
+  * The velocity of the next segment in the path.
+* **prev_angle:** *float*
+  * The angle of the previous segment in the path.
+* **next_angle:** *float*
+  * The angle of the next segment in the path.
+* **length:** *float*
+  * The length of the segment in kilometers.
+
+***method* calculate_travel_time(self)**
+Calculates the travel time required to cover the segment based on the drone's velocities and acceleration/deceleration curves.
+
+***method* display_segment(self, show=True)**
+Displays the segment on a map.
+
+> **Parameters:**
+* **show:** *bool*
+  * Determines whether to display the segment immediately. Defaults to `True`.
+
+***method* save_segment(self, filename)**
+Saves the segment information to a file.
+
+> **Parameters:**
+* **filename:** *string*
+  * Name of the file to save the segment information.
+
+***method* load_segment(self, filename)**
+Loads segment information from a file.
+
+> **Parameters:**
+* **filename:** *string*
+  * Name of the file to load the segment information from.
+
 
 ### basic_functions
 
