@@ -22,6 +22,7 @@ STATIC_DIR = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'static')
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 JSON_FILE_PATH = os.path.join(DATA_DIR, 'polygons.json')
+SHAPE_FILE_PATH = os.path.join(DATA_DIR, "best_path.shp")
 PROJECTED_COORDS_JSON_PATH = os.path.join(
     DATA_DIR, 'projected_coordinates.json')
 
@@ -60,6 +61,7 @@ def optimize():
         coordinate_info = json.load(json_file)
 
     all_projected_coords = []
+    bestPathList = []
 
     # Iterate through each polygon in the coordinate info
     for polygon in coordinate_info:
@@ -73,6 +75,7 @@ def optimize():
         debug_info.append(f"Constructed best path: {best_path}")
 
         # Assuming best_path.to_coordinates() returns coordinates in EPSG:3857
+        bestPathList.append(best_path.path)
         projected_coords = best_path.to_coordinates()
         all_projected_coords.append(projected_coords)
 
@@ -84,6 +87,12 @@ def optimize():
         plt.savefig(plot_path)
         plt.close()
         debug_info.append(f"Saved plot to {plot_path}")
+
+        # Shapefile extraction
+
+        gdf = gpd.GeoDataFrame(geometry=bestPathList[0])
+        gdf.set_crs(epsg=3857, inplace=True)
+        gdf.to_file(SHAPE_FILE_PATH)
 
     # Save projected coordinates to a new JSON file
     try:
