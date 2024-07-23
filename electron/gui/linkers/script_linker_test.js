@@ -9,11 +9,11 @@ function run_python_test() {
     var path = require("path");
     console.log(path.join(__dirname, '../engine/script_linker_test.py'))
 
-    //Set options for pyshell
+    //Set options for pyshellcd
     let options = {
         mode: 'text',
         pythonOptions: ['-u'], // get print results in real-time
-        scriptPath: path.join(__dirname, '../engine')
+        scriptPath: path.join(__dirname, '../engine')        
     };
 
     let pyshell = new PythonShell('script_linker_test.py', options);
