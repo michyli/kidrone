@@ -28,7 +28,7 @@ function run_python_test() {
     console.log('ScriptPath: ', ScriptPath);
     console.log('ScriptName: ', ScriptName);
 
-    //Set options for pyshell
+    //Set options for pyshellcd
     let options = {
         mode: 'text',
         pythonOptions: ['-u'], // get print results in real-time

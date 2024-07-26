@@ -177,14 +177,14 @@ def show3Dpath(full_path, height_offset=0, plottype="coarse", gif=False):
     ax.set_zlabel('Elevation (m)')
     ax.set_box_aspect((2, 2, 1.5))
     
-    #Set background color of plot to bg_color
-    
+    #Uncomment to set background color of plot to bg_color
     bg_color = "#F2F7CA"
-    fig.set_facecolor(bg_color)
+    
+    """ fig.set_facecolor(bg_color)
     ax.set_facecolor(bg_color)
     ax.xaxis.set_pane_color(bg_color)
     ax.yaxis.set_pane_color(bg_color)
-    ax.zaxis.set_pane_color(bg_color)
+    ax.zaxis.set_pane_color(bg_color) """
    
     
     if gif:
@@ -199,7 +199,7 @@ def show3Dpath(full_path, height_offset=0, plottype="coarse", gif=False):
         # Animate
         print("Generating .gif file in the directory...")
         anim = animation.FuncAnimation(fig, animate, init_func=init,
-                                    frames=360, interval=10, blit=True)
+                                    frames=400, interval=10, blit=True)
         # Save
         #anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
         writer = PillowWriter(fps=30)

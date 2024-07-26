@@ -1,0 +1,85 @@
+@import './assets/base.css';
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #70c19a; /* Background color representing the ground */
+}
+
+.drone {
+  position: absolute;
+  top: 50%;
+  left: -100px;
+  width: 100px;
+  height: 50px;
+  background-color: #f7f7f7; /* Drone body color */
+  border-radius: 8px;
+  animation: fly 5s linear forwards; /* Animation for drone flying across the screen */
+}
+
+.tree {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 20px;
+  height: 100px;
+  background-color: #5a9857; /* Tree trunk color */
+}
+
+.foliage {
+  position: absolute;
+  bottom: 100px;
+  left: -50px;
+  width: 200px;
+  height: 200px;
+  background-color: #2c6023; /* Tree foliage color */
+  border-radius: 50%;
+  animation: grow 2s linear forwards; /* Animation for tree growing */
+  opacity: 0; /* Start with opacity 0 to fade in */
+}
+
+@keyframes fly {
+  0% { transform: translateX(-100px); }
+  100% { transform: translateX(calc(100vw + 100px)); }
+}
+
+@keyframes grow {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.button-container {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #4caf50; /* Button background color */
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #45a049; /* Darker background color on hover */
+}
+
+.output_box {
+  width: 500px;
+  height: 200px;
+  border: 1px solid #000;
+  position: absolute;
+  top: 50px; /* Change this to adjust the vertical position */
+  left: 100px; /* Change this to adjust the horizontal position */
+  padding: 10px;
+  background-color: #f0f0f0;
+  overflow-y: auto; /* Enables vertical scrolling */
+  word-wrap: break-word; /* Ensures long words wrap to the next line */
+}
