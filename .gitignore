@@ -1,3 +1,4 @@
+__pycache__
 electron/engine/__pycache__
 electron/gui/node_modules
 Tests
