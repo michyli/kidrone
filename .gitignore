@@ -1,6 +1,6 @@
-__pycache__
-basic_animation.gif
-run.py
+electron/engine/__pycache__
+electron/gui/node_modules
+Tests
 electron/gui/out
 electron/engine/build
 electron/engine/dist
