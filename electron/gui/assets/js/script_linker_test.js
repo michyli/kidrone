@@ -1,5 +1,6 @@
 const { spawn } = require("child_process");
 
+//Add arguments if you want to pass in something to send to python
 function run_python_test() {
 
     //Just checking if the button got clicked
@@ -13,13 +14,12 @@ function run_python_test() {
     //TODO: process.env.NODE_ENV isn't actually set to anything, it's null be default, so this only works by setting it mannually into dev mode
     ///[$env:NODE_ENV="development"; npm start] (Windows)
     ///[NODE_ENV=development npm start] (MacOS/Linux)
-    console.log(process.env.NODE_ENV)
+    console.log('mode: ', process.env.NODE_ENV);
     if (process.env.NODE_ENV === 'development') {
-        ScriptPath = path.join(__dirname, '../engine');
+        ScriptPath = path.join(__dirname, '../engine'); //TODO: For same reason __dirname gives the gui dir, even though this file is nested in assets
         ScriptName = 'script_linker_test.py'
     } else {
         console.log('In production');
-        // ScriptPath = process.resourcesPath;
         ScriptPath = path.join(__dirname, '../script_linker_test.exe');
         // ScriptPath = path.join(__dirname, '../engine/dist/script_linker_test.exe');
         ScriptName = 'script_linker_test.exe';
@@ -28,15 +28,15 @@ function run_python_test() {
     console.log('ScriptPath: ', ScriptPath);
     console.log('ScriptName: ', ScriptName);
 
-    //Set options for pyshellcd
-    let options = {
-        mode: 'text',
-        pythonOptions: ['-u'], // get print results in real-time
-        scriptPath: ScriptPath
-    };
-
-    let pyshell;
     if (ScriptName.endsWith('.py')) {
+        let pyshell;
+
+        //Set options for pyshellcd
+        let options = {
+            mode: 'text',
+            pythonOptions: ['-u'], // get print results in real-time
+            scriptPath: ScriptPath
+        };
         pyshell = new PythonShell(ScriptName, options); // For Python scripts
         // Run the Python script with callback function everytime message is read
         pyshell.on('message', function (message) {
@@ -90,6 +90,4 @@ function run_python_test() {
 
         return;
     }
-
-    
 }
