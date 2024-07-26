@@ -20,8 +20,8 @@ function run_python_test() {
     } else {
         console.log('In production');
         // ScriptPath = process.resourcesPath;
-        // ScriptPath = path.join(__dirname, '../script_linker_test.exe');
-        ScriptPath = path.join(__dirname, '../engine/dist/script_linker_test.exe');
+        ScriptPath = path.join(__dirname, '../script_linker_test.exe');
+        // ScriptPath = path.join(__dirname, '../engine/dist/script_linker_test.exe');
         ScriptName = 'script_linker_test.exe';
     }
     
