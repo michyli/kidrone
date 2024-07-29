@@ -2,6 +2,7 @@ const burger = document.querySelector(".burgerMenu");
 const menu = document.querySelector(".menu");
 const titles = document.querySelectorAll(".menu div");
 
+/* Menu items */
 const newProject = document.getElementById("new");
 const browseProject = document.getElementById("browse");
 const loadProject = document.getElementById("load");
@@ -13,7 +14,6 @@ const loadProjectTab = document.getElementById("loadProject");
 const settingProjectTab = document.getElementById("settingProject");
 
 menu.style.height = `${menu.scrollHeight + 20}px`;
-
 /* Burger & Menu Control */
 burger.addEventListener("click", function() {
   burger.classList.toggle("active")
@@ -31,7 +31,15 @@ titles.forEach((title) => {
   })
 })
 
-/* Switch Tabs logic */
+/* Tab Routing */
+pageLevel = {"newProject": [],
+  "browseProject": [],
+  "loadProject": [],
+  "settingProject": []
+}; // Add ID of tab in the respective bracket based on sequence
+
+mainTabs = Object.keys(pageLevel);
+
 newProject.addEventListener("click", function() {
   newProjectTab.classList.add("active");
   browseProjectTab.classList.remove("active");
