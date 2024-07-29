@@ -4,6 +4,13 @@
 
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+}
+
 body {
     background-color: darkgrey;
     display: flex;
@@ -15,90 +22,117 @@ body {
 .login-container {
     background-color: black;
     display: flex;
-    aspect-ratio: 639 / 612;
-    height: 50%;
+    height: 639px;
+    width: 612px;
     color: white;
     font-family: "ITC Avant Garde Gothic Std Medium";
-    overflow: visible;
     flex-direction: column;
+    justify-content: space-between;
+    padding: 40px;
 }
 
-/* #row1 {
-    display: flex;
-    border: 1px solid white;
-    height: 9.23%;
+.header-container {
+    height: 59.02px;
     width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
-#row2 {
-    display: flex;
-    border: 1px solid white;
-    height: 29%;
-    width: 100%;
-}
-#row3 {
-    display: flex;
-    border: 1px solid white;
-    height: 7.35%;
-    width: 100%;
-} */
 
 #kidrone-logo {
-    width: 13.4%;
-    height: 9.23%;
+    width: 82.1px;
+    height: 59.02px;
 }
+
 
 h1 {
     display: flex;
-    width: 17.81%;
-    height: 2.35%;
-    border: 2px solid white;
+    width: 109px;
+    height: 15px;
     margin: 0;
     justify-content: center;
     align-items: center;
-    font-size: 50%;
+    font-size: 100%;
+}
+
+.hook-container {
+    height: 186px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 h2 {
+    width: 284px;
+    height: 186px;
+    font-size: 440%;
     display: flex;
-    width: 46.41%;
-    height: 29.11%;
-    border: 1px;
-    border: 2px solid white;
-    margin: 0;
+    line-height: 0.9;
+}
+
+.hook-container .drone-background {
+    width: 239.72px;
+    height: 186.99px;
+    background-color: white;
+    display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 230%;
 }
 
 #kidrone-drone {
-    width: 37.45%;
-    height: 19.53%;
+    width: 229.19px;
+    height: 124.77px;
 }
 
-.credentials-container {
-    width: 88.15%;
-    height: 7.35%;
+.inputs-container {
+    height: 130px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.inputs-container .credentials-container {
+    height: 46.95px;
     background-color: transparent;
-    border: 1px solid black;
-    border-color: white;
+    border: 1px solid white;
     color: white;
+    text-indent: 20px;
+    font-size: 200%;
 }
 
-.credentials-container::placeholder {
+.inputs-container .credentials-container::placeholder {
     color: white;
     font-family: "ITC Avant Garde Gothic Std Medium";
+}
+
+.buttons-container {
+    height: 35px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 #login-button {
     background-color: white;
-    width: 30.72%;
-    height: 5.48%;
+    width: 235px;
+    height: 35px;
+    font-family: "ITC Avant Garde Gothic Std Medium";
+    font-size: 150%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #signup-button {
     background-color: transparent;
     color: white;
-    width: 30.72%;
-    height: 5.48%;
+    width: 235px;
+    height: 35px;
+    font-family: "ITC Avant Garde Gothic Std Medium";
+    font-size: 150%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 0 40px;
 }
 
