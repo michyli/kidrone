@@ -15,7 +15,7 @@ body {
   left: 0;
   height: 100vh;
   width: 400px;
-  background-color: #000;
+  background-color: black;
   padding: 30px;
   display: flex;
   flex-direction: column;
@@ -75,8 +75,41 @@ body {
   opacity: 0.2;
 }
 
-.tabBackground h1 {
+.menu {
+  height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.menu div {
+  width: 100%;
+  background-color: transparent;
+}
+
+.menu div h1 {
+  position: relative;
+  left: 0;
   color: white;
   font-size: 2rem;
   font-weight: 200;
+  cursor: pointer;
+}
+
+.menu div h1::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: white;
+  mix-blend-mode: difference;
+  transition: width 0.3s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.menu div h1:hover::after {
+  width: 100%;  
 }
