@@ -6,6 +6,8 @@
   <link rel="stylesheet" href="../assets/css/global.css" />
   <link rel="stylesheet" href="../assets/css/landing.css" />
   <link rel="stylesheet" href="../assets/css/browseProject.css" />
+  <link rel="stylesheet" href="../assets/css/newProject.css" />
+  <link rel="stylesheet" href="../assets/css/loadProject.css" />
 </head>
 <body>
   <div class="tabBackground">
@@ -30,10 +32,21 @@
         <div class="tabsTitle"><p>New Project</p></div>
         <hr>
 
-        <!-- replace the <p> for content -->
-        <p>New Project</p>
-        <input type="text" />
-        <button class="complete"></button>
+        <div class="byCity">
+          <p>Locate by City</p>
+          <input class='province' type="text" />
+          <input class='city' type="text" />
+        </div>
+
+        <div class="orDivider"><hr><span>OR</span><hr></div>
+
+        <div class="byCity">
+          <p>Locate by GPS</p>
+          <input class='latitude' type="text" />
+          <input class='longtitude' type="text" />
+        </div>
+        
+        <button class="complete">Locate</button>
 
       </div>
     </div>
@@ -73,10 +86,13 @@
       <div class="tabsContent">
         <div class="tabsTitle"><p>Load Project</p></div>
         <hr>
-
-        <!-- replace the <p> for content -->
-        <p>Load Project</p>
-
+        <div class="uploadButton">
+          <label for="uploadProject" class="fileUpload">
+            <p id="uploadText">Upload File from Computer</p>
+          </label>
+          <input id="uploadProject" type="file"/>
+        </div>
+        <button class="complete"><p>Proceed</p></button>
       </div>
     </div>
 
@@ -94,5 +110,7 @@
   </div>
   <script src="../assets/js/landing.js"></script>
   <script src="../assets/js/browseProject.js"></script>
+  <script src="../assets/js/newProject.js"></script>
+  <script src="../assets/js/loadProject.js"></script>
 </body>
 </html>
