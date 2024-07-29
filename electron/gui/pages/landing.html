@@ -1,76 +1,205 @@
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Landing Page</title>
-  <link rel="stylesheet" href="../assets/css/global.css" />
-  <link rel="stylesheet" href="../assets/css/landing.css" />
-</head>
-<body>
-  <div class="tabBackground">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing Page</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="../assets/css/global.css" />
+    <link rel="stylesheet" href="../assets/css/landing.css" />
+    <link rel="stylesheet" href="../assets/css/setting.css" />
+  </head>
+  <body>
+    <div class="tabBackground">
+      <!-- Navigation Bar -->
+      <div class="tabHeader">
+        <img src="/electron/gui/assets/images/Kidrone_logo.png" />
+        <div class="burgerMenu active"></div>
+      </div>
+      <hr />
 
-    <!-- Navigation Bar -->
-    <div class="tabHeader">
-      <img src="/electron/gui/assets/images/Kidrone_logo.png">
-      <div class="burgerMenu active"></div>
-    </div>
-    <hr>
+      <div class="menu">
+        <div id="new"><h1>New Project</h1></div>
+        <div id="browse"><h1>Browse Projects</h1></div>
+        <div id="load"><h1>Load Project</h1></div>
+        <div id="setting"><h1>Default Drone Setting</h1></div>
+      </div>
 
-    <div class="menu">
-      <div id="new"><h1>New Project</h1></div>
-      <div id="browse"><h1>Browse Projects</h1></div>
-      <div id="load"><h1>Load Project</h1></div>
-      <div id="setting"><h1>Default Drone Setting</h1></div>
-    </div>
+      <!-- Below are side tab contents -->
+      <div class="tabs" id="newProject">
+        <div class="tabsContent">
+          <div class="tabsTitle"><p>New Project</p></div>
+          <hr />
 
-    <!-- Below are side tab contents -->
-    <div class="tabs" id="newProject">
-      <div class="tabsContent">
-        <div class="tabsTitle"><p>New Project</p></div>
-        <hr>
+          <!-- replace the <p> for content -->
+          <p>New Project</p>
+          <input type="text" />
+          <button class="complete"></button>
+        </div>
+      </div>
 
-        <!-- replace the <p> for content -->
-        <p>New Project</p>
-        <input type="text" />
-        <button class="complete"></button>
+      <div class="tabs" id="browseProject">
+        <div class="tabsContent">
+          <div class="tabsTitle"><p>Browse Projects</p></div>
+          <hr />
 
+          <!-- replace the <p> for content -->
+          <p>Browse Project</p>
+        </div>
+      </div>
+
+      <div class="tabs" id="loadProject">
+        <div class="tabsContent">
+          <div class="tabsTitle"><p>Load Project</p></div>
+          <hr />
+
+          <!-- replace the <p> for content -->
+          <p>Load Project</p>
+        </div>
+      </div>
+
+      <div class="tabs" id="settingProject">
+        <div class="settingHeader">
+          <div class="left" onclick="goBack()">
+            <i class="fa fa-angle-left"></i>
+          </div>
+          <div class="right">DEFAULT DRONE SETTINGS</div>
+        </div>
+
+        <!-- lalalacdsbhkjdbnfjkbsndjkbbbfkabfkajbjkasbkd -->
+
+        <div class="input-container">
+          <label for="dispersion-diameter" class="left"
+            >Dispersion diameter:</label
+          >
+          <input
+            type="number"
+            id="dispersion-diameter"
+            name="dispersion-diameter"
+            class="input-field"
+            value="100"
+          />
+          <span class="unit">m</span>
+        </div>
+
+        <div class="input-container">
+          <label for="dispersion-velocity" class="left"
+            >Dispersion velocity:</label
+          >
+          <input
+            type="number"
+            id="dispersion-velocity"
+            name="dispersion-velocity"
+            class="input-field"
+            value="100"
+          />
+          <span class="unit">km/h</span>
+        </div>
+
+        <div class="input-container">
+          <label for="travel-velocity" class="left">Travel velocity:</label>
+          <input
+            type="number"
+            id="travel-velocity"
+            name="travel-velocity"
+            class="input-field"
+            value="200"
+          />
+          <span class="unit">km/h</span>
+        </div>
+        <p>Wind Offset</p>
+
+        <div class="input-container flex-container">
+          <svg
+            width="69"
+            height="72"
+            viewBox="0 0 69 72"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M35.032 0.406885L38.432 5.53688L38.402 0.406885H39.832V7.80688H38.512L35.102 2.68688L35.132 7.80688H33.702V0.406885H35.032Z"
+              fill="white"
+            />
+            <path
+              d="M34.2785 69.2549H35.7585C35.8085 70.2549 36.4785 70.4449 36.7985 70.4449C37.3685 70.4449 37.8085 69.9849 37.8085 69.4649C37.8085 68.8349 37.2785 68.6749 36.2485 68.2649C35.6885 68.0649 34.3985 67.6049 34.3985 66.2049C34.3985 64.7849 35.6485 64.0149 36.8485 64.0149C37.8285 64.0149 39.1285 64.5349 39.1885 66.1749H37.7185C37.6585 65.8349 37.5285 65.2649 36.7985 65.2649C36.3085 65.2649 35.8885 65.6049 35.8885 66.1049C35.8785 66.6549 36.2785 66.7949 37.5285 67.3149C38.6585 67.8049 39.2885 68.3449 39.2885 69.3949C39.2885 70.5849 38.5585 71.6949 36.8185 71.6949C35.1385 71.6949 34.2685 70.6849 34.2785 69.2549Z"
+              fill="white"
+            />
+            <path
+              d="M64.2869 38.8333V31.4333H68.4369V32.7433H65.7769V34.4233H68.3869V35.7333H65.7769V37.5233H68.4369V38.8333H64.2869Z"
+              fill="white"
+            />
+            <path
+              d="M2.31996 38.8333L0.359961 31.4333H1.87996L3.13996 36.7933L4.42996 31.4333H5.56996L6.86996 36.8033L8.11996 31.4333H9.62996L7.62996 38.8333H6.28996L4.98996 33.5833L3.69996 38.8333H2.31996Z"
+              fill="white"
+            />
+            <circle cx="36.7715" cy="35.8328" r="22.5854" stroke="white" />
+          </svg>
+
+          <svg
+            width="14"
+            height="42"
+            viewBox="0 0 14 42"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M6.77148 41.1838L6.77148 1.02661" stroke="white" />
+            <path
+              d="M0.710938 6.92455L6.77149 0.864502L12.8315 6.92455"
+              stroke="white"
+            />
+          </svg>
+          <div class="input-group">
+            <label for="wind-direction" class="left">Wind direction:</label>
+            <input
+              type="number"
+              id="wind-direction"
+              name="wind-direction"
+              class="input-field"
+              value="0"
+            />
+            <span class="unit">&deg;</span>
+          </div>
+        </div>
+
+        <div class="input-container">
+          <label for="wind-speed" class="left">Wind speed:</label>
+          <input
+            type="text"
+            id="wind-speed"
+            name="wind-speed"
+            class="input-field"
+          />
+          <span class="unit">km/h</span>
+        </div>
+
+        <div class="input-container">
+          <label for="block-offset" class="left">Block offset:</label>
+          <input
+            type="text"
+            id="block-offset"
+            name="block-offset"
+            class="input-field"
+          />
+          <span class="unit">m</span>
+        </div>
+
+        <div class="input-container">
+          <label for="default-seed-type" class="left">Default seed type:</label>
+          <input
+            type="text"
+            id="default-seed-type"
+            name="default-seed-type"
+            class="input-field"
+          />
+        </div>
+        <!-- ashjfguhdkjbhvsfjkjdbgudh -->
+        <hr />
       </div>
     </div>
-
-    <div class="tabs" id="browseProject">
-      <div class="tabsContent">
-        <div class="tabsTitle"><p>Browse Projects</p></div>
-        <hr>
-
-        <!-- replace the <p> for content -->
-        <p>Browse Project</p>
-        
-      </div>
-    </div>
-
-    <div class="tabs" id="loadProject">
-      <div class="tabsContent">
-        <div class="tabsTitle"><p>Load Project</p></div>
-        <hr>
-
-        <!-- replace the <p> for content -->
-        <p>Load Project</p>
-
-      </div>
-    </div>
-
-    <div class="tabs" id="settingProject">
-      <div class="tabsContent">
-        <div class="tabsTitle"><p>Settings</p></div>
-        <hr>
-
-        <!-- replace the <p> for content -->
-        <p>Settings</p>
-        
-      </div>
-    </div>
-
-  </div>
-  <script src="../assets/js/landing.js"></script>
-</body>
+    <script src="../assets/js/landing.js"></script>
+    <script src="../assets/js/setting.js"></script>
+  </body>
 </html>
