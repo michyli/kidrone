@@ -3,29 +3,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Landing Page</title>
+  <link rel="stylesheet" href="../assets/css/global.css" />
   <link rel="stylesheet" href="../assets/css/landing.css" />
 </head>
 <body>
   <div class="tabBackground">
+
+    <!-- Navigation Bar -->
     <div class="tabHeader">
       <img src="/electron/gui/assets/images/Kidrone_logo.png">
-      <div class="burgerMenu"></div>
+      <div class="burgerMenu active"></div>
     </div>
     <hr>
 
     <div class="menu">
-      <div>
-        <h1>New Project</h1>
-      </div>
-      <div>
-        <h1>Browse Projects</h1>
-      </div>
-      <div>
-        <h1>Load Project</h1>
-      </div>
-      <div>
-       <h1>Default Drone Setting</h1>
-      </div>
+      <div id="new"><h1>New Project</h1></div>
+      <div id="browse"><h1>Browse Projects</h1></div>
+      <div id="load"><h1>Load Project</h1></div>
+      <div id="setting"><h1>Default Drone Setting</h1></div>
+    </div>
+
+    <!-- Below are side tab contents -->
+    <div class="tabs" id="newProject">
+      <!-- replace the <p> for content -->
+      <p>New Project</p>
+    </div>
+
+    <div class="tabs" id="browseProject">
+      <!-- replace the <p> for content -->
+      <p>Browse Project</p>
+    </div>
+
+    <div class="tabs" id="loadProject">
+      <!-- replace the <p> for content -->
+      <p>Load Project</p>
+    </div>
+
+    <div class="tabs" id="settingProject">
+      <!-- replace the <p> for content -->
+      <p>Settings</p>
     </div>
 
   </div>
