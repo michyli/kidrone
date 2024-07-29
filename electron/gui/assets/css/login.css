@@ -1,8 +1,4 @@
-@font-face {
-    font-family: 'ITC Avant Garde Gothic Std Medium';
-    src: url('../fonts/ITC Avant Garde Gothic Std Medium.otf') format('opentype');
-
-}
+@import "../fonts/font.css";
 
 * {
     margin: 0;
@@ -25,7 +21,7 @@ body {
     height: 639px;
     width: 612px;
     color: white;
-    font-family: "ITC Avant Garde Gothic Std Medium";
+    font-family: "AvantGarde";
     flex-direction: column;
     justify-content: space-between;
     padding: 40px;
@@ -36,6 +32,7 @@ body {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 #kidrone-logo {
@@ -45,13 +42,11 @@ body {
 
 
 h1 {
-    display: flex;
-    width: 109px;
+    width: 200px;
     height: 15px;
-    margin: 0;
-    justify-content: center;
-    align-items: center;
     font-size: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .hook-container {
@@ -102,7 +97,7 @@ h2 {
 
 .inputs-container .credentials-container::placeholder {
     color: white;
-    font-family: "ITC Avant Garde Gothic Std Medium";
+    font-family: "AvantGarde";
 }
 
 .buttons-container {
@@ -116,7 +111,7 @@ h2 {
     background-color: white;
     width: 235px;
     height: 35px;
-    font-family: "ITC Avant Garde Gothic Std Medium";
+    font-family: "AvantGarde";
     font-size: 150%;
     display: flex;
     align-items: center;
@@ -128,7 +123,7 @@ h2 {
     color: white;
     width: 235px;
     height: 35px;
-    font-family: "ITC Avant Garde Gothic Std Medium";
+    font-family: "AvantGarde";
     font-size: 150%;
     display: flex;
     align-items: center;
