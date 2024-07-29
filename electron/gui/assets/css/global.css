@@ -27,14 +27,24 @@ button.complete {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: 'AvantGarde';
   color: black;
   background-color: #00cd78;
   border-radius: 3px;
   margin: 20px 0;
   scale: 1;
   transition: scale 0.25s cubic-bezier(0.76, 0, 0.24, 1);
+  cursor: pointer;
 }
 
 button.complete:hover {
   scale: 1.01;
+}
+
+hr {
+  height: 2px;
+  width: 100%;
+  border: none;
+  background-color: #4d4d4d;
+  opacity: 0.3;
 }

@@ -6,6 +6,7 @@ const newProject = document.getElementById("new");
 const browseProject = document.getElementById("browse");
 const loadProject = document.getElementById("load");
 const settingProject = document.getElementById("setting");
+
 const newProjectTab = document.getElementById("newProject");
 const browseProjectTab = document.getElementById("browseProject");
 const loadProjectTab = document.getElementById("loadProject");
