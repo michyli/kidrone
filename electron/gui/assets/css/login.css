@@ -1,0 +1,104 @@
+@font-face {
+    font-family: 'ITC Avant Garde Gothic Std Medium';
+    src: url('../fonts/ITC Avant Garde Gothic Std Medium.otf') format('opentype');
+
+}
+
+body {
+    background-color: darkgrey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: black;
+    display: flex;
+    aspect-ratio: 639 / 612;
+    height: 50%;
+    color: white;
+    font-family: "ITC Avant Garde Gothic Std Medium";
+    overflow: visible;
+    flex-direction: column;
+}
+
+/* #row1 {
+    display: flex;
+    border: 1px solid white;
+    height: 9.23%;
+    width: 100%;
+}
+#row2 {
+    display: flex;
+    border: 1px solid white;
+    height: 29%;
+    width: 100%;
+}
+#row3 {
+    display: flex;
+    border: 1px solid white;
+    height: 7.35%;
+    width: 100%;
+} */
+
+#kidrone-logo {
+    width: 13.4%;
+    height: 9.23%;
+}
+
+h1 {
+    display: flex;
+    width: 17.81%;
+    height: 2.35%;
+    border: 2px solid white;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+    font-size: 50%;
+}
+
+h2 {
+    display: flex;
+    width: 46.41%;
+    height: 29.11%;
+    border: 1px;
+    border: 2px solid white;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+    font-size: 230%;
+}
+
+#kidrone-drone {
+    width: 37.45%;
+    height: 19.53%;
+}
+
+.credentials-container {
+    width: 88.15%;
+    height: 7.35%;
+    background-color: transparent;
+    border: 1px solid black;
+    border-color: white;
+    color: white;
+}
+
+.credentials-container::placeholder {
+    color: white;
+    font-family: "ITC Avant Garde Gothic Std Medium";
+}
+
+#login-button {
+    background-color: white;
+    width: 30.72%;
+    height: 5.48%;
+}
+
+#signup-button {
+    background-color: transparent;
+    color: white;
+    width: 30.72%;
+    height: 5.48%;
+}
+
