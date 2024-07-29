@@ -11,6 +11,7 @@
   flex-direction: column;
   gap: 30px;
   overflow: scroll;
+  scrollbar-width: none;
 }
 
 .tabHeader {
