@@ -1,0 +1,64 @@
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('../fonts/ITCAvantGardeStd-XLt.otf');
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('../fonts/ITCAvantGardeStd-XLtObl.otf');
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('../fonts/ITCAvantGardeStd-Bk.otf');
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('../fonts/ITCAvantGardeStd-BkObl.otf');
+  font-weight: 200;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('../fonts/ITCAvantGardeStd-Md.otf');
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('../fonts/ITCAvantGardeStd-MdObl.otf');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('../fonts/ITCAvantGardeStd-Demi.otf');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('../fonts/ITCAvantGardeStd-DemiObl.otf');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('../fonts/ITCAvantGardeStd-Bold.otf');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('../fonts/ITCAvantGardeStd-BoldObl.otf');
+  font-weight: 500;
+  font-style: italic;
+}
