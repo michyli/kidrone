@@ -1,0 +1,50 @@
+#loadProject .tabsContent .uploadButton input[type="file"] {
+  display: none;
+}
+
+.uploadButton {
+  position: relative;
+  height: 40px;
+  width: calc(100%-4px);
+  margin-top: 20px;
+  z-index: 2;
+  border: 2px solid white;
+}
+
+.fileUpload {
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  z-index: 1;
+}
+
+.fileUpload p::after {
+  content: "";
+  height: 0;
+  width: 100%;
+  background-color: white;
+  mix-blend-mode: difference;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: height 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.fileUpload:hover p::after {
+  height: 100%;
+}
+
+#loadProject .tabsContent button {
+  position: absolute;
+  bottom: 0;
+}
+
+#loadProject .tabsContent button.complete p {
+  font-size: 1.2em;
+  font-weight: 300;
+}
