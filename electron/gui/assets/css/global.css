@@ -8,6 +8,7 @@
 
 body {
   font-family: 'AvantGarde';
+  color: white;
 }
 
 /* Standard Input Field */
@@ -37,4 +38,3 @@ button.complete {
 button.complete:hover {
   scale: 1.01;
 }
-
