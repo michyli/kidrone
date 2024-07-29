@@ -1,0 +1,57 @@
+.settingHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-size: 1.7em;
+    font-weight: 250;
+    margin-bottom: 10px;
+    color:gray
+}
+
+.left {
+    font-weight: 250;
+    text-align: left;
+    flex: 1;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.right {
+    text-align: right;
+    flex: 1;
+    white-space: nowrap;
+}
+
+.input-container {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+}
+.svg-icon {
+    margin-right: 10px; /* Space between SVG and input */
+}
+.input-group {
+    flex-grow: 1;
+}
+.input-field {
+    width: 100%;
+    height: 30px;
+    padding: 10px;
+    padding-right: 50px; /* Add padding to the right for units */
+    border-radius: 3px;
+    opacity: 0.75;
+    box-sizing: border-box;
+}
+.unit {
+    position: absolute;
+    right: 10px;
+    top: 77%;
+    transform: translateY(-50%);
+    pointer-events: none; /* Prevent interaction with the unit */
+    color: white; /* Ensure the unit text is visible */
+}

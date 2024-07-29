@@ -1,30 +1,34 @@
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Landing Page</title>
-  <link rel="stylesheet" href="../assets/css/global.css" />
-  <link rel="stylesheet" href="../assets/css/landing.css" />
-  <link rel="stylesheet" href="../assets/css/browseProject.css" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing Page</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="../assets/css/global.css" />
+    <link rel="stylesheet" href="../assets/css/landing.css" />
+    <link rel="stylesheet" href="../assets/css/setting.css" />
+    <link rel="stylesheet" href="../assets/css/browseProject.css" />
   <link rel="stylesheet" href="../assets/css/newProject.css" />
   <link rel="stylesheet" href="../assets/css/loadProject.css" />
 </head>
-<body>
-  <div class="tabBackground">
+  <body>
+    <div class="tabBackground">
+      <!-- Navigation Bar -->
+      <div class="tabHeader">
+        <img src="/electron/gui/assets/images/Kidrone_logo.png" />
+        <div class="burgerMenu active"></div>
+      </div>
+      <hr />
 
-    <!-- Navigation Bar -->
-    <div class="tabHeader">
-      <img src="/electron/gui/assets/images/Kidrone_logo.png">
-      <div class="burgerMenu active"></div>
-    </div>
-    <hr>
-
-    <div class="menu">
-      <div id="new"><h1>New Project</h1></div>
-      <div id="browse"><h1>Browse Projects</h1></div>
-      <div id="load"><h1>Load Project</h1></div>
-      <div id="setting"><h1>Default Drone Setting</h1></div>
-    </div>
+      <div class="menu">
+        <div id="new"><h1>New Project</h1></div>
+        <div id="browse"><h1>Browse Projects</h1></div>
+        <div id="load"><h1>Load Project</h1></div>
+        <div id="setting"><h1>Default Drone Setting</h1></div>
+      </div>
 
     <!-- New Project Sequence -->
     <div class="tabs" id="newProject">
@@ -98,21 +102,44 @@
       </div>
     </div>
 
-    <!-- Setting Sequence -->
-    <div class="tabs" id="settingProject">
-      <div class="tabsContent">
-        <div class="tabsTitle"><p>Settings</p></div>
-        <hr>
+        <div class="input-container">
+          <label for="wind-speed" class="left">Wind speed:</label>
+          <input
+            type="text"
+            id="wind-speed"
+            name="wind-speed"
+            class="input-field"
+          />
+          <span class="unit">km/h</span>
+        </div>
 
-        <!-- replace the <p> for content -->
-        <p>Settings</p>
-        
+        <div class="input-container">
+          <label for="block-offset" class="left">Block offset:</label>
+          <input
+            type="text"
+            id="block-offset"
+            name="block-offset"
+            class="input-field"
+          />
+          <span class="unit">m</span>
+        </div>
+
+        <div class="input-container">
+          <label for="default-seed-type" class="left">Default seed type:</label>
+          <input
+            type="text"
+            id="default-seed-type"
+            name="default-seed-type"
+            class="input-field"
+          />
+        </div>
+        <!-- ashjfguhdkjbhvsfjkjdbgudh -->
+        <hr />
       </div>
     </div>
-
-  </div>
-  <script src="../assets/js/landing.js"></script>
-  <script src="../assets/js/browseProject.js"></script>
+    <script src="../assets/js/landing.js"></script>
+    <script src="../assets/js/setting.js"></script>
+    <script src="../assets/js/browseProject.js"></script>
   <script src="../assets/js/newProject.js"></script>
   <script src="../assets/js/loadProject.js"></script>
 </body>
