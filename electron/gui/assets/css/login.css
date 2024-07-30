@@ -110,13 +110,14 @@ body {
     background-color: transparent;
     border: 1px solid white;
     border-radius: 5px;
+    color: white;
+    padding: 0 10px;
 }
 
 .inputs-container .credentials-container::placeholder {
     font-size: 1.25em;
     letter-spacing: 1px;
     font-weight: 200;
-    padding-left: 10px;
     color: white;
     opacity: 0.5;
     transform: translateY(2px);
