@@ -69,7 +69,7 @@
           <div class="tabsTitle"><p>Browse Projects</p></div>
           <hr>
 
-          <div class="subTabs" id="browseProjectF1">
+          <div class="subTab" id="browseProjectF1">
             <div class="dropdownContainer">
 
               <div class="projectDropdown">
@@ -134,7 +134,7 @@
           <div class="tabsTitle"><p>Load Project</p></div>
           <hr>
           
-          <div class="subTabs" id="loadProjectF1">
+          <div class="subTab" id="loadProjectF1">
             <div class="uploadButton">
               <label for="uploadProject" class="fileUpload">
                 <p id="uploadText">Upload File from Computer</p>
@@ -156,7 +156,7 @@
           </div>  
           <hr>        
           
-          <div class="subTabs" id="settingProjectF1"></div>
+          <div class="subTab" id="settingProjectF1"></div>
             <div class="inputContainer">
               <p>Dispersion Diameter</p>
               <div class="inputFieldContainer">
@@ -258,7 +258,6 @@
       <!-- After Locate Button Sequence -->
       <div class="tabs" id="afterLocateBtn">
         <div class="tabsContent">
-          <hr>
 
           <div class="subTab" id="afterLocateBtnF1">
             <div class="buttons-container"> 
@@ -269,15 +268,21 @@
           </div>
 
           <div class="subTab" id="dropPinF1">
+            <div class="settingHead">
+              <button onclick="goBack()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path></svg></button>
+              <div class="tabsTitle"><p>Drop Pin</p></div>
+            </div>  
+            <hr>
 
+            <h1>Name</h1>
+            <input>
+          
           </div>
 
           <div class="subTab" id="plotBlockF1">
-
           </div>
 
           <div class="subTab" id="loadShapeF1">
-            
           </div>
 
         </div>
@@ -290,5 +295,6 @@
     <script type="module" src="../assets/js/browseProject.js"></script>
     <script type="module" src="../assets/js/newProject.js"></script>
     <script type="module" src="../assets/js/loadProject.js"></script>
+    <script type="module" src="../assets/js/dropPin.js"></script>
   </body>
 </html>
