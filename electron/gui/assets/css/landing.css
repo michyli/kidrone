@@ -62,7 +62,7 @@
 /* Menu Content */
 .menu {
   position: absolute;
-  top: 90px;
+  top: 91px;
   height: 0;
   transform: translateX(-30px);
   width: calc(100% - 60px);
@@ -73,7 +73,7 @@
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.76, 0, 0.24, 1);
   background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
   z-index: 10;
 }
 
@@ -126,7 +126,8 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  height: 100%;
+  height: fit-content;
+  min-height: 100%;
 }
 
 .tabsTitle {
@@ -134,7 +135,18 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  font-size: 1.5em;
-  font-weight: 200;
   margin-bottom: 10px;
+}
+
+.tabsTitle p {
+  color: #999999;
+  font-size: 1.2em;
+  font-weight: 300;
+}
+
+.subTabs {
+  display: none;
+}
+.subTabs.active {
+  display: block;
 }

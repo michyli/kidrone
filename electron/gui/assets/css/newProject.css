@@ -1,24 +1,19 @@
-.byCity {
+.locatorContainer {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  margin-top: 10px;
 }
-
-
-
 
 .orDivider {
-  width: 100%;
-  display: flex;
-  gap: 15px;
-  margin: 10px 0;
-}
-
-.orDivider hr {
   position: relative;
-  top: 50%;
-  transform: translateY(-50%);
+  width: 100%;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 20px 0;
 }
 
 .orDivider span {
@@ -26,14 +21,7 @@
   color: #4D4D4D;
 }
 
-
-
 #newProject .tabsContent button {
   position: absolute;
   bottom: 0;
-}
-
-#newProject .tabsContent button.complete p {
-  font-size: 1.2em;
-  font-weight: 300;
 }

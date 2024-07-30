@@ -3,17 +3,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Landing Page</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-    <link rel="stylesheet" href="../assets/css/global.css" />
-    <link rel="stylesheet" href="../assets/css/landing.css" />
-    <link rel="stylesheet" href="../assets/css/setting.css" />
-    <link rel="stylesheet" href="../assets/css/browseProject.css" />
-  <link rel="stylesheet" href="../assets/css/newProject.css" />
-  <link rel="stylesheet" href="../assets/css/loadProject.css" />
-</head>
+    <link rel="stylesheet" href="../assets/master.css"/>
+  </head>
+
   <body>
     <div class="tabBackground">
       <!-- Navigation Bar -->
@@ -21,7 +13,7 @@
         <img src="/electron/gui/assets/images/Kidrone_logo.png" />
         <div class="burgerMenu active"></div>
       </div>
-      <hr />
+      <hr>
 
       <div class="menu">
         <div id="new"><h1>New Project</h1></div>
@@ -30,117 +22,245 @@
         <div id="setting"><h1>Default Drone Setting</h1></div>
       </div>
 
-    <!-- New Project Sequence -->
-    <div class="tabs" id="newProject">
-      <div class="tabsContent">
-        <div class="tabsTitle"><p>New Project</p></div>
-        <hr>
+      <!-- New Project Sequence -->
+      <div class="tabs" id="newProject">
+        <div class="tabsContent">
+          <div class="tabsTitle"><p>New Project</p></div>
+          <hr>
+          
+          <div class="subTab" id="newProjectF1">
+            <div class="locatorContainer">
+              <p>Locate by City</p>
+              <select id="provinceSelection">
+                <option value="Alberta">Alberta</option>
+                <option value="BritishColumbia">British Columbia</option>
+                <option value="Manitoba">Manitoba</option>
+                <option value="NewBrunswick">New Brunswick</option>
+                <option value="Ontario">Ontario</option>
+                <option value="NovaScotia">Nova Scotia</option>
+                <option value="PrinceEdward Island">Prince Edward Island</option>
+                <option value="Quebec">Quebec</option>
+                <option value="NewfoundlandAndLabrador">Newfoundland and Labrador</option>
+              </select>
+              <select id="citySelection">
+                <option value="Toronto">Toronto</option>
+                <option value="Vancouver">Vancouver</option>
+                <option value="Calgary">Calgary</option>
+                <option value="Montreal">Montreal</option>
+                <option value="Ottawa">Ottawa</option>
+                <option value="Edmonton">Edmonton</option>
+              </select>
+            </div>
+            <div class="orDivider"><hr><span>OR</span><hr></div>
+            <div class="locatorContainer">
+              <p>Locate by GPS</p>
+              <input class='latitude' type="number" placeholder="latitude"/>
+              <input class='longtitude' type="number" placeholder="longtitude" />
+            </div>
+            <button class="complete"><p>Locate</p></button>
+          </div>
 
-        <div class="byCity">
-          <p>Locate by City</p>
-          <input class='province' type="text" />
-          <input class='city' type="text" />
         </div>
-
-        <div class="orDivider"><hr><span>OR</span><hr></div>
-
-        <div class="byCity">
-          <p>Locate by GPS</p>
-          <input class='latitude' type="text" />
-          <input class='longtitude' type="text" />
-        </div>
-        
-        <button class="complete">Locate</button>
-
       </div>
-    </div>
 
-    <!-- Browse Project Sequence -->
-    <div class="tabs" id="browseProject">
-      <div class="tabsContent">
-        <div class="tabsTitle"><p>Browse Project</p></div>
+      <!-- Browse Project Sequence -->
+      <div class="tabs" id="browseProject">
+        <div class="tabsContent">
+          <div class="tabsTitle"><p>Browse Projects</p></div>
           <hr>
 
-          <div class="projectDropdown">
-            <button onclick="toggleDropdown('dropdownInstance')" class="dropbtn">
-              Dropdown
-              <!-- TODO: Viewbox somehow changes orientation, I want less padding and thinner arrow -->
-              <svg class="dropdownArrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" preserveAspectRatio="xMidYMid meet"><path d="M11.9999 13.1714L16.9497 8.22168L18.3639 9.63589L11.9999 15.9999L5.63599 9.63589L7.0502 8.22168L11.9999 13.1714Z"></path></svg>
-            </button>
-            <div id="dropdownInstance" class="dropdown-content">
-              <button class="contentButton">Open</button>
-              <button class="contentButton">Delete</button>
+          <div class="subTabs" id="browseProjectF1">
+            <div class="dropdownContainer">
+
+              <div class="projectDropdown">
+                <div class="dropdownBtn">
+                  <p>North Vancouver</p>
+                  <div class="arrowContainer"><div></div></div>
+                </div>
+                <div class="dropdownContent">
+                  <button class="contentButton">Open</button>
+                  <button class="contentButton">Delete</button>
+                </div>
+              </div>
+              <div class="projectDropdown">
+                <div class="dropdownBtn">
+                  <p>East Alberta</p>
+                  <div class="arrowContainer"><div></div></div>
+                </div>
+                <div class="dropdownContent">
+                  <button class="contentButton">Open</button>
+                  <button class="contentButton">Delete</button>
+                </div>
+              </div>
+              <div class="projectDropdown">
+                <div class="dropdownBtn">
+                  <p>Toronto Island</p>
+                  <div class="arrowContainer"><div></div></div>
+                </div>
+                <div class="dropdownContent">
+                  <button class="contentButton">Open</button>
+                  <button class="contentButton">Delete</button>
+                </div>
+              </div>
+              <div class="projectDropdown">
+                <div class="dropdownBtn">
+                  <p>Saskatchewan</p>
+                  <div class="arrowContainer"><div></div></div>
+                </div>
+                <div class="dropdownContent">
+                  <button class="contentButton">Open</button>
+                  <button class="contentButton">Delete</button>
+                </div>
+              </div>
+              <div class="projectDropdown">
+                <div class="dropdownBtn">
+                  <p>All of Canada</p>
+                  <div class="arrowContainer"><div></div></div>
+                </div>
+                <div class="dropdownContent">
+                  <button class="contentButton">Open</button>
+                  <button class="contentButton">Delete</button>
+                </div>
+              </div>
+
             </div>
           </div>
+        </div>
+      </div>
 
-          <div class="projectDropdown">
-            <button onclick="toggleDropdown('dropdownInstance2')" class="dropbtn">
-              Dropdown2
-              <svg class="dropdownArrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" preserveAspectRatio="xMidYMid meet"><path d="M11.9999 13.1714L16.9497 8.22168L18.3639 9.63589L11.9999 15.9999L5.63599 9.63589L7.0502 8.22168L11.9999 13.1714Z"></path></svg>
-            </button>
-            <div id="dropdownInstance2" class="dropdown-content">
-              <button class="contentButton">Open</button>
-              <button class="contentButton">Delete</button>
+      <!-- Load Project Sequence -->
+      <div class="tabs" id="loadProject">
+        <div class="tabsContent">
+          <div class="tabsTitle"><p>Load Project</p></div>
+          <hr>
+          
+          <div class="subTabs" id="loadProjectF1">
+            <div class="uploadButton">
+              <label for="uploadProject" class="fileUpload">
+                <p id="uploadText">Upload File from Computer</p>
+              </label>
+              <input id="uploadProject" type="file"/>
             </div>
+            <button class="complete"><p>Proceed</p></button>
           </div>
 
+        </div>
       </div>
+
+      <!-- Settings Sequence -->
+      <div class="tabs" id="settingProject">
+        <div class="tabsContent">
+          <div class="settingHead">
+            <button onclick="goBack()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path></svg></button>
+            <div class="tabsTitle"><p>Default Drone Settings</p></div>
+          </div>  
+          <hr>        
+          
+          <div class="subTabs" id="settingProjectF1"></div>
+            <div class="inputContainer">
+              <p>Dispersion Diameter</p>
+              <div class="inputFieldContainer">
+                <input id="dispersionDiameter" type="number" value="10" maxlength="30">
+                <div class="unit"><p>m</p></div>
+              </div>
+            </div>
+            <div class="inputContainer">
+              <p>Dispersion Velocity</p>
+              <div class="inputFieldContainer">
+                <input id="dispersionVelocity" type="number" value="100" maxlength="10">
+                <div class="unit"><p>km/h</p></div>
+              </div>
+            </div>
+            <div class="inputContainer">
+              <p>Non-Dispersion Velocity</p>
+              <div class="inputFieldContainer">
+                <input id="nondispersionVelocity" type="number" value="200" maxlength="10">
+                <div class="unit"><p>km/h</p></div>
+              </div>
+            </div>
+            <div class="inputContainer">
+              <p>Acceleration 0 - 100km/h</p>
+              <div class="inputFieldContainer">
+                <input id="acceleration" type="number" value="100" maxlength="10">
+                <div class="unit"><p>m</p></div>
+              </div>
+            </div>
+            <hr>
+            <div class="inputContainer">
+              <p>Minimum Coverage</p>
+              <div class="inputFieldContainer">
+                <input id="minimumCoverage" type="number" value="90">
+                <div class="unit"><p>%</p></div>
+              </div>
+            </div>
+            <hr>
+            <div class="inputContainer">
+              <p class="inputFieldContainer">Wind Offset</p>
+              <div class="windDirContainer">
+                <div class="windIcon">
+                  <div class="direction north">N</div>
+                  <div class="direction south">S</div>
+                  <div class="direction west">W</div>
+                  <div class="direction east">E</div>
+                  <div class="arrow">
+                    <svg width="14" height="42" viewBox="0 0 14 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6.77148 41.1838L6.77148 1.02661" stroke="white"/>
+                    <path d="M0.710938 6.92455L6.77149 0.864502L12.8315 6.92455" stroke="white"/></svg>
+                  </div>
+                </div>
+                <div class="inputContainer shorter">
+                  <p>Wind Direction (N°)</p>
+                  <div class="inputFieldContainer">
+                    <input id="windDirection" type="number" value="0" maxlength="10">
+                    <div class="unit"><p>deg</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="inputContainer">
+              <p>Wind Velocity</p>
+              <div class="inputFieldContainer">
+                <input id="windVelocity" type="number" value="0" maxlength="10">
+                <div class="unit"><p>km/h</p></div>
+              </div>
+            </div>
+            <hr>
+            <div class="inputContainer">
+              <p>Default Seed Type</p>
+              <div class="inputFieldContainer">
+                <select id="seedSelection">
+                  <option value="100">Oak (100g/unit)</option>
+                  <option value="130">Maple (130g/unit)</option>
+                  <option value="120">Cedar (120g/unit)</option>
+                  <option value="180">Poplar (180g/unit)</option>
+                  <option value="80">Pine (80g/unit)</option>
+                  <option value="90">Spruce (90g/unit)</option>
+                </select>
+              </div>
+            </div>
+            <div class="inputContainer">
+              <p>Add Seed Type</p>
+              <div class="inputFieldContainer sectioned">
+                <div>
+                  <input id="seedName" type="text" value="" maxlength="30" disabled>
+                </div>
+                <div>
+                  <input id="seedWeight" type="number" value="0" maxlength="10" disabled>
+                  <div class="unit"><p>kg/unit</p></div>
+                </div>
+                <button id="addSeedBtn" onclick="addSeed()">+</button>
+            </div>
+            <button class="complete" onclick="saveSetting()"><p>Save</p></button>
+          </div>
+        </div>
+      </div>
+      
     </div>
 
-    <!-- Load Project Sequence -->
-    <div class="tabs" id="loadProject">
-      <div class="tabsContent">
-        <div class="tabsTitle"><p>Load Project</p></div>
-        <hr>
-        <div class="uploadButton">
-          <label for="uploadProject" class="fileUpload">
-            <p id="uploadText">Upload File from Computer</p>
-          </label>
-          <input id="uploadProject" type="file"/>
-        </div>
-        <button class="complete"><p>Proceed</p></button>
-      </div>
-    </div>
-
-        <div class="input-container">
-          <label for="wind-speed" class="left">Wind speed:</label>
-          <input
-            type="text"
-            id="wind-speed"
-            name="wind-speed"
-            class="input-field"
-          />
-          <span class="unit">km/h</span>
-        </div>
-
-        <div class="input-container">
-          <label for="block-offset" class="left">Block offset:</label>
-          <input
-            type="text"
-            id="block-offset"
-            name="block-offset"
-            class="input-field"
-          />
-          <span class="unit">m</span>
-        </div>
-
-        <div class="input-container">
-          <label for="default-seed-type" class="left">Default seed type:</label>
-          <input
-            type="text"
-            id="default-seed-type"
-            name="default-seed-type"
-            class="input-field"
-          />
-        </div>
-        <!-- ashjfguhdkjbhvsfjkjdbgudh -->
-        <hr />
-      </div>
-    </div>
     <script src="../assets/js/landing.js"></script>
     <script src="../assets/js/setting.js"></script>
     <script src="../assets/js/browseProject.js"></script>
-  <script src="../assets/js/newProject.js"></script>
-  <script src="../assets/js/loadProject.js"></script>
-</body>
+    <script src="../assets/js/newProject.js"></script>
+    <script src="../assets/js/loadProject.js"></script>
+  </body>
 </html>

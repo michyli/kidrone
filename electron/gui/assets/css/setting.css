@@ -1,57 +1,138 @@
-.settingHeader {
+.settingHead {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    font-size: 1.7em;
-    font-weight: 250;
-    margin-bottom: 10px;
-    color:gray
-}
-
-.left {
-    font-weight: 250;
-    text-align: left;
-    flex: 1;
-    display: block;
     margin-bottom: 10px;
 }
 
-.right {
-    text-align: right;
-    flex: 1;
-    white-space: nowrap;
+.settingHead button {
+    background: transparent;
+    cursor: pointer;
 }
 
-.input-container {
-    position: relative;
-    margin-bottom: 30px;
-}
-
-.flex-container {
-    display: flex;
-    align-items: center;
-}
-.svg-icon {
-    margin-right: 10px; /* Space between SVG and input */
-}
-.input-group {
-    flex-grow: 1;
-}
-.input-field {
-    width: 100%;
+.settingHead button svg {
     height: 30px;
-    padding: 10px;
-    padding-right: 50px; /* Add padding to the right for units */
-    border-radius: 3px;
-    opacity: 0.75;
-    box-sizing: border-box;
+    fill: #999999;
 }
+
+.settingHead .tabsTitle {
+    margin-bottom: 0;
+    justify-content: end;
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.inputContainer p {
+    font-weight: 200;
+}
+
+.inputFieldContainer {
+    position: relative;
+    height: 30px;
+    width: 100%;
+    background-color: transparent;
+}
+
 .unit {
     position: absolute;
-    right: 10px;
-    top: 77%;
-    transform: translateY(-50%);
-    pointer-events: none; /* Prevent interaction with the unit */
-    color: white; /* Ensure the unit text is visible */
+    top: 0;
+    right: 0;
+    height: 30px;
+    padding-right: 10px;
+    display: flex;
+    justify-content: cente;
+    align-items: center;
+    pointer-events: none;
+}
+
+.unit p {
+    color: black;
+    font-weight: 200;
+}
+
+.windDirContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    padding: 20px 0 20px 15px;
+    height: fit-content;
+}
+
+.windIcon {
+    flex: 0 0 80px;
+    height: 80px;
+    border: 2px solid white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.inputContainer.shorter {
+    flex: 1;
+}
+
+.direction {
+    position: absolute;
+    font-size: 0.8em;
+    font-weight: 200;
+}
+.direction.north {
+    transform: translateY(-52px);
+}
+.direction.south {
+    transform: translateY(52px);
+}
+.direction.east {
+    transform: translateX(52px);
+}
+.direction.west {
+    transform: translateX(-52px);
+}
+
+.windIcon .arrow {
+    position: absolute;
+    scale: 1.5;
+    transform: rotate(0);
+    transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.inputFieldContainer.sectioned {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+.inputFieldContainer.sectioned div {
+    flex-grow: 1;
+}
+
+.inputFieldContainer.sectioned div .unit {
+    padding-right: 60px;
+}
+
+#addSeedBtn {
+    height: 100%;
+    aspect-ratio: 1/1;
+    background-color: white;
+    opacity: 0.9;
+    border-radius: 3px;
+    font-size: 1.5em;
+    color: black;
+    cursor: pointer;
+    transition: scale 0.25s cubic-bezier(0.76, 0, 0.24, 1),
+                background-color 0.1s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+#addSeedBtn:hover {
+    scale: 1.05;
+}
+
+#addSeedBtn:active {
+    background-color: #9d9d9d;
 }

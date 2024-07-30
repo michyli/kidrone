@@ -4,37 +4,73 @@
   margin: 0;
   padding: 0;
   border: 0;
-}
-
-body {
   font-family: 'AvantGarde';
   color: white;
 }
 
 /* Standard Input Field */
 input {
+  font-family: "AvantGarde";
+  font-weight: 300;
   width: 100%;
   height: 30px;
   padding: 10px;
   border-radius: 3px;
-  opacity: 0.75;
+  color: #9d9d9d;
+  opacity: 1;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input::placeholder {
+  color: #9d9d9d;
+  font-weight: 300;
+  font-size: 1em;
+  opacity: 0.8;
+}
+
+select {
+  width: 100%;
+  height: 30px;
+  font-family: "AvantGarde";
+  font-size: .8em;
+  font-weight: 200;
+  color: black;
+  border-radius: 3px;
+  padding: 0 5px;
+}
+
+option {
+  font-family: "AvantGarde";
+  font-size: 1em;
+  font-weight: 200;
+  color: inherit;
 }
 
 /* Standard Complete Button */
 button.complete {
+  position: relative;
+  bottom: 0;
   width: 100%;
   height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'AvantGarde';
-  color: black;
   background-color: #00cd78;
   border-radius: 3px;
-  margin: 20px 0;
+  margin: 20px 0 40px 0;
   scale: 1;
   transition: scale 0.25s cubic-bezier(0.76, 0, 0.24, 1);
   cursor: pointer;
+  font-size: 1em;
+  font-weight: 300;
+}
+
+button.complete p{
+  color: black;
 }
 
 button.complete:hover {

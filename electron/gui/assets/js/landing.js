@@ -2,17 +2,6 @@ const burger = document.querySelector(".burgerMenu");
 const menu = document.querySelector(".menu");
 const titles = document.querySelectorAll(".menu div");
 
-/* Menu items */
-const newProject = document.getElementById("new");
-const browseProject = document.getElementById("browse");
-const loadProject = document.getElementById("load");
-const settingProject = document.getElementById("setting");
-
-const newProjectTab = document.getElementById("newProject");
-const browseProjectTab = document.getElementById("browseProject");
-const loadProjectTab = document.getElementById("loadProject");
-const settingProjectTab = document.getElementById("settingProject");
-
 menu.style.height = `${menu.scrollHeight + 20}px`;
 /* Burger & Menu Control */
 burger.addEventListener("click", function() {
@@ -32,35 +21,27 @@ titles.forEach((title) => {
 })
 
 /* Tab Routing */
-pageLevel = {"newProject": [],
-  "browseProject": [],
-  "loadProject": [],
-  "settingProject": []
+mainTabRef = {"new": ["newProject", "newProjectF1"],
+  "browse": ["browseProject", "browseProjectF1"],
+  "load": ["loadProject", "loadProjectF1"],
+  "setting": ["settingProject", "settingProjectF1"],
 }; // Add ID of tab in the respective bracket based on sequence
 
-mainTabs = Object.keys(pageLevel);
+/* Main Tabs Routing */
+mainTabs = Object.keys(mainTabRef);
+mainTabsDependency = Object.values(mainTabRef);
 
-newProject.addEventListener("click", function() {
-  newProjectTab.classList.add("active");
-  browseProjectTab.classList.remove("active");
-  loadProjectTab.classList.remove("active");
-  settingProjectTab.classList.remove("active");
-})
-browseProject.addEventListener("click", function() {
-  newProjectTab.classList.remove("active");
-  browseProjectTab.classList.add("active");
-  loadProjectTab.classList.remove("active");
-  settingProjectTab.classList.remove("active");
-})
-loadProject.addEventListener("click", function() {
-  newProjectTab.classList.remove("active");
-  browseProjectTab.classList.remove("active");
-  loadProjectTab.classList.add("active");
-  settingProjectTab.classList.remove("active");
-})
-settingProject.addEventListener("click", function() {
-  newProjectTab.classList.remove("active");
-  browseProjectTab.classList.remove("active");
-  loadProjectTab.classList.remove("active");
-  settingProjectTab.classList.add("active");
+mainTabs.forEach((tab) => {
+  var tabRef = document.getElementById(tab);
+  var mainContentsRef = mainTabRef[tab].map((ref) => document.getElementById(ref))
+
+  tabRef.addEventListener("click", function() {
+    mainTabsDependency.forEach((arr) => {
+      arr.forEach((el) => {
+        console.log(el)
+        document.getElementById(el).classList.remove("active");
+      })
+    })
+    mainContentsRef.forEach((cont) => cont.classList.add("active"));
+  })
 })
