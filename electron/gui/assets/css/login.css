@@ -4,10 +4,10 @@
     margin: 0;
     padding: 0;
     border: 0;
-    font-size: 100%;
 }
 
 body {
+    font-family: "AvantGarde";
     background-color: darkgrey;
     display: flex;
     justify-content: center;
@@ -18,68 +18,80 @@ body {
 .login-container {
     background-color: black;
     display: flex;
-    height: 639px;
-    width: 612px;
-    color: white;
-    font-family: "AvantGarde";
     flex-direction: column;
+    height: 450px;
+    width: 400px;
+    color: white;
     justify-content: space-between;
     padding: 40px;
 }
 
 .header-container {
-    height: 59.02px;
+    height: 50px;
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-#kidrone-logo {
-    width: 82.1px;
-    height: 59.02px;
+.header-container img {
+    height: 100%;
+    aspect-ratio: 1.4/1;
+    object-fit: cover;
 }
 
-
-h1 {
-    width: 200px;
-    height: 15px;
-    font-size: 100%;
+.header-container h1 {
+    font-size: 0.8em;
+    font-weight: 500;
+    height: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: end;
+    align-items: center;
 }
 
 .hook-container {
-    height: 186px;
+    height: 200px;
     width: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
-h2 {
-    width: 284px;
-    height: 186px;
-    font-size: 440%;
+.hook-container .hookTitle {
+    height: calc(100% - 40px);
+    aspect-ratio: 1/1;
     display: flex;
-    line-height: 0.9;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1px;
+    padding: 20px;
+}
+
+.hook-container .hookTitle h2 {
+    margin: 0;
+    font-size: 2em;
+    font-weight: 500;
+    text-align: left;
 }
 
 .hook-container .drone-background {
-    width: 239.72px;
-    height: 186.99px;
+    height: 80%;
+    aspect-ratio: 1.2/1;
     background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-#kidrone-drone {
-    width: 229.19px;
-    height: 124.77px;
+.hook-container .drone-background img {
+    height: 100%;
+    aspect-ratio: 1.2/1;
+    object-fit: contain;
 }
 
 .inputs-container {
-    height: 130px;
+    height: 100px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -87,15 +99,19 @@ h2 {
 }
 
 .inputs-container .credentials-container {
-    height: 46.95px;
+    height: 40px;
     background-color: transparent;
     border: 1px solid white;
     color: white;
     text-indent: 20px;
     font-size: 200%;
+    border-radius: 5px;
 }
 
 .inputs-container .credentials-container::placeholder {
+    font-size: .75em;
+    font-weight: 200;
+    align-self: center;
     color: white;
     font-family: "AvantGarde";
 }
@@ -116,6 +132,7 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 #signup-button {
@@ -129,5 +146,6 @@ h2 {
     align-items: center;
     justify-content: space-evenly;
     padding: 0 40px;
+    cursor: pointer;
 }
 
