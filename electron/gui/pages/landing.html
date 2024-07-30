@@ -294,14 +294,22 @@
           </div>
 
           <div class="subTab" id="dropPinF1">
+            <!-- TODO: Don't like spacing on the settingHead, different from default settings page due to it being under a subtab and not a tab? -->
             <div class="settingHead">
               <button onclick="goBack()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path></svg></button>
               <div class="tabsTitle"><p>Drop Pin</p></div>
             </div>  
             <hr>
 
-            <h1>Name</h1>
-            <input>
+            <div class="pin-container">
+              <h1>Name</h1>
+              <input></input>
+              <input class="description"></input>
+              <button>Add Image</button>
+              <hr>
+            </div>
+
+            <button class="complete">Save Pin</button>
           
           </div>
 

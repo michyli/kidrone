@@ -1,0 +1,15 @@
+
+.subTab#dropPinF1 .pin-container {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    row-gap: 20px;
+}
+
+.pin-container .description {
+    height: 240px;
+}
+
+.subTab#dropPinF1 .complete {
+    margin-top: auto;
+} 
