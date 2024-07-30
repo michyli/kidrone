@@ -8,6 +8,10 @@
   color: white;
 }
 
+body {
+  overflow: hidden;
+}
+
 /* Standard Input Field */
 input {
   font-family: "AvantGarde";

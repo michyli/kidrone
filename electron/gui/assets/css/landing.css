@@ -1,6 +1,20 @@
+.map {
+  position: relative;
+  right: 0;
+  width: 150vw;
+  height: 100vh;
+  z-index: 0;
+  filter: grayscale(0.75);
+  transform: rotate(90deg) translateX(-150px);
+}
+
+.map img {
+  object-fit: cover;
+}
+
 /* Tab Background */
 .tabBackground {
-  position: relative;
+  position: absolute;
   top: 0;
   left: 0;
   height: calc(100vh - 60px);
@@ -19,7 +33,7 @@
   justify-content: space-between;
 }
 
-.tabHeader img{
+.tabHeader img {
   width: 40px;
   object-fit: cover;
 }
@@ -32,7 +46,8 @@
   cursor: pointer;
 }
 
-.burgerMenu::before, .burgerMenu::after {
+.burgerMenu::before,
+.burgerMenu::after {
   content: "";
   position: relative;
   display: block;
@@ -105,11 +120,11 @@
 }
 
 .menu div h1:hover::after {
-  width: 100%;  
+  width: 100%;
 }
 
 /* Tabs General */
-.tabs{
+.tabs {
   display: none;
   width: 100%;
   height: 100%;
