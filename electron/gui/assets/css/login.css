@@ -13,17 +13,22 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    width: 100vw;
+    overflow: hidden;
 }
 
 .login-container {
     background-color: black;
     display: flex;
+    justify-content: center;
     flex-direction: column;
     height: 450px;
     width: 400px;
     color: white;
-    justify-content: space-between;
+    gap: 10px;
     padding: 40px;
+    border-radius: 5px;
+    box-shadow: -10px 20px 30px -4px #4d4d4d;
 }
 
 .header-container {
@@ -50,7 +55,7 @@ body {
 }
 
 .hook-container {
-    height: 200px;
+    height: 190px;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -58,34 +63,35 @@ body {
 }
 
 .hook-container .hookTitle {
-    height: calc(100% - 40px);
+    height: calc(100% - 20px);
     aspect-ratio: 1/1;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: left;
     gap: 1px;
-    padding: 20px;
+    padding: 10px;
 }
 
 .hook-container .hookTitle h2 {
     margin: 0;
-    font-size: 2em;
+    font-size: 2.25em;
     font-weight: 500;
     text-align: left;
 }
 
 .hook-container .drone-background {
-    height: 80%;
-    aspect-ratio: 1.2/1;
+    height: 90%;
+    aspect-ratio: 1.1/1;
     background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 .hook-container .drone-background img {
-    height: 100%;
+    width: 100%;
     aspect-ratio: 1.2/1;
     object-fit: contain;
 }
@@ -96,56 +102,148 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding: 5px 0;
 }
 
 .inputs-container .credentials-container {
     height: 40px;
     background-color: transparent;
     border: 1px solid white;
-    color: white;
-    text-indent: 20px;
-    font-size: 200%;
     border-radius: 5px;
 }
 
 .inputs-container .credentials-container::placeholder {
-    font-size: .75em;
+    font-size: 1.25em;
+    letter-spacing: 1px;
     font-weight: 200;
-    align-self: center;
+    padding-left: 10px;
     color: white;
-    font-family: "AvantGarde";
+    opacity: 0.5;
+    transform: translateY(2px);
+}
+
+.credentials-container:focus::placeholder {
+    color: transparent;
+    outline: none;
 }
 
 .buttons-container {
-    height: 35px;
+    height: 40px;
     width: 100%;
     display: flex;
     justify-content: space-between;
+    padding: 10px 0;
 }
 
-#login-button {
-    background-color: white;
-    width: 235px;
-    height: 35px;
+.buttons-container .login,
+.buttons-container .signup {
     font-family: "AvantGarde";
-    font-size: 150%;
+    font-size: 1.25em;
+    font-weight: 400;
+    height: 100%;
+    width: 46%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    padding: 10px;
+    border-radius: 3px;
+    overflow: hidden;
 }
 
-#signup-button {
-    background-color: transparent;
-    color: white;
-    width: 235px;
-    height: 35px;
-    font-family: "AvantGarde";
-    font-size: 150%;
+.login {
+    background-color: white;
+}
+
+.loginText {
+    position: absolute;
     display: flex;
+    height: 40px;
+    width: 184px;
+    justify-content: center;
     align-items: center;
-    justify-content: space-evenly;
-    padding: 0 40px;
-    cursor: pointer;
+    transform: translateX(-25%);
+    transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
 }
 
+.loginText p,
+.loginText svg {
+    width: 50%;
+    transition: opacity 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.loginText p {
+    opacity: 1;
+}
+
+.loginText svg {
+    height: 20px;
+    opacity: 0;
+}
+
+.login:hover .loginText {
+    transform: translateX(25%);
+}
+
+.login:hover .loginText p {
+    opacity: 0;
+}
+.login:hover .loginText svg {
+    opacity: 1;
+}
+
+#signupBtn {
+    background-color: transparent;
+    padding: 0;
+}
+
+.signupText {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: white;
+}
+
+.signupText::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background-color: white;
+    mix-blend-mode: difference;
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.signupText p {
+    font-size: 1em;
+    font-weight: 300;
+    transform: translateX(15px);
+    transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.signupText svg {
+    height: 20px;
+    stroke-width: 3px;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    transform: translateX(5px);
+    transition: stroke-dashoffset 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.signup:hover .signupText p {
+    transform: translateX(4px);
+}
+
+.signup:hover .signupText svg {
+    stroke-dashoffset: 0;
+}
+.signup:hover .signupText::after {
+    width: 100%;
+}
