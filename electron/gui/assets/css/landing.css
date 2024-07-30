@@ -159,9 +159,10 @@
   font-weight: 300;
 }
 
-.subTabs {
+.subTab {
   display: none;
 }
-.subTabs.active {
+.subTab.active {
   display: block;
 }
+

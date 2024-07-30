@@ -21,27 +21,44 @@ titles.forEach((title) => {
 })
 
 /* Tab Routing */
-mainTabRef = {"new": ["newProject", "newProjectF1"],
+const mainTabRef = {
+  "new": ["newProject", "newProjectF1"],
   "browse": ["browseProject", "browseProjectF1"],
   "load": ["loadProject", "loadProjectF1"],
   "setting": ["settingProject", "settingProjectF1"],
 }; // Add ID of tab in the respective bracket based on sequence
 
 /* Main Tabs Routing */
-mainTabs = Object.keys(mainTabRef);
-mainTabsDependency = Object.values(mainTabRef);
+const mainTabs = Object.keys(mainTabRef);
+const mainTabsDependency = Object.values(mainTabRef);
 
 mainTabs.forEach((tab) => {
   var tabRef = document.getElementById(tab);
   var mainContentsRef = mainTabRef[tab].map((ref) => document.getElementById(ref))
 
   tabRef.addEventListener("click", function() {
+    console.log("clicked: ", tabRef)
     mainTabsDependency.forEach((arr) => {
       arr.forEach((el) => {
-        console.log(el)
+        console.log("removing: ", el)
         document.getElementById(el).classList.remove("active");
       })
     })
-    mainContentsRef.forEach((cont) => cont.classList.add("active"));
+    mainContentsRef.forEach((cont) => {
+      console.log("activated: ", cont)
+      cont.classList.add("active")
+    });
   })
-})
+});
+
+export function switchSubTab(nextSubTabID) {
+  const activeSubTabs = document.querySelectorAll(".subTab.active");
+  console.log("active sub tabs:", activeSubTabs);
+  activeSubTabs.forEach((el) => {
+    el.classList.remove('active');
+  })
+
+  document.getElementById(nextSubTabID).classList.add('active');
+
+};
+

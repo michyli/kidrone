@@ -58,7 +58,16 @@
               <input class='latitude' type="number" placeholder="latitude"/>
               <input class='longtitude' type="number" placeholder="longtitude" />
             </div>
-            <button class="complete"><p>Locate</p></button>
+            <button class="complete" id="locateButton"><p>Locate</p></button>
+          </div>
+
+          <!-- After Locate Button Sequence -->
+          <div class="subTab" id="startnewProjectF2">
+            <div class="buttons-container"> 
+              <div id="dropPinButton">Drop Pin</div>
+              <div id="plotBlockButton">Plot Block</div>
+              <div id="loadShapeButton">Load Shape</div>
+            </div>
           </div>
 
         </div>
@@ -258,10 +267,10 @@
       
     </div>
 
-    <script src="../assets/js/landing.js"></script>
-    <script src="../assets/js/setting.js"></script>
-    <script src="../assets/js/browseProject.js"></script>
-    <script src="../assets/js/newProject.js"></script>
-    <script src="../assets/js/loadProject.js"></script>
+    <script type="module" src="../assets/js/landing.js"></script>
+    <script type="module" src="../assets/js/setting.js"></script>
+    <script type="module" src="../assets/js/browseProject.js"></script>
+    <script type="module" src="../assets/js/newProject.js"></script>
+    <script type="module" src="../assets/js/loadProject.js"></script>
   </body>
 </html>

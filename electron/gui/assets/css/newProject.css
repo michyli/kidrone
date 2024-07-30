@@ -25,3 +25,21 @@
   position: absolute;
   bottom: 0;
 }
+
+#startnewProjectF1 {
+  width: 100%;
+  font-size: 2rem;
+  font-weight: 200;
+  display: flex;
+  flex-direction: column; 
+  gap: 20px; 
+}
+
+.buttons-container {
+  width: 100%;
+  font-size: 2rem;
+  font-weight: 200;
+  display: flex;
+  flex-direction: column; 
+  gap: 20px; 
+}
