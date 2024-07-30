@@ -37,15 +37,12 @@ mainTabs.forEach((tab) => {
   var mainContentsRef = mainTabRef[tab].map((ref) => document.getElementById(ref))
 
   tabRef.addEventListener("click", function() {
-    console.log("clicked: ", tabRef)
     mainTabsDependency.forEach((arr) => {
       arr.forEach((el) => {
-        console.log("removing: ", el)
         document.getElementById(el).classList.remove("active");
       })
     })
     mainContentsRef.forEach((cont) => {
-      console.log("activated: ", cont)
       cont.classList.add("active")
     });
   })
