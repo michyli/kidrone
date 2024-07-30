@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ArcGIS Polygon Creation</title>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.20/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.30/"></script>
+  </head>
+  <body>
+    <div id="mainPage">
+      <button id="createPolygonBtn">Create Polygon</button>
+      <div id="polygonList"></div>
+      <div id="viewDivMain" style="height: 400px"></div>
+    </div>
+
+    <div id="mapPage" style="display: none">
+      <div id="viewDivCreate" style="height: 800px"></div>
+      <button id="savePolygonBtn">Save</button>
+    </div>
+
+    <script>
+      let map,
+        graphicsLayer,
+        sketch,
+        polygonGraphic,
+        currentPolygonIndex = null;
+      let polygons = [];
+
+      document
+        .getElementById("createPolygonBtn")
+        .addEventListener("click", function () {
+          document.getElementById("mainPage").style.display = "none";
+          document.getElementById("mapPage").style.display = "block";
+          sketch.create("polygon");
+          currentPolygonIndex = null;
+        });
+
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/Graphic",
+        "esri/layers/GraphicsLayer",
+        "esri/widgets/Sketch",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/symbols/SimpleFillSymbol",
+        "esri/symbols/SimpleLineSymbol",
+      ], function (
+        Map,
+        MapView,
+        Graphic,
+        GraphicsLayer,
+        Sketch,
+        SimpleMarkerSymbol,
+        SimpleFillSymbol,
+        SimpleLineSymbol
+      ) {
+        map = new Map({
+          basemap: "topo-vector",
+        });
+
+        graphicsLayer = new GraphicsLayer();
+        map.add(graphicsLayer);
+
+        const viewMain = new MapView({
+          container: "viewDivMain",
+          map: map,
+          center: [-118.805, 34.027],
+          zoom: 13,
+        });
+
+        const viewCreate = new MapView({
+          container: "viewDivCreate",
+          map: map,
+          center: [-118.805, 34.027],
+          zoom: 13,
+        });
+
+        const polygonSymbol = new SimpleFillSymbol({
+          //   color: [0, 0, 0, 0.25],
+          outline: {
+            color: [0, 205, 120],
+            width: 2,
+          },
+        });
+
+        const pointSymbol = new SimpleMarkerSymbol({
+          style: "circle",
+          color: [0, 0, 0],
+          size: 10,
+          outline: {
+            color: [0, 205, 120],
+            width: 2,
+          },
+        });
+
+        sketch = new Sketch({
+          view: viewCreate,
+          layer: graphicsLayer,
+          creationMode: "update",
+          availableCreateTools: ["polygon"],
+          updateOnGraphicClick: false,
+        });
+
+        viewCreate.ui.add(sketch, "top-right");
+
+        sketch.on("create", function (event) {
+          if (event.state === "complete") {
+            polygonGraphic = event.graphic;
+            polygonGraphic.symbol = polygonSymbol;
+            graphicsLayer.add(polygonGraphic);
+          }
+        });
+
+        sketch.on("update", function (event) {
+          if (event.state === "complete") {
+            polygonGraphic = event.graphics[0];
+          }
+        });
+
+        document
+          .getElementById("savePolygonBtn")
+          .addEventListener("click", function () {
+            if (polygonGraphic) {
+              if (currentPolygonIndex !== null) {
+                polygons[currentPolygonIndex].graphic = polygonGraphic;
+              } else {
+                const polygonName = prompt("Enter the name of the polygon:");
+                addPolygonToList(polygonName, polygonGraphic);
+              }
+
+              document.getElementById("mainPage").style.display = "block";
+              document.getElementById("mapPage").style.display = "none";
+            }
+          });
+
+        function addPolygonToList(name, graphic) {
+          const polygonList = document.getElementById("polygonList");
+
+          const listItem = document.createElement("div");
+          const nameLabel = document.createElement("span");
+          nameLabel.textContent = name;
+          listItem.appendChild(nameLabel);
+
+          const toggleButton = document.createElement("button");
+          toggleButton.textContent = "Show";
+          listItem.appendChild(toggleButton);
+
+          const editButton = document.createElement("button");
+          editButton.textContent = "Edit";
+          listItem.appendChild(editButton);
+
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          listItem.appendChild(deleteButton);
+
+          toggleButton.addEventListener("click", function () {
+            if (graphicsLayer.graphics.includes(graphic)) {
+              graphicsLayer.remove(graphic);
+              this.textContent = "Show";
+            } else {
+              graphicsLayer.add(graphic);
+              this.textContent = "Hide";
+            }
+          });
+
+          editButton.addEventListener("click", function () {
+            document.getElementById("mainPage").style.display = "none";
+            document.getElementById("mapPage").style.display = "block";
+            sketch.update(graphic);
+            currentPolygonIndex = polygons.findIndex(
+              (p) => p.graphic === graphic
+            );
+          });
+
+          deleteButton.addEventListener("click", function () {
+            graphicsLayer.remove(graphic);
+            polygonList.removeChild(listItem);
+            polygons = polygons.filter((p) => p.graphic !== graphic);
+          });
+
+          polygonList.appendChild(listItem);
+          polygons.push({ name, graphic });
+        }
+      });
+    </script>
+  </body>
+</html>
