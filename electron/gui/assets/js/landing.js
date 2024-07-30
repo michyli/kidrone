@@ -26,6 +26,7 @@ const mainTabRef = {
   "browse": ["browseProject", "browseProjectF1"],
   "load": ["loadProject", "loadProjectF1"],
   "setting": ["settingProject", "settingProjectF1"],
+  "locateButton": ["afterLocateBtn", "afterLocateBtnF1"],
 }; // Add ID of tab in the respective bracket based on sequence
 
 /* Main Tabs Routing */
@@ -37,15 +38,12 @@ mainTabs.forEach((tab) => {
   var mainContentsRef = mainTabRef[tab].map((ref) => document.getElementById(ref))
 
   tabRef.addEventListener("click", function() {
-    console.log("clicked: ", tabRef)
     mainTabsDependency.forEach((arr) => {
       arr.forEach((el) => {
-        console.log("removing: ", el)
         document.getElementById(el).classList.remove("active");
       })
     })
     mainContentsRef.forEach((cont) => {
-      console.log("activated: ", cont)
       cont.classList.add("active")
     });
   })
@@ -53,7 +51,6 @@ mainTabs.forEach((tab) => {
 
 export function switchSubTab(nextSubTabID) {
   const activeSubTabs = document.querySelectorAll(".subTab.active");
-  console.log("active sub tabs:", activeSubTabs);
   activeSubTabs.forEach((el) => {
     el.classList.remove('active');
   })
