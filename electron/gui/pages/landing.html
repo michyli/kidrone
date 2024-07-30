@@ -3,18 +3,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Landing Page</title>
-    <link rel="stylesheet" href="../assets/master.css"/>
+    <link rel="stylesheet" href="../assets/master.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.30/esri/themes/light/main.css"
+    />
   </head>
 
   <body>
-    <div class="map"><img src="../assets/images/mapDemo.png"></div>
+    <div id="viewDiv"></div>
     <div class="tabBackground">
       <!-- Navigation Bar -->
       <div class="tabHeader">
         <img src="/electron/gui/assets/images/Kidrone_logo.png" />
         <div class="burgerMenu active"></div>
       </div>
-      <hr>
+      <hr />
 
       <div class="menu">
         <div id="new"><h1>New Project</h1></div>
@@ -27,8 +32,8 @@
       <div class="tabs" id="newProject">
         <div class="tabsContent">
           <div class="tabsTitle"><p>New Project</p></div>
-          <hr>
-          
+          <hr />
+
           <div class="subTab" id="newProjectF1">
             <div class="locatorContainer">
               <p>Locate by City</p>
@@ -39,9 +44,13 @@
                 <option value="NewBrunswick">New Brunswick</option>
                 <option value="Ontario">Ontario</option>
                 <option value="NovaScotia">Nova Scotia</option>
-                <option value="PrinceEdward Island">Prince Edward Island</option>
+                <option value="PrinceEdward Island">
+                  Prince Edward Island
+                </option>
                 <option value="Quebec">Quebec</option>
-                <option value="NewfoundlandAndLabrador">Newfoundland and Labrador</option>
+                <option value="NewfoundlandAndLabrador">
+                  Newfoundland and Labrador
+                </option>
               </select>
               <select id="citySelection">
                 <option value="Toronto">Toronto</option>
@@ -52,13 +61,30 @@
                 <option value="Edmonton">Edmonton</option>
               </select>
             </div>
-            <div class="orDivider"><hr><span>OR</span><hr></div>
+            <div class="orDivider">
+              <hr />
+              <span>OR</span>
+              <hr />
+            </div>
             <div class="locatorContainer">
               <p>Locate by GPS</p>
-              <input class='latitude' type="number" placeholder="latitude"/>
-              <input class='longtitude' type="number" placeholder="longtitude" />
+              <input class="latitude" type="number" placeholder="latitude" />
+              <input
+                class="longtitude"
+                type="number"
+                placeholder="longtitude"
+              />
             </div>
             <button class="complete" id="locateButton"><p>Locate</p></button>
+          </div>
+
+          <!-- After Locate Button Sequence -->
+          <div class="subTab" id="startnewProjectF2">
+            <div class="buttons-container">
+              <div id="dropPinButton">Drop Pin</div>
+              <div id="plotBlockButton">Plot Block</div>
+              <div id="loadShapeButton">Load Shape</div>
+            </div>
           </div>
         </div>
       </div>
@@ -67,11 +93,10 @@
       <div class="tabs" id="browseProject">
         <div class="tabsContent">
           <div class="tabsTitle"><p>Browse Projects</p></div>
-          <hr>
+          <hr />
 
           <div class="subTab" id="browseProjectF1">
             <div class="dropdownContainer">
-
               <div class="projectDropdown">
                 <div class="dropdownBtn">
                   <p>North Vancouver</p>
@@ -122,7 +147,6 @@
                   <button class="contentButton">Delete</button>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -139,11 +163,10 @@
               <label for="uploadProject" class="fileUpload">
                 <p id="uploadText">Upload File from Computer</p>
               </label>
-              <input id="uploadProject" type="file"/>
+              <input id="uploadProject" type="file" />
             </div>
             <button class="complete"><p>Proceed</p></button>
           </div>
-
         </div>
       </div>
 
@@ -151,7 +174,17 @@
       <div class="tabs" id="settingProject">
         <div class="tabsContent">
           <div class="settingHead">
-            <button onclick="goBack()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path></svg></button>
+            <button onclick="goBack()">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"
+                ></path>
+              </svg>
+            </button>
             <div class="tabsTitle"><p>Default Drone Settings</p></div>
           </div>  
           <hr>        
@@ -250,7 +283,9 @@
                 </div>
                 <button id="addSeedBtn" onclick="addSeed()"></button>
             </div>
-            <button class="complete" onclick="saveSetting()"><p>Save</p></button>
+            <button class="complete" onclick="saveSetting()">
+              <p>Save</p>
+            </button>
           </div>
         </div>
       </div>
