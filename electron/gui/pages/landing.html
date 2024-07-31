@@ -4,14 +4,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Landing Page</title>
     <link rel="stylesheet" href="../assets/master.css" />
-
-    <link
-      rel="stylesheet"
-      href="https://js.arcgis.com/4.30/esri/themes/light/main.css"
-    />
+    <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
   </head>
 
   <body>
+    <!-- <div id="viewDiv"></div> -->
     <div id="viewDiv"></div>
     <div class="tabBackground">
       <!-- Navigation Bar -->
@@ -536,7 +533,8 @@
         </div>
       </div>
     </div>
-
+    <script src="https://js.arcgis.com/4.30/"></script>
+    <script type="module" src="../assets/js/map.js"></script>
     <script type="module" src="../assets/js/landing.js"></script>
     <script type="module" src="../assets/js/setting.js"></script>
     <script type="module" src="../assets/js/browseProject.js"></script>
@@ -545,6 +543,7 @@
     <script type="module" src="../assets/js/dropPin.js"></script>
     <script type="module" src="../assets/js/loadShape.js"></script>
     <script type="module" src="../assets/js/blockList.js"></script>
-    <script type="module" src="../assets/js/generateFlight.js"></script><script type="module" src="../assets/js/plotBlock.js"></script>
+    <script type="module" src="../assets/js/generateFlight.js"></script>
+    <script type="module" src="../assets/js/plotBlock.js"></script>
   </body>
 </html>

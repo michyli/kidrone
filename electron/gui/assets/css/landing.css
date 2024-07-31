@@ -1,4 +1,4 @@
-.map {
+/* .map {
   position: relative;
   right: 0;
   width: 150vw;
@@ -10,6 +10,22 @@
 
 .map img {
   object-fit: cover;
+} */
+html, body, #viewDiv {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#viewDiv {
+  position: relative;
+  right: 0;
+  width: 150vw;
+  height: 100vh;
+  z-index: 0;
+  filter: grayscale(0.75);
+  transform: translateX(-150px);
 }
 
 /* Tab Background */
