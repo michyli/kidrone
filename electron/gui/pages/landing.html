@@ -281,7 +281,7 @@
         </div>
       </div>
 
-      <!-- After Locate Button Sequence -->
+      <!-- After Locate Button Sequence, when creating a new project -->
       <div class="tabs" id="afterLocateBtn">
         <div class="tabsContent">
 
@@ -304,8 +304,8 @@
             <div class="pin-container">
               <h1>Name</h1>
               <input></input>
-              <input class="description"></input>
-              <button>Add Image</button>
+              <textarea class="description"></textarea>
+              <button class="addImageBtn">Add Image</button>
               <hr>
             </div>
 
@@ -317,6 +317,126 @@
           </div>
 
           <div class="subTab" id="loadShapeF1">
+            <div class="uploadButton">
+              <label for="uploadShape" class="shapeFileUpload">
+                <p id="uploadShapeText">Upload Shapefile from Computer</p>
+              </label>
+              <input id="uploadShape" type="file"/>
+            </div>
+            <button class="complete" id="saveBlockBtn"><p>Save Block</p></button>
+          </div>
+
+          <!-- Here is after pins/blocks are complete, it lists the blocks for path generation -->
+          <!-- TODO: Add the green dot for active dropdown and helicopter icon -->
+          <div class="subTab" id="blockListF1">
+            <div class="dropdownContainer">
+              <div class="projectDropdown">
+                <div class="dropdownBtn">
+                  <p> Block 1 </p>
+                  <div class="arrowContainer"><div></div></div>
+                </div>
+                <div class="dropdownContent">
+                  <button class="contentButton" id="planFlightBtn">Plan Flight</button>
+                  <button class="contentButton">Edit</button>
+                  <button class="contentButton">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="subTab" id="generateFlightF1">
+            <div class="settingHead">
+              <button onclick="goBack()">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"
+                  ></path>
+                </svg>
+              </button>
+              <div class="tabsTitle"><p>Plan Flight</p></div>
+            </div>  
+            <hr>  
+
+            <!-- Name from the previous thing -->
+            <hr>
+
+            <!-- Copy from settings -->
+            <div class="inputContainer">
+              <p>Dispersion Diameter</p>
+              <div class="inputFieldContainer">
+                <input id="dispersionDiameter" type="number" value="10" maxlength="30">
+                <div class="unit"><p>m</p></div>
+              </div>
+            </div>
+            <div class="inputContainer">
+              <p>Dispersion Velocity</p>
+              <div class="inputFieldContainer">
+                <input id="dispersionVelocity" type="number" value="100" maxlength="10">
+                <div class="unit"><p>km/h</p></div>
+              </div>
+            </div>
+            <div class="inputContainer">
+              <p>Non-Dispersion Velocity</p>
+              <div class="inputFieldContainer">
+                <input id="nondispersionVelocity" type="number" value="200" maxlength="10">
+                <div class="unit"><p>km/h</p></div>
+              </div>
+            </div>
+            <div class="inputContainer">
+              <p>Acceleration 0 - 100km/h</p>
+              <div class="inputFieldContainer">
+                <input id="acceleration" type="number" value="100" maxlength="10">
+                <div class="unit"><p>m</p></div>
+              </div>
+            </div>
+            <hr>
+            <div class="inputContainer">
+              <p>Minimum Coverage</p>
+              <div class="inputFieldContainer">
+                <input id="minimumCoverage" type="number" value="90">
+                <div class="unit"><p>%</p></div>
+              </div>
+            </div>
+            <hr>
+            <div class="inputContainer">
+              <p class="inputFieldContainer">Wind Offset</p>
+              <div class="windDirContainer">
+                <div class="windIcon">
+                  <div class="direction north">N</div>
+                  <div class="direction south">S</div>
+                  <div class="direction west">W</div>
+                  <div class="direction east">E</div>
+                  <div class="arrow">
+                    <svg width="14" height="42" viewBox="0 0 14 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6.77148 41.1838L6.77148 1.02661" stroke="white"/>
+                    <path d="M0.710938 6.92455L6.77149 0.864502L12.8315 6.92455" stroke="white"/></svg>
+                  </div>
+                </div>
+                <div class="inputContainer shorter">
+                  <p>Wind Direction (N°)</p>
+                  <div class="inputFieldContainer">
+                    <input id="windDirection" type="number" value="0" maxlength="10">
+                    <div class="unit"><p>deg</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="inputContainer">
+              <p>Wind Velocity</p>
+              <div class="inputFieldContainer">
+                <input id="windVelocity" type="number" value="0" maxlength="10">
+                <div class="unit"><p>km/h</p></div>
+              </div>
+            </div>
+            <hr>
+            <button class="complete" id="generateFlightBtn">
+              <p>Generate Flight</p>
+            </button>
+
           </div>
 
         </div>
@@ -330,5 +450,8 @@
     <script type="module" src="../assets/js/newProject.js"></script>
     <script type="module" src="../assets/js/loadProject.js"></script>
     <script type="module" src="../assets/js/dropPin.js"></script>
+    <script type="module" src="../assets/js/loadShape.js"></script>
+    <script type="module" src="../assets/js/blockList.js"></script>
+    <script type="module" src="../assets/js/generateFlight.js"></script>
   </body>
 </html>
