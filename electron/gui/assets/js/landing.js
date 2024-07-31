@@ -38,11 +38,10 @@ mainTabs.forEach((tab) => {
   var mainContentsRef = mainTabRef[tab].map((ref) => document.getElementById(ref))
 
   tabRef.addEventListener("click", function() {
-    mainTabsDependency.forEach((arr) => {
-      arr.forEach((el) => {
-        document.getElementById(el).classList.remove("active");
-      })
-    })
+    const activeItems = document.querySelectorAll(".active");
+    activeItems.forEach((el) => {
+      el.classList.remove('active');
+    });
     mainContentsRef.forEach((cont) => {
       cont.classList.add("active")
     });

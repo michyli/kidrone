@@ -22,6 +22,7 @@ input {
   border-radius: 3px;
   color: #9d9d9d;
   opacity: 1;
+  outline:none;
 }
 
 input::-webkit-outer-spin-button,
