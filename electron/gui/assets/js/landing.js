@@ -50,11 +50,12 @@ mainTabs.forEach((tab) => {
 
 export function switchSubTab(nextSubTabID) {
   const activeSubTabs = document.querySelectorAll(".subTab.active");
+  console.log(activeSubTabs);
   activeSubTabs.forEach((el) => {
     el.classList.remove('active');
   })
 
+  console.log(document.getElementById(nextSubTabID))
   document.getElementById(nextSubTabID).classList.add('active');
-
 };
 

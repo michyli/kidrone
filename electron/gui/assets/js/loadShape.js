@@ -2,7 +2,8 @@ import { switchSubTab } from "./landing.js";
 
 const dropPinButton = document.getElementById("loadShapeButton");
 dropPinButton.addEventListener("click", () => {
-    switchSubTab("loadShapeF1");
+  console.log("load shape clicked");
+  switchSubTab("loadShapeF1");
 });
 
 const fileInput = document.getElementById('uploadShape');
