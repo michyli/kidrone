@@ -44,3 +44,24 @@
   gap: 20px; 
   cursor: pointer;
 }
+
+.addButton {
+  display: inline-block;
+  width: 113px;
+  height: 23px;
+  border: 1px solid white;
+  border-radius: 1.5px;
+  background-color: transparent;
+  color: white;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  text-align: center;
+  line-height: 21px; /* Adjust this to vertically center the text */
+  cursor: pointer;
+  text-transform: uppercase; /* Make text uppercase */
+  letter-spacing: 0.5px; /* Adjust letter spacing if needed */
+}
+
+.styled-button:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Add a hover effect */
+}
