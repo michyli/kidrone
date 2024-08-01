@@ -10,432 +10,157 @@
   <body>
     <!-- <div id="viewDiv"></div> -->
     <div id="viewDiv"></div>
-    <div class="tabBackground">
-      <!-- Navigation Bar -->
-      <div class="tabHeader">
-        <img src="/electron/gui/assets/images/Kidrone_logo.png" />
-        <div class="burgerMenu active"></div>
-      </div>
-      <hr />
-
-      <div class="menu">
-        <div id="new"><h1>New Project</h1></div>
-        <div id="browse"><h1>Browse Projects</h1></div>
-        <div id="load"><h1>Load Project</h1></div>
-        <div id="setting"><h1>Default Drone Setting</h1></div>
-      </div>
-
-      <!-- New Project Sequence -->
-      <div class="tabs" id="newProject">
-        <div class="tabsContent">
-          <div class="tabsTitle"><p>New Project</p></div>
-          <hr />
-
-          <div class="subTab" id="newProjectF1">
-            <div class="locatorContainer">
-              <p>Locate by City</p>
-              <select id="provinceSelection">
-                <option value="Alberta">Alberta</option>
-                <option value="BritishColumbia">British Columbia</option>
-                <option value="Manitoba">Manitoba</option>
-                <option value="NewBrunswick">New Brunswick</option>
-                <option value="Ontario">Ontario</option>
-                <option value="NovaScotia">Nova Scotia</option>
-                <option value="PrinceEdward Island">
-                  Prince Edward Island
-                </option>
-                <option value="Quebec">Quebec</option>
-                <option value="NewfoundlandAndLabrador">
-                  Newfoundland and Labrador
-                </option>
-              </select>
-              <select id="citySelection">
-                <option value="Toronto">Toronto</option>
-                <option value="Vancouver">Vancouver</option>
-                <option value="Calgary">Calgary</option>
-                <option value="Montreal">Montreal</option>
-                <option value="Ottawa">Ottawa</option>
-                <option value="Edmonton">Edmonton</option>
-              </select>
-            </div>
-            <div class="orDivider">
-              <hr />
-              <span>OR</span>
-              <hr />
-            </div>
-            <div class="locatorContainer">
-              <p>Locate by GPS</p>
-              <input class="latitude" type="number" placeholder="latitude" />
-              <input
-                class="longtitude"
-                type="number"
-                placeholder="longtitude"
-              />
-            </div>
-            <button class="complete" id="locateButton"><p>Locate</p></button>
-          </div>
+      <div class="tabBackground">
+        <!-- Navigation Bar -->
+        <div class="tabHeader">
+          <img src="/electron/gui/assets/images/Kidrone_logo.png" />
+          <div class="burgerMenu active"></div>
         </div>
-      </div>
+        <hr />
 
-      <!-- Browse Project Sequence -->
-      <div class="tabs" id="browseProject">
-        <div class="tabsContent">
-          <div class="tabsTitle"><p>Browse Projects</p></div>
-          <hr />
-
-          <div class="subTab" id="browseProjectF1">
-            <div class="dropdownContainer">
-              <div class="projectDropdown">
-                <div class="dropdownBtn">
-                  <p>North Vancouver</p>
-                  <div class="arrowContainer"><div></div></div>
-                </div>
-                <div class="dropdownContent">
-                  <button class="contentButton">Open</button>
-                  <button class="contentButton">Delete</button>
-                </div>
-              </div>
-              <div class="projectDropdown">
-                <div class="dropdownBtn">
-                  <p>East Alberta</p>
-                  <div class="arrowContainer"><div></div></div>
-                </div>
-                <div class="dropdownContent">
-                  <button class="contentButton">Open</button>
-                  <button class="contentButton">Delete</button>
-                </div>
-              </div>
-              <div class="projectDropdown">
-                <div class="dropdownBtn">
-                  <p>Toronto Island</p>
-                  <div class="arrowContainer"><div></div></div>
-                </div>
-                <div class="dropdownContent">
-                  <button class="contentButton">Open</button>
-                  <button class="contentButton">Delete</button>
-                </div>
-              </div>
-              <div class="projectDropdown">
-                <div class="dropdownBtn">
-                  <p>Saskatchewan</p>
-                  <div class="arrowContainer"><div></div></div>
-                </div>
-                <div class="dropdownContent">
-                  <button class="contentButton">Open</button>
-                  <button class="contentButton">Delete</button>
-                </div>
-              </div>
-              <div class="projectDropdown">
-                <div class="dropdownBtn">
-                  <p>All of Canada</p>
-                  <div class="arrowContainer"><div></div></div>
-                </div>
-                <div class="dropdownContent">
-                  <button class="contentButton">Open</button>
-                  <button class="contentButton">Delete</button>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="menu">
+          <div id="new"><h1>New Project</h1></div>
+          <div id="browse"><h1>Browse Projects</h1></div>
+          <div id="load"><h1>Load Project</h1></div>
+          <div id="setting"><h1>Default Drone Setting</h1></div>
         </div>
-      </div>
 
-      <!-- Load Project Sequence -->
-      <div class="tabs" id="loadProject">
-        <div class="tabsContent">
-          <div class="tabsTitle"><p>Load Project</p></div>
-          <hr />
-
-          <div class="subTab" id="loadProjectF1">
-            <div class="uploadButton">
-              <label for="uploadProject" class="fileUpload">
-                <p id="uploadText">Upload File from Computer</p>
-              </label>
-              <input id="uploadProject" type="file" />
-            </div>
-            <button class="complete"><p>Proceed</p></button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Settings Sequence -->
-      <div class="tabs" id="settingProject">
-        <div class="tabsContent">
-          <div class="settingHead">
-            <button onclick="goBack()">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path
-                  d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"
-                ></path>
-              </svg>
-            </button>
-            <div class="tabsTitle"><p>Default Drone Settings</p></div>
-          </div>
-          <hr />
-
-          <div class="subTab" id="settingProjectF1"></div>
-          <div class="inputContainer">
-            <p>Dispersion Diameter</p>
-            <div class="inputFieldContainer">
-              <input
-                id="dispersionDiameter"
-                type="number"
-                value="10"
-                maxlength="30"
-              />
-              <div class="unit"><p>m</p></div>
-            </div>
-          </div>
-          <div class="inputContainer">
-            <p>Dispersion Velocity</p>
-            <div class="inputFieldContainer">
-              <input
-                id="dispersionVelocity"
-                type="number"
-                value="100"
-                maxlength="10"
-              />
-              <div class="unit"><p>km/h</p></div>
-            </div>
-          </div>
-          <div class="inputContainer">
-            <p>Non-Dispersion Velocity</p>
-            <div class="inputFieldContainer">
-              <input
-                id="nondispersionVelocity"
-                type="number"
-                value="200"
-                maxlength="10"
-              />
-              <div class="unit"><p>km/h</p></div>
-            </div>
-          </div>
-          <div class="inputContainer">
-            <p>Acceleration 0 - 100km/h</p>
-            <div class="inputFieldContainer">
-              <input
-                id="acceleration"
-                type="number"
-                value="100"
-                maxlength="10"
-              />
-              <div class="unit"><p>m</p></div>
-            </div>
-          </div>
-          <hr />
-          <div class="inputContainer">
-            <p>Minimum Coverage</p>
-            <div class="inputFieldContainer">
-              <input id="minimumCoverage" type="number" value="90" />
-              <div class="unit"><p>%</p></div>
-            </div>
-          </div>
-          <hr />
-          <div class="inputContainer">
-            <p class="inputFieldContainer">Wind Offset</p>
-            <div class="windDirContainer">
-              <div class="windIcon">
-                <div class="direction north">N</div>
-                <div class="direction south">S</div>
-                <div class="direction west">W</div>
-                <div class="direction east">E</div>
-                <div class="arrow">
-                  <svg
-                    width="14"
-                    height="42"
-                    viewBox="0 0 14 42"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M6.77148 41.1838L6.77148 1.02661" stroke="white" />
-                    <path
-                      d="M0.710938 6.92455L6.77149 0.864502L12.8315 6.92455"
-                      stroke="white"
-                    />
-                  </svg>
-                </div>
-              </div>
-              <div class="inputContainer shorter">
-                <p>Wind Direction (N°)</p>
-                <div class="inputFieldContainer">
-                  <input
-                    id="windDirection"
-                    type="number"
-                    value="0"
-                    maxlength="10"
-                  />
-                  <div class="unit"><p>deg</p></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="inputContainer">
-            <p>Wind Velocity</p>
-            <div class="inputFieldContainer">
-              <input id="windVelocity" type="number" value="0" maxlength="10" />
-              <div class="unit"><p>km/h</p></div>
-            </div>
-          </div>
-          <hr />
-          <div class="inputContainer">
-            <p>Default Seed Type</p>
-            <div class="inputFieldContainer">
-              <select id="seedSelection">
-                <option value="100">Oak (100g/unit)</option>
-                <option value="130">Maple (130g/unit)</option>
-                <option value="120">Cedar (120g/unit)</option>
-                <option value="180">Poplar (180g/unit)</option>
-                <option value="80">Pine (80g/unit)</option>
-                <option value="90">Spruce (90g/unit)</option>
-              </select>
-            </div>
-          </div>
-          <div class="inputContainer">
-            <p>Add Seed Type</p>
-            <div class="inputFieldContainer sectioned">
-              <div>
-                <input
-                  id="seedName"
-                  type="text"
-                  value=""
-                  maxlength="30"
-                  disabled
-                />
-              </div>
-              <div>
-                <input
-                  id="seedWeight"
-                  type="number"
-                  value="0"
-                  maxlength="10"
-                  disabled
-                />
-                <div class="unit"><p>kg/unit</p></div>
-              </div>
-              <button id="addSeedBtn" onclick="addSeed()"></button>
-            </div>
-            <button class="complete" onclick="saveSetting()">
-              <p>Save</p>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- After Locate Button Sequence, when creating a new project -->
-      <div class="tabs" id="afterLocateBtn">
-        <div class="tabsContent">
-          <div class="subTab" id="afterLocateBtnF1">
-            <div class="buttons-container">
-              <div id="dropPinButton">Drop Pin</div>
-              <div id="plotBlockButton">Plot Block</div>
-              <div id="loadShapeButton">Load Shape</div>
-            </div>
-          </div>
-
-          <div class="subTab" id="dropPinF1">
-            <!-- TODO: Don't like spacing on the settingHead, different from default settings page due to it being under a subtab and not a tab? -->
-            <div class="settingHead">
-              <button onclick="goBack()">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path
-                    d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"
-                  ></path>
-                </svg>
-              </button>
-              <div class="tabsTitle"><p>Drop Pin</p></div>
-            </div>
+        <!-- New Project Sequence -->
+        <div class="tabs" id="newProject">
+          <div class="tabsContent">
+            <div class="tabsTitle"><p>New Project</p></div>
             <hr />
 
-            <div class="pin-container">
-              <h1>Name</h1>
-              <input></input>
-              <textarea class="description"></textarea>
-              <button class="addImageBtn">Add Image</button>
-              <hr>
-            </div>
-
-            <button class="complete">Save Pin</button>
-          
-          </div>
-
-          <div class="subTab" id="plotBlockF1">
-            <div class="settingHead">
-              <button onclick="goBack()">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path
-                    d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"
-                  ></path>
-                </svg>
-              </button>
-              <div class="tabsTitle"><p>Plot Block</p></div>
-            </div>
-            <hr />
-
-            <div class="inputContainer">
-              <p>Name</p>
-              <div class="inputFieldContainer">
-                <input id="blockName" type="number" maxlength="10" />
-              </div>
-            </div>
-            <hr />
-
-            <div class="inputContainer">
-              <p>Seed Type</p>
-              <div class="inputFieldContainer">
-                <select id="seedSelection">
-                  <option value="100">Oak (100g/unit)</option>
-                  <option value="130">Maple (130g/unit)</option>
-                  <option value="120">Cedar (120g/unit)</option>
-                  <option value="180">Poplar (180g/unit)</option>
-                  <option value="80">Pine (80g/unit)</option>
-                  <option value="90">Spruce (90g/unit)</option>
+            <div class="subTab" id="newProjectF1">
+              <div class="locatorContainer">
+                <p>Locate by City</p>
+                <select id="provinceSelection">
+                  <option value="Alberta">Alberta</option>
+                  <option value="BritishColumbia">British Columbia</option>
+                  <option value="Manitoba">Manitoba</option>
+                  <option value="NewBrunswick">New Brunswick</option>
+                  <option value="Ontario">Ontario</option>
+                  <option value="NovaScotia">Nova Scotia</option>
+                  <option value="PrinceEdward Island">
+                    Prince Edward Island
+                  </option>
+                  <option value="Quebec">Quebec</option>
+                  <option value="NewfoundlandAndLabrador">
+                    Newfoundland and Labrador
+                  </option>
+                </select>
+                <select id="citySelection">
+                  <option value="Toronto">Toronto</option>
+                  <option value="Vancouver">Vancouver</option>
+                  <option value="Calgary">Calgary</option>
+                  <option value="Montreal">Montreal</option>
+                  <option value="Ottawa">Ottawa</option>
+                  <option value="Edmonton">Edmonton</option>
                 </select>
               </div>
-              <button class="add-button">Add Exclusion</button>
+              <div class="orDivider">
+                <hr />
+                <span>OR</span>
+                <hr />
+              </div>
+              <div class="locatorContainer">
+                <p>Locate by GPS</p>
+                <input class="latitude" type="number" placeholder="latitude" />
+                <input
+                  class="longtitude"
+                  type="number"
+                  placeholder="longtitude"
+                />
+              </div>
+              <button class="complete" id="locateButton"><p>Locate</p></button>
             </div>
           </div>
+        </div>
 
-          <div class="subTab" id="loadShapeF1">
-            <div class="uploadButton">
-              <label for="uploadShape" class="shapeFileUpload">
-                <p id="uploadShapeText">Upload Shapefile from Computer</p>
-              </label>
-              <input id="uploadShape" type="file"/>
-            </div>
-            <button class="complete" id="saveBlockBtn"><p>Save Block</p></button>
-          </div>
+        <!-- Browse Project Sequence -->
+        <div class="tabs" id="browseProject">
+          <div class="tabsContent">
+            <div class="tabsTitle"><p>Browse Projects</p></div>
+            <hr />
 
-          <!-- Here is after pins/blocks are complete, it lists the blocks for path generation -->
-          <!-- TODO: Add the green dot for active dropdown and helicopter icon -->
-          <div class="subTab" id="blockListF1">
-            <div class="dropdownContainer">
-              <div class="projectDropdown">
-                <div class="dropdownBtn">
-                  <p> Block 1 </p>
-                  <div class="arrowContainer"><div></div></div>
+            <div class="subTab" id="browseProjectF1">
+              <div class="dropdownContainer">
+                <div class="projectDropdown">
+                  <div class="dropdownBtn">
+                    <p>North Vancouver</p>
+                    <div class="arrowContainer"><div></div></div>
+                  </div>
+                  <div class="dropdownContent">
+                    <button class="contentButton">Open</button>
+                    <button class="contentButton">Delete</button>
+                  </div>
                 </div>
-                <div class="dropdownContent">
-                  <button class="contentButton" id="planFlightBtn">Plan Flight</button>
-                  <button class="contentButton">Edit</button>
-                  <button class="contentButton">Delete</button>
+                <div class="projectDropdown">
+                  <div class="dropdownBtn">
+                    <p>East Alberta</p>
+                    <div class="arrowContainer"><div></div></div>
+                  </div>
+                  <div class="dropdownContent">
+                    <button class="contentButton">Open</button>
+                    <button class="contentButton">Delete</button>
+                  </div>
+                </div>
+                <div class="projectDropdown">
+                  <div class="dropdownBtn">
+                    <p>Toronto Island</p>
+                    <div class="arrowContainer"><div></div></div>
+                  </div>
+                  <div class="dropdownContent">
+                    <button class="contentButton">Open</button>
+                    <button class="contentButton">Delete</button>
+                  </div>
+                </div>
+                <div class="projectDropdown">
+                  <div class="dropdownBtn">
+                    <p>Saskatchewan</p>
+                    <div class="arrowContainer"><div></div></div>
+                  </div>
+                  <div class="dropdownContent">
+                    <button class="contentButton">Open</button>
+                    <button class="contentButton">Delete</button>
+                  </div>
+                </div>
+                <div class="projectDropdown">
+                  <div class="dropdownBtn">
+                    <p>All of Canada</p>
+                    <div class="arrowContainer"><div></div></div>
+                  </div>
+                  <div class="dropdownContent">
+                    <button class="contentButton">Open</button>
+                    <button class="contentButton">Delete</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="subTab" id="generateFlightF1">
+        <!-- Load Project Sequence -->
+        <div class="tabs" id="loadProject">
+          <div class="tabsContent">
+            <div class="tabsTitle"><p>Load Project</p></div>
+            <hr />
+
+            <div class="subTab" id="loadProjectF1">
+              <div class="uploadButton">
+                <label for="uploadProject" class="fileUpload">
+                  <p id="uploadText">Upload File from Computer</p>
+                </label>
+                <input id="uploadProject" type="file" />
+              </div>
+              <button class="complete"><p>Proceed</p></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Sequence -->
+        <div class="tabs" id="settingProject">
+          <div class="tabsContent">
             <div class="settingHead">
               <button onclick="goBack()">
                 <svg
@@ -448,90 +173,297 @@
                   ></path>
                 </svg>
               </button>
-              <div class="tabsTitle"><p>Plan Flight</p></div>
-            </div>  
-            <hr>  
+              <div class="tabsTitle"><p>Default Drone Settings</p></div>
+            </div>
+            <hr />
 
-            <!-- Name from the previous thing -->
-            <hr>
-
-            <!-- Copy from settings -->
-            <div class="inputContainer">
-              <p>Dispersion Diameter</p>
-              <div class="inputFieldContainer">
-                <input id="dispersionDiameter" type="number" value="10" maxlength="30">
-                <div class="unit"><p>m</p></div>
-              </div>
-            </div>
-            <div class="inputContainer">
-              <p>Dispersion Velocity</p>
-              <div class="inputFieldContainer">
-                <input id="dispersionVelocity" type="number" value="100" maxlength="10">
-                <div class="unit"><p>km/h</p></div>
-              </div>
-            </div>
-            <div class="inputContainer">
-              <p>Non-Dispersion Velocity</p>
-              <div class="inputFieldContainer">
-                <input id="nondispersionVelocity" type="number" value="200" maxlength="10">
-                <div class="unit"><p>km/h</p></div>
-              </div>
-            </div>
-            <div class="inputContainer">
-              <p>Acceleration 0 - 100km/h</p>
-              <div class="inputFieldContainer">
-                <input id="acceleration" type="number" value="100" maxlength="10">
-                <div class="unit"><p>m</p></div>
-              </div>
-            </div>
-            <hr>
-            <div class="inputContainer">
-              <p>Minimum Coverage</p>
-              <div class="inputFieldContainer">
-                <input id="minimumCoverage" type="number" value="90">
-                <div class="unit"><p>%</p></div>
-              </div>
-            </div>
-            <hr>
-            <div class="inputContainer">
-              <p class="inputFieldContainer">Wind Offset</p>
-              <div class="windDirContainer">
-                <div class="windIcon">
-                  <div class="direction north">N</div>
-                  <div class="direction south">S</div>
-                  <div class="direction west">W</div>
-                  <div class="direction east">E</div>
-                  <div class="arrow">
-                    <svg width="14" height="42" viewBox="0 0 14 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6.77148 41.1838L6.77148 1.02661" stroke="white"/>
-                    <path d="M0.710938 6.92455L6.77149 0.864502L12.8315 6.92455" stroke="white"/></svg>
-                  </div>
-                </div>
-                <div class="inputContainer shorter">
-                  <p>Wind Direction (N°)</p>
-                  <div class="inputFieldContainer">
-                    <input id="windDirection" type="number" value="0" maxlength="10">
-                    <div class="unit"><p>deg</p></div>
-                  </div>
+            <div class="subTab" id="settingProjectF1">
+              <div class="inputContainer">
+                <p>Dispersion Diameter</p>
+                <div class="inputFieldContainer">
+                  <input
+                    id="dispersionDiameter"
+                    type="number"
+                    value="10"
+                    maxlength="30"
+                  />
+                  <div class="unit"><p>m</p></div>
                 </div>
               </div>
-            </div>
-            <div class="inputContainer">
-              <p>Wind Velocity</p>
-              <div class="inputFieldContainer">
-                <input id="windVelocity" type="number" value="0" maxlength="10">
-                <div class="unit"><p>km/h</p></div>
+              <div class="inputContainer">
+                <p>Dispersion Velocity</p>
+                <div class="inputFieldContainer">
+                  <input
+                    id="dispersionVelocity"
+                    type="number"
+                    value="100"
+                    maxlength="10"
+                  />
+                  <div class="unit"><p>km/h</p></div>
+                </div>
+              </div>
+              <div class="inputContainer">
+                <p>Non-Dispersion Velocity</p>
+                <div class="inputFieldContainer">
+                  <input
+                    id="nondispersionVelocity"
+                    type="number"
+                    value="200"
+                    maxlength="10"
+                  />
+                  <div class="unit"><p>km/h</p></div>
+                </div>
+              </div>
+              <div class="inputContainer">
+                <p>Acceleration 0 - 100km/h</p>
+                <div class="inputFieldContainer">
+                  <input
+                    id="acceleration"
+                    type="number"
+                    value="100"
+                    maxlength="10"
+                  />
+                  <div class="unit"><p>m</p></div>
+                </div>
+              </div>
+              <hr />
+              <div class="inputContainer">
+                <p>Minimum Coverage</p>
+                <div class="inputFieldContainer">
+                  <input id="minimumCoverage" type="number" value="90" />
+                  <div class="unit"><p>%</p></div>
+                </div>
+              </div>
+              <hr />
+              <div class="inputContainer">
+                <p class="inputFieldContainer">Wind Offset</p>
+                <div class="windDirContainer">
+                  <div class="windIcon">
+                    <div class="direction north">N</div>
+                    <div class="direction south">S</div>
+                    <div class="direction west">W</div>
+                    <div class="direction east">E</div>
+                    <div class="arrow">
+                      <svg
+                        width="14"
+                        height="42"
+                        viewBox="0 0 14 42"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M6.77148 41.1838L6.77148 1.02661" stroke="white" />
+                        <path
+                          d="M0.710938 6.92455L6.77149 0.864502L12.8315 6.92455"
+                          stroke="white"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="inputContainer shorter">
+                    <p>Wind Direction (N°)</p>
+                    <div class="inputFieldContainer">
+                      <input
+                        id="windDirection"
+                        type="number"
+                        value="0"
+                        maxlength="10"
+                      />
+                      <div class="unit"><p>deg</p></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="inputContainer">
+                <p>Wind Velocity</p>
+                <div class="inputFieldContainer">
+                  <input id="windVelocity" type="number" value="0" maxlength="10" />
+                  <div class="unit"><p>km/h</p></div>
+                </div>
+              </div>
+              <hr />
+              <div class="inputContainer">
+                <p>Default Seed Type</p>
+                <div class="inputFieldContainer">
+                  <select id="seedSelection">
+                    <option value="100">Oak (100g/unit)</option>
+                    <option value="130">Maple (130g/unit)</option>
+                    <option value="120">Cedar (120g/unit)</option>
+                    <option value="180">Poplar (180g/unit)</option>
+                    <option value="80">Pine (80g/unit)</option>
+                    <option value="90">Spruce (90g/unit)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="inputContainer">
+                <p>Add Seed Type</p>
+                <div class="inputFieldContainer sectioned">
+                  <div>
+                    <input
+                      id="seedName"
+                      type="text"
+                      value=""
+                      maxlength="30"
+                      disabled
+                    />
+                  </div>
+                  <div>
+                    <input
+                      id="seedWeight"
+                      type="number"
+                      value="0"
+                      maxlength="10"
+                      disabled
+                    />
+                    <div class="unit"><p>kg/unit</p></div>
+                  </div>
+                  <button id="addSeedBtn" onclick="addSeed()"></button>
+                </div>
+                <button class="complete" id="saveSettingsBtn">
+                  <p>Save</p>
+                </button>
               </div>
             </div>
-            <hr>
-            <button class="complete" id="generateFlightBtn">
-              <p>Generate Flight</p>
-            </button>
+          </div>
+        </div>
+
+        <!-- After Locate Button Sequence, when creating a new project -->
+        <div class="tabs" id="afterLocateBtn">
+          <div class="tabsContent">
+            <div class="subTab" id="afterLocateBtnF1">
+              <div class="buttons-container">
+                <div id="dropPinButton">Drop Pin</div>
+                <div id="plotBlockButton">Plot Block</div>
+                <div id="loadShapeButton">Load Shape</div>
+              </div>
+            </div>
+
+            <div class="subTab" id="dropPinF1">
+              <!-- TODO: Don't like spacing on the settingHead, different from default settings page due to it being under a subtab and not a tab? -->
+              <div class="settingHead">
+                <button onclick="goBack()">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"
+                    ></path>
+                  </svg>
+                </button>
+                <div class="tabsTitle"><p>Drop Pin</p></div>
+              </div>
+              <hr />
+
+              <div class="pin-container">
+                <h1>Name</h1>
+                <input></input>
+                <textarea class="description"></textarea>
+                <button class="addImageBtn">Add Image</button>
+                <hr>
+              </div>
+
+              <button class="complete">Save Pin</button>
+            
+            </div>
+
+            <div class="subTab" id="plotBlockF1">
+              <div class="settingHead">
+                <button onclick="goBack()">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"
+                    ></path>
+                  </svg>
+                </button>
+                <div class="tabsTitle"><p>Plot Block</p></div>
+              </div>
+              <hr />
+
+              <div class="inputContainer">
+                <p>Name</p>
+                <div class="inputFieldContainer">
+                  <input id="blockName" type="number" maxlength="10" />
+                </div>
+              </div>
+              <hr />
+
+              <div class="inputContainer">
+                <p>Seed Type</p>
+                <div class="inputFieldContainer">
+                  <select id="seedSelection">
+                    <option value="100">Oak (100g/unit)</option>
+                    <option value="130">Maple (130g/unit)</option>
+                    <option value="120">Cedar (120g/unit)</option>
+                    <option value="180">Poplar (180g/unit)</option>
+                    <option value="80">Pine (80g/unit)</option>
+                    <option value="90">Spruce (90g/unit)</option>
+                  </select>
+                </div>
+                <button class="add-button">Add Exclusion</button>
+              </div>
+            </div>
+
+            <div class="subTab" id="loadShapeF1">
+              <div class="uploadButton">
+                <label for="uploadShape" class="shapeFileUpload">
+                  <p id="uploadShapeText">Upload Shapefile from Computer</p>
+                </label>
+                <input id="uploadShape" type="file"/>
+              </div>
+              <button class="complete" id="saveBlockBtn"><p>Save Block</p></button>
+            </div>
+
+            <!-- Here is after pins/blocks are complete, it lists the blocks for path generation -->
+            <!-- TODO: Add the green dot for active dropdown and helicopter icon -->
+            <div class="subTab" id="blockListF1">
+              <div class="dropdownContainer">
+                <div class="projectDropdown">
+                  <div class="dropdownBtn">
+                    <p> Block 1 </p>
+                    <div class="arrowContainer"><div></div></div>
+                  </div>
+                  <div class="dropdownContent">
+                    <button class="contentButton" id="planFlightBtn">Plan Flight</button>
+                    <button class="contentButton">Edit</button>
+                    <button class="contentButton">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="subTab" id="generateFlightF1">
+              <div class="settingHead">
+                <button onclick="goBack()">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"
+                    ></path>
+                  </svg>
+                </button>
+                <div class="tabsTitle"><p>Plan Flight</p></div>
+              </div>  
+              <hr>  
+
+              <!-- Name from the previous thing -->
+              <hr>
+
+              <!-- Copy from settings -->
+              <button id = "testing thing">TESTIENG</button>
+
+            </div>
 
           </div>
-
-          <div class="subTab" id="loadShapeF1"></div>
         </div>
+
       </div>
     </div>
     <script src="https://js.arcgis.com/4.30/"></script>
