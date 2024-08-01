@@ -6,7 +6,7 @@ from matplotlib import cm
 from scipy.interpolate import griddata
 from matplotlib import animation
 from matplotlib.animation import PillowWriter
-from .basic_functions import *
+from basic_functions import *
 
 """
 ==========================

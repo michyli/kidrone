@@ -1,7 +1,11 @@
-const { spawn } = require("child_process");
+console.log(__dirname)
+console.log('Module paths:', module.paths);
+console.log('Current working directory:', process.cwd());
+
+const { spawn } = require("child_process"); //This only works in the test_screen for some reason?
 
 //Add arguments if you want to pass in something to send to python
-function run_python_test() {
+export function run_python_script(message2Send) {
 
     //Just checking if the button got clicked
     document.getElementById('detect').value = 'BUTTON PRESSED';
@@ -10,6 +14,7 @@ function run_python_test() {
     //Initialize pythonshell and get path to python script directory (not the path to the script itself)
     var { PythonShell } = require("python-shell");
     var path = require("path");
+
     // Check if running in production, run these commands in terminal based on version
     //TODO: process.env.NODE_ENV isn't actually set to anything, it's null be default, so this only works by setting it mannually into dev mode
     ///[$env:NODE_ENV="development"; npm start] (Windows)
@@ -20,8 +25,8 @@ function run_python_test() {
         ScriptName = 'script_linker_test.py'
     } else {
         console.log('In production');
-        ScriptPath = path.join(__dirname, '../script_linker_test.exe');
-        // ScriptPath = path.join(__dirname, '../engine/dist/script_linker_test.exe');
+        ScriptPath = path.join(__dirname, '../script_linker_test.exe'); //Path used after packaging
+        ScriptPath = path.join(__dirname, '../engine/dist/script_linker_test.exe'); //Path used before packaging
         ScriptName = 'script_linker_test.exe';
     }
     
@@ -46,7 +51,7 @@ function run_python_test() {
         });
 
         //Send data to python script
-        pyshell.send('Testing sending data to python script')
+        pyshell.send(message2Send + "\n")
         
         // Handle errors during the execution of the Python script
         pyshell.on('error', function (err) {
@@ -61,14 +66,15 @@ function run_python_test() {
             console.log('finished');
         });
 
-    } else if (ScriptName.endsWith('.exe')) {
+    } 
+    else if (ScriptName.endsWith('.exe')) {
         const startTime = performance.now();
         // Execute the .exe file directly
         // Spawn the executable
         const executable = spawn(ScriptPath, [], { cwd: path.dirname(ScriptPath) });
 
         // Send data to the executable
-        executable.stdin.write('Testing sending data to python script\n');
+        executable.stdin.write(message2Send + '\n');
         executable.stdin.end(); // Close stdin to signal that no more data will be sent
 
         executable.stdout.on('data', function (data) {
@@ -89,5 +95,5 @@ function run_python_test() {
         });
 
         return;
-    }
-}
+    };
+};

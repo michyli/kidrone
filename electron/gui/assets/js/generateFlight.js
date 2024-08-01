@@ -1,5 +1,6 @@
 import { switchSubTab } from "./landing.js";
 import { displaySettingsValues } from "./setting.js";
+// import { run_python_script } from "./script_linker_test.js";
 
 const dropPinButton = document.getElementById("planFlightBtn");
 dropPinButton.addEventListener("click", () => {
@@ -23,4 +24,11 @@ dropPinButton.addEventListener("click", () => {
         input.readOnly = true;
     });
 });
+
+// //Generate the flight path shapefile by calling python script
+// const generateFlightBtn = document.getElementById("generateFlightBtn");
+// generateFlightBtn.addEventListener("click", () => {
+//     var message = localStorage.getItem('settingsValues') + '\n';
+//     run_python_script(message);
+// })
 
