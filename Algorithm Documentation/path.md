@@ -18,7 +18,7 @@ A `Path` instance contains all necessary information about the flight path and i
 
 ### Methods
 
-```generate_waypoints(self, interval)**```
+#### generate_waypoints(self, interval)
 Generates waypoints along the path at specified intervals.
 
 > **Parameters:**
