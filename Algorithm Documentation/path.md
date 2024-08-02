@@ -16,7 +16,7 @@ A `Path` instance contains all necessary information about the flight path and i
 * **end_velo:** *float*
   * Ending velocity of this path, static (0) by default.
 
-```***method* generate_waypoints(self, interval)**```
+```**Method** generate_waypoints(self, interval)**```
 Generates waypoints along the path at specified intervals.
 
 > **Parameters:**
