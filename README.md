@@ -6,13 +6,12 @@ This is an algorithm that generates the optimal flight path for a drone over a t
   - [Requirements](#requirements)
   - [Instructions](#instructions)
   - [Structures](#structures)
-      - [Outline](#outline)
-      - [Path](#path)
-      - [Segment](#segment)
+      - [Outline](Algorithm%20Documentation/outline.md)
+      - [Path](Algorithm%20Documentation/path.md)
+      - [Segment](Algorithm%20Documentation/segment.md)
       - [basic_functions](Algorithm%20Documentation/basic_functions.md)
-      - [graph](#graph)
-      - [optimization](#optimization)
-      - [run \& .csv](#run--csv)
+      - [graph](Algorithm%20Documentation/graph.md)
+      - [optimization](Algorithm%20Documentation/optimization.md)
   - [Credits](#credits)
 
 ## Requirements
