@@ -2,15 +2,6 @@
     display: none;
 }
 
-#loadShapeF1 .uploadButton .shapeFileUpload{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-    cursor: pointer;
-}
-
 #loadShapeF1 .complete {
     position: absolute;
 }

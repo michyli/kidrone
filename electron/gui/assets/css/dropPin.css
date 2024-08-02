@@ -19,6 +19,7 @@
     font-weight: 300;
     padding: 10px;
     resize: none;
+    border-radius: 3px;
 }
 
 .pin-container .addImageBtn {
@@ -28,9 +29,19 @@
     width: 27%;
     height: 28px;
     border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.pin-container .addImageBtn:hover {
+    background-color: #4d4d4d;
 }
 
 .subTab#dropPinF1 .complete {
     position: absolute;
     color: black;
 } 
+
+.subTabsTitle {
+    margin-bottom: 30px;
+}
