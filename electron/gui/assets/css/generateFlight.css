@@ -1,0 +1,11 @@
+#generateFlightF1 .generateFlightF1-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 13px;
+}
+
+
+#generateFlightF1 h1 {
+    font-size: 1.4em;
+    font-weight: 200;
+}

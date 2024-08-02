@@ -1,4 +1,4 @@
-from .basic_functions import *
+from basic_functions import *
 from functools import cached_property
 
 """

@@ -1,7 +1,7 @@
 # src/optimization.py
-from .outline import *
-from .graph import *
-from .basic_functions import *
+from outline import *
+from graph import *
+from basic_functions import *
 import time
 import pandas as pd
 

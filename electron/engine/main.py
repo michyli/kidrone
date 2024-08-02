@@ -16,11 +16,11 @@ SHAPE_FILE_PATH = os.path.join(DATA_DIR, "best_path.shp")
 PROJECTED_COORDS_JSON_PATH = os.path.join(
     DATA_DIR, 'projected_coordinates.json')
 
-# Ensure the data directory existsn
+# Ensure the data directory exists
 os.makedirs(DATA_DIR, exist_ok=True)
 
 
-# also take ploygron info from JSON_FILE_PATH
+# also take polygon info from JSON_FILE_PATH
 # TODO: add more parameters
 def optimize(disp_diam: int):
     debug_info = []
