@@ -1,9 +1,9 @@
-### optimization
+## optimization
 An aggregation of functions to find the optimal `Path` instance given relevant weighting parameters. These functions help in constructing and evaluating various path configurations to determine the best possible path based on specified criteria.
 
-> **Functions:**
+## Methods
 
-***function* construct_pathlist(coords, disp_diam, children=None, poly_offset=None, init_slope=-10, end_slope=10, num_path=10)**
+### construct_pathlist(coords, disp_diam, children=None, poly_offset=None, init_slope=-10, end_slope=10, num_path=10)
 Constructs a list of possible paths given the initial parameters and returns a DataFrame with the path data and the runtime.
 
 > **Parameters:**
@@ -28,7 +28,7 @@ Constructs a list of possible paths given the initial parameters and returns a D
 * **runtime:** *float*
   * The time taken to generate the paths.
 
-***function* find_best_path(pathdf, optimizer)**
+### find_best_path(pathdf, optimizer)
 Finds the best path based on the provided optimizer function, which returns an index given a path.
 
 > **Parameters:**
@@ -43,7 +43,7 @@ Finds the best path based on the provided optimizer function, which returns an i
 * **best_path:** *Path*
   * The best `Path` instance based on the optimization criteria.
 
-***function* minmax_norm(col)**
+### minmax_norm(col)
 Normalizes a DataFrame column using Min-Max normalization.
 
 > **Parameters:**
