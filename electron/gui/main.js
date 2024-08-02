@@ -1,12 +1,10 @@
-// Modules to control application life and create native browser window
 const { app, BrowserWindow } = require('electron')
-const path = require('node:path');
-const { scheduler } = require('node:timers/promises');
+const path = require('node:path')
+const { exec } = require('child_process')
 
 function createWindow () {
-// Create the browser window.
+  // Create the browser window.
   const mainWindow = new BrowserWindow({
-    //fullscreen: true,
     width: 800,
     height: 800,
     webPreferences: {
@@ -17,18 +15,37 @@ function createWindow () {
     }
   })
 
-  mainWindow.maximize();
+  mainWindow.maximize()
 
-  // and load the index.html of the app.
+  // Load the index.html of the app.
   mainWindow.loadFile('pages/landing.html')
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
+
+  // Start the Python server
+  const pyProcess = exec('python /Users/qiwen/Downloads/kidrone/electron/engine/server.py', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error starting Python server: ${error.message}`)
+      return
+    }
+
+    if (stderr) {
+      console.error(`Python server stderr: ${stderr}`)
+      return
+    }
+
+    console.log(`Python server stdout: ${stdout}`)
+  })
+
+  // Ensure Python process is terminated when Electron app is closed
+  mainWindow.on('closed', () => {
+    pyProcess.kill()
+  })
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow()
 
