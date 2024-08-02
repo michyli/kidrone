@@ -1,9 +1,9 @@
-### graph
+## graph
 A collection of functions used for graphing and visualizing various elements such as polygons and paths. These utilities help in plotting and animating drone flight paths and related geometries.
 
-> **Functions:**
+## Methods
 
-***function* showpoly(ax, polygons, label=None, color=None)**
+### showpoly(ax, polygons, label=None, color=None)
 Plots a polygon on the given axes.
 
 > **Parameters:**
@@ -20,14 +20,14 @@ Plots a polygon on the given axes.
 * **ax:** *matplotlib.axes.Axes*
   * The axes with the plotted polygon.
 
-***function* showpath(path)**
+### showpath(path)
 Plots all relevant information about a path, including the path itself, airtime, coverage, and path length.
 
 > **Parameters:**
 * **path:** *Path*
   * A `Path` instance to be plotted.
 
-***function* showprojection(ax, full_path)**
+### showprojection(ax, full_path)
 Plots the baseline and field projection on the XY plane.
 
 > **Parameters:**
@@ -36,7 +36,7 @@ Plots the baseline and field projection on the XY plane.
 * **full_path:** *Path*
   * A `Path` object. The `.path` attribute extracts the list of `LineString`s that make up the `Path` object.
 
-***function* animatepath(path, interval=200)**
+### animatepath(path, interval=200)
 Animates the drone flight path over time.
 
 > **Parameters:**
@@ -45,7 +45,7 @@ Animates the drone flight path over time.
 * **interval:** *int, optional*
   * Interval between frames in milliseconds. Defaults to 200.
 
-***function* saveanimation(anim, filename)**
+### saveanimation(anim, filename)
 Saves the animation to a file.
 
 > **Parameters:**
@@ -54,7 +54,7 @@ Saves the animation to a file.
 * **filename:** *str*
   * Name of the file to save the animation.
 
-***function* plot3Dsurface(X, Y, Z, title="3D Surface Plot")**
+### plot3Dsurface(X, Y, Z, title="3D Surface Plot")
 Plots a 3D surface plot.
 
 > **Parameters:**
@@ -67,7 +67,7 @@ Plots a 3D surface plot.
 * **title:** *str, optional*
   * Title of the plot. Defaults to "3D Surface Plot".
 
-***function* plot3Dscatter(X, Y, Z, title="3D Scatter Plot")**
+### plot3Dscatter(X, Y, Z, title="3D Scatter Plot")
 Plots a 3D scatter plot.
 
 > **Parameters:**
@@ -80,7 +80,7 @@ Plots a 3D scatter plot.
 * **title:** *str, optional*
   * Title of the plot. Defaults to "3D Scatter Plot".
 
-***function* plot2Dcontour(X, Y, Z, title="2D Contour Plot")**
+### plot2Dcontour(X, Y, Z, title="2D Contour Plot")
 Plots a 2D contour plot.
 
 > **Parameters:**
