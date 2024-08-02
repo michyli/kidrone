@@ -88,6 +88,6 @@ This repository contains the work of *Michael Li*, *Jason Lee*, *Edward Cheng*, 
 <div align="center">
   ![kidrone_logo](https://github.com/user-attachments/assets/547dc883-0b61-45ff-9988-724187e26ffc)
 
-  <img src="./Algorithm\ Documentation/Documentation\ Assets/kidrone_logo.jpeg" alt="logo">
+  <img src="https://github.com/user-attachments/assets/547dc883-0b61-45ff-9988-724187e26ffc" alt="logo">
 </div>
 
