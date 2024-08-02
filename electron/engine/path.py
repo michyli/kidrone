@@ -87,22 +87,38 @@ class Path:
 
         return detailed_coords
 
-    def path_offset(self, wind_dir, height, seed_weight):
+    
+    def path_offset(self, wind_dir, height, seed_weight=0.00085):
         """Returns an offsetted path based on the wind direction, drone height, and seed weight.
 
-        wind_dir:       a tuple containing the x and y components of the wind vector
-        height:         constant height the drone aims to travel at (m)
-        seed_weight:    weight of the seed (kg)
+        wind_dir:         a tuple containing the x and y components of the wind vector in km/h
+        height:           constant height the drone aims to travel at (m)
+        seed_weight:      weight of the seed (kg)
         """
         # Constants
         g = 9.81  # Acceleration due to gravity (m/s^2)
+        air_density = 1.225  # Density of air (kg/m^3)
+        kmh_to_ms = 1000 / 3600  # Conversion factor from km/h to m/s
+        drag_coefficient = 0.5  # Drag coefficient for a roughly spherical seed
+        seed_area = 7.85e-5  # Cross-sectional area of the seed (m^2)
 
-        # Time it takes for the seed to fall from the given height
+        # Convert wind speed from km/h to m/s
+        wind_dir_ms = (wind_dir[0] * kmh_to_ms, wind_dir[1] * kmh_to_ms)
+
+        # Calculate the time it takes for the seed to fall from the given height
         fall_time = math.sqrt((2 * height) / g)
 
-        # Wind displacement during the fall time
-        wind_displacement_x = wind_dir[0] * fall_time
-        wind_displacement_y = wind_dir[1] * fall_time
+        # Calculate the drag force exerted by the wind (F_d = 0.5 * air_density * v^2 * drag_coefficient * A)
+        drag_force_x = 0.5 * air_density * (wind_dir_ms[0]**2) * drag_coefficient * seed_area
+        drag_force_y = 0.5 * air_density * (wind_dir_ms[1]**2) * drag_coefficient * seed_area
+
+        # Calculate the acceleration due to the drag force (a = F / m)
+        acceleration_x = drag_force_x / seed_weight
+        acceleration_y = drag_force_y / seed_weight
+
+        # Calculate the displacement due to wind during the fall time (s = 0.5 * a * t^2)
+        wind_displacement_x = 0.5 * acceleration_x * (fall_time**2)
+        wind_displacement_y = 0.5 * acceleration_y * (fall_time**2)
 
         # Offset the path by the wind displacement
         offset_x = wind_displacement_x
@@ -110,11 +126,10 @@ class Path:
 
         offset_path = []
         for line in self.path:
-            offset_coords = [(x + offset_x, y + offset_y)
-                             for x, y in line.coords]
+            offset_coords = [(x + offset_x, y + offset_y) for x, y in line.coords]
             offset_path.append(LineString(offset_coords))
 
-        return offset_path
+        return Path(offset_path, self.parent, self.disp_diam, self.swath_slope, self.start_velo, self.end_velo)
 
     def _coverage_compute(self):
         #Define border of Field
