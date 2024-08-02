@@ -58,30 +58,6 @@ cd kidrone
 py run.py
 ```
 
-## Structures
-* *class* Outline - `outline.py`
-  * `poly_offset`
-  * `extrapolate_line`
-  * `span_line`
-  * `swath_gen`
-* *class* Path - `path.py`
-  * `path_offset`
-  * `path_disp`
-  * `coverage`
-  * `coverage_disp`
-  * `coverage_print`
-  * `airtime_print`
-  * `length_print`
-* *class* Segment - `segment.py`
-  * `time_setter`
-
-<br>
-
-* `basic_functions.py`
-* `graph.py`
-* `optimization.py`
-* `run.py` & `test_coordinates.csv`
-
 ## Credits
 This repository contains the work of *Michael Li*, *Jason Lee*, *Edward Cheng*, *Wendy Qi*, and *KiDrone*. Do not use or reference the contents of this repository without properly crediting its author.
 
