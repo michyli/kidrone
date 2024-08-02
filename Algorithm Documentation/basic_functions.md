@@ -81,7 +81,7 @@ Reverses the direction of a `LineString`.
 * **reversed_line:** *`LineString`*
   * The reversed `LineString`.
 
-### split_line(line, interval)**
+### split_line(line, interval)
 Splits a `LineString` into segments of a given interval length.
 
 > **Parameters:**
@@ -94,7 +94,7 @@ Splits a `LineString` into segments of a given interval length.
 * **segments:** *list of `LineString`*
   * A list of `LineString` segments.
 
-### break_line(line)**
+### break_line(line)
 Breaks a `LineString` into individual two-point segments.
 
 > **Parameters:**
@@ -105,7 +105,7 @@ Breaks a `LineString` into individual two-point segments.
 * **segments:** *list of `LineString`*
   * A list of two-point `LineString` segments.
 
-### check_continuity(path)**
+### check_continuity(path)
 Checks the continuity of a path composed of `LineString` segments.
 
 > **Parameters:**
