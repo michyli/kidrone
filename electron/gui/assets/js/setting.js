@@ -45,6 +45,7 @@ export function displaySettingsValues(subTabId) {
     };
 }
 
+//TODO: Arrow direction saves during session but not when app closes
 function saveSetting() {
     //Save the values in map
     storeSettingsValues();
