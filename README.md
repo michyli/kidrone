@@ -9,7 +9,8 @@ All rights reserved by Ki.
 1. [Requirements](#requirements)
 2. [Instructions](#instructions)
 3. [Algorithm Description](#desctiption)
-4. [Credits](#credits)
+4. [Progress](#progress)
+5. [Credits](#credits)
 
 ## Requirements
 
