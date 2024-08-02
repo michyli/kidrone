@@ -85,5 +85,7 @@ py run.py
 ## Credits
 This repository contains the work of *Michael Li*, *Jason Lee*, *Edward Cheng*, *Wendy Qi*, and *KiDrone*. Do not use or reference the contents of this repository without properly crediting its author.
 
-![kidrone_logo](https://github.com/user-attachments/assets/06336978-63ae-465b-84a2-b9bedaf9dc92)
+<div align="center">
+  ![kidrone_logo](https://github.com/user-attachments/assets/06336978-63ae-465b-84a2-b9bedaf9dc92)
+</div>
 
