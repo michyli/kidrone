@@ -44,14 +44,15 @@ git clone https://github.com/michyli/kidrone.git
 ```
 pip install -r requirements.txt
 ```
-3. Install the LiveServer extension in VSCode
+3. Install the LiveServer extension in VSCode__
    
 4. cd into the directory of the repo
 ```
 cd kidrone
 ```
-5. View the raw HTML in ```electron/gui/pages```. Right click the page and click Open with LiveServer to start a static Front-End session
-6. Start the electron app by cd-ing into ```electron/gui```. Run ```npm install``` to download electron, and then ```npm start``` to start the application
+5. View the raw HTML in ```electron/gui/pages```. Right click the page and click Open with LiveServer to start a static Front-End session__
+
+6. Start the electron app by cd-ing into ```electron/gui```. Run ```npm install``` to download electron, and then ```npm start``` to start the application__
 
 ## Algorithm Description
 
@@ -66,6 +67,7 @@ The core algorithm classes can be located at ```electron/engine```. The overall 
 - [optimization](Algorithm%20Documentation/optimisation.md)
 
 ## Progress
+This project is currently **In Progress**. For those next working on the project, the front-end files can be located as ```electron/gui/pages```, and please see the KiDrone Figma Mockups to view the application's final desired look. The backend files are located at ```electron/gui```, and ```main.js``` controls the overall logic. For further details on the state of this project, please see the **Why Electron** and **Future Plans** subheading at the document [here](https://docs.google.com/document/d/13txw84tOc-ipvObAjZp5-afF4HjbdMIu_Dmh2Kdlvos/edit#heading=h.3xltt7wt8ggh). 
 
 ## Credits
 This repository contains the work of *Michael Li*, *Jason Lee*, *Edward Cheng*, *Wendy Qi*, and *KiDrone*. Do not use or reference the contents of this repository without properly crediting its author.
