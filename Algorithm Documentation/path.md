@@ -56,3 +56,10 @@ Loads a path from a file.
 > **Parameters:**
 * **filename:** *string*
   * Name of the file to load the path from.
+ 
+## Credits
+This repository contains the work of *Michael Li*, *Jason Lee*, *Edward Cheng*, *Wendy Qi*, and *KiDrone*. Do not use or reference the contents of this repository without properly crediting its author.
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/b0b72a19-e0f9-402d-aab6-2a135cb50f2f" alt="logo">
+</div>
