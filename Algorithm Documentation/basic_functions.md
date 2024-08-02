@@ -1,9 +1,9 @@
-### basic_functions
+## basic_functions
 A collection of general-purpose functions used throughout the algorithm to manipulate Shapely datatypes and vectors. These functions are essential for various operations related to polygons, vectors, and line segments.
 
-> **Functions:**
+## Methods
 
-***function* extractGeoTypes(geometry)**
+### extractGeoTypes(geometry)
 Takes a Shapely geometry instance and returns the individual polygons in a list.
 
 > **Parameters:**
@@ -14,7 +14,7 @@ Takes a Shapely geometry instance and returns the individual polygons in a list.
 * **polygons:** *list of `Polygon`*
   * A list of individual polygons extracted from the input geometry.
 
-***function* normalizeVec(x, y, z=0)**
+### normalizeVec(x, y, z=0)
 Normalizes a vector (x, y) or (x, y, z).
 
 > **Parameters:**
@@ -29,7 +29,7 @@ Normalizes a vector (x, y) or (x, y, z).
 * **normalized vector:** *tuple of float*
   * The normalized vector components.
 
-***function* line_slope(line)**
+### line_slope(line)
 Returns the slope of a `LineString` based on its boundary points.
 
 > **Parameters:**
@@ -40,7 +40,7 @@ Returns the slope of a `LineString` based on its boundary points.
 * **slope:** *float or str*
   * The slope of the line or "vertical" if the line is vertical.
 
-***function* pt_to_line(point, line)**
+### pt_to_line(point, line)
 Projects a point onto a line and returns the projected point.
 
 > **Parameters:**
@@ -53,7 +53,7 @@ Projects a point onto a line and returns the projected point.
 * **projected_point:** *`Point`*
   * The point projected onto the line.
 
-***function* line_intersection(p1, slope1, p2, slope2)**
+### function* line_intersection(p1, slope1, p2, slope2)
 Finds the intersection point of two lines given their points and slopes.
 
 > **Parameters:**
@@ -70,7 +70,7 @@ Finds the intersection point of two lines given their points and slopes.
 * **intersection:** *`Point`*
   * The intersection point of the two lines.
 
-***function* reverse_line(line)**
+### reverse_line(line)
 Reverses the direction of a `LineString`.
 
 > **Parameters:**
@@ -81,7 +81,7 @@ Reverses the direction of a `LineString`.
 * **reversed_line:** *`LineString`*
   * The reversed `LineString`.
 
-***function* split_line(line, interval)**
+### split_line(line, interval)**
 Splits a `LineString` into segments of a given interval length.
 
 > **Parameters:**
@@ -94,7 +94,7 @@ Splits a `LineString` into segments of a given interval length.
 * **segments:** *list of `LineString`*
   * A list of `LineString` segments.
 
-***function* break_line(line)**
+### break_line(line)**
 Breaks a `LineString` into individual two-point segments.
 
 > **Parameters:**
@@ -105,7 +105,7 @@ Breaks a `LineString` into individual two-point segments.
 * **segments:** *list of `LineString`*
   * A list of two-point `LineString` segments.
 
-***function* check_continuity(path)**
+### check_continuity(path)**
 Checks the continuity of a path composed of `LineString` segments.
 
 > **Parameters:**
