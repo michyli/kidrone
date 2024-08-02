@@ -86,6 +86,6 @@ py run.py
 This repository contains the work of *Michael Li*, *Jason Lee*, *Edward Cheng*, *Wendy Qi*, and *KiDrone*. Do not use or reference the contents of this repository without properly crediting its author.
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/547dc883-0b61-45ff-9988-724187e26ffc" alt="logo">
+  <img src="https://github.com/user-attachments/assets/b0b72a19-e0f9-402d-aab6-2a135cb50f2f" alt="logo">
 </div>
 
