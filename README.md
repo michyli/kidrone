@@ -55,7 +55,7 @@ py run.py
 
 ## Algorithm Description
 
-The core algorithm classes can be located at ```electron/engine```. The overall algorithm is implemented using a **Boustrophedon Cellular Decomposition**. For further clarity on this algorith, see the description [here](https://docs.google.com/document/d/13txw84tOc-ipvObAjZp5-afF4HjbdMIu_Dmh2Kdlvos/edit#heading=h.3xltt7wt8ggh) at the subheading **Method of Boustrophedon Path Generation**. Further details can be found at the directory ```Path Planner Papers```.
+The core algorithm classes can be located at ```electron/engine```. The overall algorithm is implemented using a **Boustrophedon Cellular Decomposition**. For further clarity on this algorithm, see the description [here](https://docs.google.com/document/d/13txw84tOc-ipvObAjZp5-afF4HjbdMIu_Dmh2Kdlvos/edit#heading=h.3xltt7wt8ggh) at the subheading **Method of Boustrophedon Path Generation**. Further details can be found at the directory ```Path Planner Papers```.
 
 ### Classes
 - [Outline](Algorithm%20Documentation/outline.md)
