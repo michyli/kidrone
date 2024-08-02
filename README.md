@@ -44,14 +44,14 @@ git clone https://github.com/michyli/kidrone.git
 ```
 pip install -r requirements.txt
 ```
-3. cd into the directory of the repo
+3. Install the LiveServer extension in VSCode
+   
+4. cd into the directory of the repo
 ```
 cd kidrone
 ```
-4. Generate coordinates from [here](https://www.keene.edu/campus/maps/tool/), and paste them into *coordinates.csv*
-```
-py run.py
-```
+5. View the raw HTML in ```electron/gui/pages```. Right click the page and click Open with LiveServer to start a static Front-End session
+6. Start the electron app by cd-ing into ```electron/gui```. Run ```npm install``` to download electron, and then ```npm start``` to start the application
 
 ## Algorithm Description
 
@@ -64,6 +64,8 @@ The core algorithm classes can be located at ```electron/engine```. The overall 
 - [basic_functions](Algorithm%20Documentation/basic_functions.md)
 - [graph](Algorithm%20Documentation/graph.md)
 - [optimization](Algorithm%20Documentation/optimisation.md)
+
+## Progress
 
 ## Credits
 This repository contains the work of *Michael Li*, *Jason Lee*, *Edward Cheng*, *Wendy Qi*, and *KiDrone*. Do not use or reference the contents of this repository without properly crediting its author.
