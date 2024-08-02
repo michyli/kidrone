@@ -1,4 +1,4 @@
-### Path
+## Path
 ***class* Path(path, parent, disp_diam, swath_slope, start_velo=0, end_velo=0)**
 A `Path` instance contains all necessary information about the flight path and is contructed from a series of `LineString` objects. This class allows for the generation of waypoints, calculation of flight duration, and path optimization based on drone velocity and acceleration. Additionally, it offers capabilities to visualize, save, and load the path, making it a comprehensive tool for drone flight path management.
 
@@ -16,7 +16,7 @@ A `Path` instance contains all necessary information about the flight path and i
 * **end_velo:** *float*
   * Ending velocity of this path, static (0) by default.
 
-### Methods
+## Methods
 
 #### generate_waypoints(self, interval)
 Generates waypoints along the path at specified intervals.
