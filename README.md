@@ -55,7 +55,7 @@ py run.py
 
 ## Algorithm Description
 
-The core algorithm classes can be located at ```k```
+The core algorithm classes can be located at ```electron/engine```
 
 - [Outline](Algorithm%20Documentation/outline.md)
 - [Path](Algorithm%20Documentation/path.md)
