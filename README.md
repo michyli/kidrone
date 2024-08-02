@@ -4,9 +4,8 @@ This Full-Stack application enables users to upload ShapeFiles containing real-w
 
 ## Overview
 
-- [KiDrone Drone Path Planning](#kidrone-drone-path-planning)
-  - [Requirements](#requirements)
-  - [Instructions](#instructions)
+- [Requirements](#requirements)
+- [Instructions](#instructions)
   - [Structures](#structures)
       - [Outline](Algorithm%20Documentation/outline.md)
       - [Path](Algorithm%20Documentation/path.md)
