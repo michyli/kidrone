@@ -1,11 +1,13 @@
 console.log(__dirname)
 console.log('Module paths:', module.paths);
-console.log('Current working directory:', process.cwd());
+console.log('Current working directory:', process.cwd()); //Testing why requires are not working
 
 const { spawn } = require("child_process"); //This only works in the test_screen for some reason?
 
 //Add arguments if you want to pass in something to send to python
-export function run_python_script(message2Send) {
+function run_python_script() {
+
+    message2Send = "Testing send data to python";
 
     //Just checking if the button got clicked
     document.getElementById('detect').value = 'BUTTON PRESSED';

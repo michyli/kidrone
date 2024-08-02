@@ -20,12 +20,14 @@ shapefile_path = r"C:\Users\edwar\OneDrive\Desktop\Kidrone\2023 Canfor Projects\
 
 #Get data from javascript, should be dict rn
 readData = sys.stdin.read() 
+print(readData)
+sys.stdout.flush()
 
-# Construct the best path and measure runtime
-optimal_func = airtime_coverage_weighted(100, 0, 0)
-pathlist, pathlistruntime = construct_pathlist(
-    polygon, disp_diam, children=None, poly_offset=0, num_path=10)  # calculates the optimized path
-datatable, best_path = find_best_path(pathlist, optimal_func)
+# # Construct the best path and measure runtime
+# optimal_func = airtime_coverage_weighted(100, 0, 0)
+# pathlist, pathlistruntime = construct_pathlist(
+#     polygon, disp_diam, children=None, poly_offset=0, num_path=10)  # calculates the optimized path
+# datatable, best_path = find_best_path(pathlist, optimal_func)
 
 
 

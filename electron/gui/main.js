@@ -15,10 +15,10 @@ function createWindow () {
     }
   })
 
-  mainWindow.maximize()
+  mainWindow.maximize();
 
-  // Load the index.html of the app.
-  mainWindow.loadFile('pages/landing.html')
+  // and load the index.html of the app.
+  mainWindow.loadFile('test_screen.html')
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
