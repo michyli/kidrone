@@ -57,3 +57,10 @@ Normalizes a DataFrame column using Min-Max normalization.
 > **Usage:**
 1. Use `construct_pathlist` to generate a list of possible paths based on initial parameters.
 2. Apply `find_best_path` with an appropriate optimizer function to determine the best path from the generated list.
+
+## Credits
+This repository contains the work of *Michael Li*, *Jason Lee*, *Edward Cheng*, *Wendy Qi*, and *KiDrone*. Do not use or reference the contents of this repository without properly crediting its author.
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/b0b72a19-e0f9-402d-aab6-2a135cb50f2f" alt="logo">
+</div>
