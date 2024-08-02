@@ -9,7 +9,7 @@ This is an algorithm that generates the optimal flight path for a drone over a t
       - [Outline](#outline)
       - [Path](#path)
       - [Segment](#segment)
-      - [basic\_functions](#basic_functions)
+      - [basic\_functions](Algorithm Documentation/basic_functions.md)
       - [graph](#graph)
       - [optimization](#optimization)
       - [run \& .csv](#run--csv)
