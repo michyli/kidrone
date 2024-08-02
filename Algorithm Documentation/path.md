@@ -16,7 +16,7 @@ A `Path` instance contains all necessary information about the flight path and i
 * **end_velo:** *float*
   * Ending velocity of this path, static (0) by default.
 
-## Methods
+### Methods
 
 ```generate_waypoints(self, interval)**```
 Generates waypoints along the path at specified intervals.
@@ -25,34 +25,34 @@ Generates waypoints along the path at specified intervals.
 * **interval:** *float*
   * Distance between waypoints in meters.
 
-***method* calculate_duration(self)**
+```calculate_duration(self)```
 Calculates the duration required to traverse the path based on drone velocities.
 
-***method* optimize_path(self)**
+```optimize_path(self)```
 Optimizes the path for the shortest duration considering drone's acceleration and deceleration capabilities.
 
-***method* get_segments(self)**
+```get_segments(self)```
 Breaks the path into smaller segments for detailed analysis.
 
 > **Attributes:**
 * **segments:** *list of `Segment`*
   * A list of `Segment` instances that make up the path.
 
-***method* display_path(self, show=True)**
+```display_path(self, show=True)```
 Displays the path on a map.
 
 > **Parameters:**
 * **show:** *bool*
   * Determines whether to display the path immediately. Defaults to `True`.
 
-***method* save_path(self, filename)**
+```save_path(self, filename)```
 Saves the path to a file.
 
 > **Parameters:**
 * **filename:** *string*
   * Name of the file to save the path.
 
-***method* load_path(self, filename)**
+```load_path(self, filename)**```
 Loads a path from a file.
 
 > **Parameters:**
