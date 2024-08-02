@@ -116,4 +116,9 @@ Checks the continuity of a path composed of `LineString` segments.
 * **is_continuous:** *bool*
   * `True` if the path is continuous, `False` otherwise.
 
-  ![alt text](https://github.com/michyli/kidrone/blob/Algorithm\ Documentation/Documentation\ Assets/kidrone_logo.jpeg?raw=true)
+## Credits
+This repository contains the work of *Michael Li*, *Jason Lee*, *Edward Cheng*, *Wendy Qi*, and *KiDrone*. Do not use or reference the contents of this repository without properly crediting its author.
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/b0b72a19-e0f9-402d-aab6-2a135cb50f2f" alt="logo">
+</div>
