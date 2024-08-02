@@ -4,16 +4,10 @@ This Full-Stack application enables users to upload ShapeFiles containing real-w
 
 ## Overview
 
-- [Requirements](#requirements)
-- [Instructions](#instructions)
-  - [Structures](#structures)
-      - [Outline](Algorithm%20Documentation/outline.md)
-      - [Path](Algorithm%20Documentation/path.md)
-      - [Segment](Algorithm%20Documentation/segment.md)
-      - [basic_functions](Algorithm%20Documentation/basic_functions.md)
-      - [graph](Algorithm%20Documentation/graph.md)
-      - [optimization](Algorithm%20Documentation/optimisation.md)
-  - [Credits](#credits)
+1. [Requirements](#requirements)
+2. [Instructions](#instructions)
+3. [Algorithm Description](#desctiption)
+4. [Credits](#credits)
 
 ## Requirements
 
@@ -57,6 +51,15 @@ cd kidrone
 ```
 py run.py
 ```
+
+## Algorithm Description
+
+- [Outline](Algorithm%20Documentation/outline.md)
+- [Path](Algorithm%20Documentation/path.md)
+- [Segment](Algorithm%20Documentation/segment.md)
+- [basic_functions](Algorithm%20Documentation/basic_functions.md)
+- [graph](Algorithm%20Documentation/graph.md)
+- [optimization](Algorithm%20Documentation/optimisation.md)
 
 ## Credits
 This repository contains the work of *Michael Li*, *Jason Lee*, *Edward Cheng*, *Wendy Qi*, and *KiDrone*. Do not use or reference the contents of this repository without properly crediting its author.
