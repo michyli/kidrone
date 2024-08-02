@@ -2,6 +2,8 @@
 
 This Full-Stack application enables users to upload ShapeFiles containing real-world coordinates and generates an optimized drone flight path. The path is designed to maximize area coverage while minimizing overall air time. All rights reserved by Ki.
 
+## Overview
+
 - [KiDrone Drone Path Planning](#kidrone-drone-path-planning)
   - [Requirements](#requirements)
   - [Instructions](#instructions)
