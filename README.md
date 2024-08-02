@@ -45,15 +45,15 @@ git clone https://github.com/michyli/kidrone.git
 ```
 pip install -r requirements.txt
 ```
-3. Install the LiveServer extension in VSCode__
+3. Install the LiveServer extension in VSCode
    
 4. cd into the directory of the repo
 ```
 cd kidrone
 ```
-5. View the raw HTML in ```electron/gui/pages```. Right click the page and click Open with LiveServer to start a static Front-End session__
+5. View the raw HTML in ```electron/gui/pages```. Right click the page and click Open with LiveServer to start a static Front-End session
 
-6. Start the electron app by cd-ing into ```electron/gui```. Run ```npm install``` to download electron, and then ```npm start``` to start the application__
+6. Start the electron app by cd-ing into ```electron/gui```. Run ```npm install``` to download electron, and then ```npm start``` to start the application
 
 ## Algorithm Description
 
